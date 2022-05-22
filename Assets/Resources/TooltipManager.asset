@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1586299751, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: TooltipManager
+  m_EditorClassIdentifier: 
+  m_TooltipPrefab: {fileID: 1057459311759878, guid: 620e3a0154f7caa4a9dc64f5b39e964a, type: 3}
+  m_SpacerHeight: 10
+  m_ItemTooltipWidth: 450
+  m_SpellTooltipWidth: 450
+  m_DefaultLineStyle:
+    Name: 
+    TextFont: {fileID: 12800000, guid: b51a6ffabb72ccc4ebe8126b769a65f2, type: 3}
+    TextFontStyle: 0
+    TextFontSize: 16
+    TextFontLineSpacing: 1
+    OverrideTextAlignment: 0
+    TextFontColor: {r: 0.9411765, g: 0.9019608, b: 0.88235295, a: 1}
+    TextEffects: []
+    DisplayName: 0
+  m_TitleLineStyle:
+    Name: 
+    TextFont: {fileID: 12800000, guid: b51a6ffabb72ccc4ebe8126b769a65f2, type: 3}
+    TextFontStyle: 0
+    TextFontSize: 20
+    TextFontLineSpacing: 1
+    OverrideTextAlignment: 0
+    TextFontColor: {r: 0.9411765, g: 0.9019608, b: 0.88235295, a: 1}
+    TextEffects: []
+    DisplayName: 0
+  m_DescriptionLineStyle:
+    Name: 
+    TextFont: {fileID: 12800000, guid: f36084bdecb1c7044b14e1a50edfb566, type: 3}
+    TextFontStyle: 0
+    TextFontSize: 16
+    TextFontLineSpacing: 1
+    OverrideTextAlignment: 0
+    TextFontColor: {r: 0.59607846, g: 0.5058824, b: 0.4, a: 1}
+    TextEffects: []
+    DisplayName: 0
+  m_CustomStyles: []

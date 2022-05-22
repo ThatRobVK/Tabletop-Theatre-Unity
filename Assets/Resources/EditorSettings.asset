@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b867026e0f7e6fb908b43ce712aabe71, type: 3}
+  m_Name: EditorSettings
+  m_EditorClassIdentifier: 
+  SnapToGrid: 0
+  ContinuousPlacement: 1
+  ShowPolygons: 0
+  RotateSpeed: 40
+  RotateStepSpeed: 1
+  RotateSpeedFast: 120
+  RotateStepSpeedFast: 5
+  RotateSnapToGridSpeed: 90
+  ElevateSpeed: 1
+  ElevateStepSpeed: 0.01
+  ElevateSpeedFast: 3
+  ElevateStepSpeedFast: 0.1
+  ElevateSnapToGridSpeed: 1
+  MoveSpeed: 1
+  MoveStepSpeed: 0.01
+  MoveSpeedFast: 3
+  MoveStepSpeedFast: 0.1
+  MoveSnapToGridSpeed: 1
+  ScaleSpeed: 0.5
+  ScaleStepSpeed: 0.01
+  ScaleSpeedFast: 1
+  ScaleStepSpeedFast: 0.1
+  HoverHighlightProfile: {fileID: 11400000, guid: c56b450356ba5974cb01a1220daf9488,
+    type: 2}
+  SelectedHighlightProfile: {fileID: 11400000, guid: f5e91fce87755dd4aa396a34f5bc0ccd,
+    type: 2}
+  DeniedHighlightProfile: {fileID: 11400000, guid: 85e8eb1a71654894881aa5b2695b4ee5,
+    type: 2}
+  PolygonMaterial: {fileID: 2100000, guid: 7f822568ebfccbb46b6b983a6c871a15, type: 2}
+  DebugRaycasts: 0
+  CompressSaves: 1
+  ShowItemIDs: 0
+  ShowFpsCounter: 0

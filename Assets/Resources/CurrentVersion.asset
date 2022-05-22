@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2b18687c0b22f046af46bcf37de308f, type: 3}
+  m_Name: CurrentVersion
+  m_EditorClassIdentifier: 
+  BuildDate: 09/03/2022 00:00:00
+  BuildNumber: 2
+  Version: 2022.3.9.2
+  ReleaseType: 2

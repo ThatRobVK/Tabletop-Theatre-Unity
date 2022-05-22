@@ -1,0 +1,320 @@
+{
+  "Packs": [
+    {
+      "Name": "Built-in",
+      "Lightsources": [
+        {
+          "Name": "Indoor",
+          "Categories": [
+            {
+              "Name": "Light",
+              "Items": [
+                {
+                  "IDs": [
+                    13
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "Outdoor",
+          "Categories": [
+            {
+              "Name": "Light",
+              "Items": [
+                {
+                  "IDs": [
+                    13
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "Built-in Terrain",
+      "TerrainLayers": [
+        {
+          "Name": "Grass",
+          "ID": 20
+        },
+        {
+          "Name": "Sand",
+          "ID": 21
+        },
+        {
+          "Name": "Soil",
+          "ID": 22
+        }
+      ],
+      "RiversRoads": {
+        "Rivers": [
+          23
+        ],
+        "Roads": [
+          24
+        ]
+      }
+    },
+    {
+      "Name": "Medieval",
+        "Bridges": [
+          1,
+          2
+        ],
+      "Construction": {
+        "Props": [
+          {
+            "Name": "Green Cube",
+            "Items": [
+              {
+                "IDs": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "Name": "Blue Cube",
+            "Items": [
+              {
+                "IDs": [
+                  1
+                ]
+              }
+            ]
+          }
+        ],
+        "Buildings": [
+          {
+            "Name": "Red Cube",
+            "Items": [
+              {
+                "IDs": [
+                  6
+                ]
+              },
+              {
+                "IDs": [
+                  12
+                ]
+              }
+            ]
+          },
+          {
+            "Name": "Orange Cube",
+            "Items": [
+              {
+                "IDs": [
+                  4
+                ]
+              },
+              {
+                "IDs": [
+                  10
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Items": [
+        {
+          "Name": "Cubes",
+          "Categories": [
+            {
+              "Name": "Big Cubes",
+              "Items": [
+                {
+                  "IDs": [
+                    1
+                  ]
+                },
+                {
+                  "IDs": [
+                    2
+                  ]
+                },
+                {
+                  "IDs": [
+                    3
+                  ]
+                },
+                {
+                  "IDs": [
+                    4
+                  ]
+                },
+                {
+                  "IDs": [
+                    5
+                  ]
+                },
+                {
+                  "IDs": [
+                    6
+                  ]
+                }
+              ]
+            },
+            {
+              "Name": "Small Cubes",
+              "Items": [
+                {
+                  "IDs": [
+                    7
+                  ]
+                },
+                {
+                  "IDs": [
+                    8
+                  ]
+                },
+                {
+                  "IDs": [
+                    9
+                  ]
+                },
+                {
+                  "IDs": [
+                    10
+                  ]
+                },
+                {
+                  "IDs": [
+                    11
+                  ]
+                },
+                {
+                  "IDs": [
+                    12
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "Nature - Temperate",
+      "Nature": [
+        {
+          "Name": "Trees",
+          "MinDensity": 0.01,
+          "MaxDensity": 0.1,
+          "Categories": [
+            {
+              "Name": "Blue",
+              "Items": [
+                {
+                  "IDs": [
+                    1
+                  ]
+                },
+                {
+                  "IDs": [
+                    7
+                  ]
+                },
+              ]
+            },
+            {
+              "Name": "Gray",
+              "Items": [
+                {
+                  "IDs": [
+                    2
+                  ]
+                },
+                {
+                  "IDs": [
+                    8
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "Vegetation",
+          "MinDensity": 0.1,
+          "MaxDensity": 0.75,
+          "Categories": [
+            {
+              "Name": "Pink",
+              "Items": [
+                {
+                  "IDs": [
+                    5
+                  ]
+                },
+                {
+                  "IDs": [
+                    11
+                  ]
+                }
+              ]
+            },
+            {
+              "Name": "Red",
+              "Items": [
+                {
+                  "IDs": [
+                    6
+                  ]
+                },
+                {
+                  "IDs": [
+                    12
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Name": "Nature Props",
+          "MinDensity": 0.02,
+          "MaxDensity": 0.1,
+          "Categories": [
+            {
+              "Name": "Green",
+              "Items": [
+                {
+                  "IDs": [
+                    3
+                  ]
+                },
+                {
+                  "IDs": [
+                    9
+                  ]
+                }
+              ]
+            },
+            {
+              "Name": "Orange",
+              "Items": [
+                {
+                  "IDs": [
+                    4
+                  ]
+                },
+                {
+                  "IDs": [
+                    10
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

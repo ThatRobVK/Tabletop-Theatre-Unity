@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1225417463, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: Blue Color Scheme
+  m_EditorClassIdentifier: 
+  m_ImagePrimary: {r: 0.16862746, g: 0.18431373, b: 0.22352941, a: 1}
+  m_ImageSecondary: {r: 0.08235294, g: 0.6392157, b: 0.93333334, a: 1}
+  m_ImageLight: {r: 0.52156866, g: 0.69411767, b: 1, a: 1}
+  m_ImageDark: {r: 0.2784314, g: 0.30588236, b: 0.41960785, a: 1}
+  m_ImageEffect: {r: 1, g: 0.7019608, b: 0.34901962, a: 1}
+  m_ImageEffect2: {r: 1, g: 0.61960787, b: 0.21960784, a: 1}
+  m_ImageEffect3: {r: 0, g: 0.50980395, b: 0.7882353, a: 1}
+  m_ImageBordersPrimary: {r: 0.7176471, g: 0.53333336, b: 0.2784314, a: 1}
+  m_ImageBordersSecondary: {r: 1, g: 0.7019608, b: 0.34901962, a: 1}
+  m_ButtonForeground: {r: 0.16470589, g: 0.29803923, b: 0.3764706, a: 1}
+  m_ButtonEffect: {r: 0.9529412, g: 0.7411765, b: 0.53333336, a: 1}
+  m_WindowHeader: {r: 0.08235294, g: 0.6392157, b: 0.93333334, a: 1}
+  m_Animation: {r: 0.13725491, g: 0.21960784, b: 0.27058825, a: 1}
+  m_ItemBackground: {r: 0.07450981, g: 0.08627451, b: 0.101960786, a: 1}
+  m_ButtonCancel: {r: 0.6117647, g: 0.21568628, b: 0.21568628, a: 1}
+  m_SliderBackground: {r: 0.105882354, g: 0.17254902, b: 0.22352941, a: 1}
+  m_SliderHandle: {r: 0.18039216, g: 0.3372549, b: 0.42352942, a: 1}
