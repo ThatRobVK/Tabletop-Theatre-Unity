@@ -20,7 +20,7 @@
 
 using UnityEngine;
 
-namespace TT.World
+namespace TT.Shared
 {
     public class WorldObjectControlsToggle : MonoBehaviour
     {
