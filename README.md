@@ -16,7 +16,7 @@ TT is open source to encourage the creative and technical community around table
 
 ### Unity requirements
 
-TT is built on Unity 2021.3.latest (LTS) on the built-in render pipeline. This is likely to be upgraded to 2022 LTS with the universal render pipeline in the near future. 
+TT is built on Unity 2020.3.latest (LTS) on the built-in render pipeline. This is likely to be upgraded to 2021 LTS with the universal render pipeline in the near future. 
 
 ### Setting up the project
 
