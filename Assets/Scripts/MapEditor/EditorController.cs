@@ -21,7 +21,9 @@
 #pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
 
 using System.Collections.Generic;
+using Amazon.Util;
 using TT.Data;
+using TT.Shared;
 using TT.State;
 using TT.World;
 using UnityEngine;
@@ -37,6 +39,7 @@ namespace TT.MapEditor
         #region Private fields
 
         private StateController _stateController;
+        private IUser _user;
 
         #endregion
 
@@ -70,6 +73,7 @@ namespace TT.MapEditor
             Content.Load(json);
 
             var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
+            AssetBundle.UnloadAllAssetBundles(false);
             var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
             loadContentCatalogAsync.Completed += OnContentCatalogLoaded;
         }

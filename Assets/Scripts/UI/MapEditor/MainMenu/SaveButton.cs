@@ -66,7 +66,7 @@ namespace TT.UI.MapEditor.MainMenu
             if (Map.Current == null)
             {
                 // Create a new map if one doesn't exist
-                Map.Create("new map", CommsLib.User.Username, GameTerrain.Current.TerrainTextureAddress);
+                Map.Create("new map", "test", GameTerrain.Current.TerrainTextureAddress);
             }
 
             var json = Map.Current.Save();
