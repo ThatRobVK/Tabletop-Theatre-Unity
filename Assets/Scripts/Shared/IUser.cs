@@ -36,7 +36,7 @@ namespace TT.Shared
         /// <summary>
         /// Invoked when the authentication attempt was unsuccessful. 
         /// </summary>
-        event Action OnLoginFailed;
+        event Action<LoginFailureReason> OnLoginFailed;
         
         /// <summary>
         /// Invoked when the user is logged out.

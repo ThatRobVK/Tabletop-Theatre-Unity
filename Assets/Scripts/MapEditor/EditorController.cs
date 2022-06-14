@@ -21,7 +21,6 @@
 #pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
 
 using System.Collections.Generic;
-using Amazon.Util;
 using TT.Data;
 using TT.Shared;
 using TT.State;
