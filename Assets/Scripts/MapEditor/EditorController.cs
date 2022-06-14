@@ -65,6 +65,15 @@ namespace TT.MapEditor
             LoadContent();
         }
 
+        private void Login()
+        {
+            Debug.Log("Logging in");
+            var user = FindObjectOfType<CommsObject>().User;
+            user.OnLoginSuccess += () => Debug.Log("Login successful");
+            user.OnLoginFailed += (LoginFailureReason failure) => Debug.Log("Login failed because " + failure.ToString());
+            user.LoginAsync("testuser@whatever.com", "u$BMLfvtDTmaPBVEA7ts2&Af%AR&SH");
+        }
+
         private async void LoadContent()
         {
             Debug.Log("EditorController :: Awake :: Loading content");
@@ -89,6 +98,8 @@ namespace TT.MapEditor
             _stateController.ChangeState(StateType.EditorIdleState);
 
             TimeController.Current.CurrentTime = 12;
+            
+            Login();
         }
 
         void Update()

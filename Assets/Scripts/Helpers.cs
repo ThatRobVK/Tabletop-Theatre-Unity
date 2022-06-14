@@ -58,6 +58,17 @@ namespace TT
             }
         }
 
+        private static CommsObject _comms;
+
+        public static CommsObject Comms
+        {
+            get
+            {
+                if (_comms == null) _comms = Object.FindObjectOfType<CommsObject>();
+                return _comms;
+            }
+        }
+
         // Layers
         public static int IgnoreRaycastLayer { get => LayerMask.NameToLayer("Ignore Raycast"); }
         public static int TraversableLayer { get => LayerMask.NameToLayer("Traversable"); }
