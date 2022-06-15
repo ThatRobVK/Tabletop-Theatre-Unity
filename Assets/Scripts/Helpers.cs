@@ -43,7 +43,7 @@ namespace TT
         {
             get
             {
-                if (_mainCamera == null) _mainCamera = Object.FindObjectOfType<Camera>();
+                if (!_mainCamera) _mainCamera = Object.FindObjectOfType<Camera>();
                 return _mainCamera;
             }
         }
@@ -53,7 +53,7 @@ namespace TT
         {
             get
             {
-                if (_settings == null) _settings = Object.FindObjectOfType<SettingsObject>();
+                if (!_settings) _settings = Object.FindObjectOfType<SettingsObject>();
                 return _settings;
             }
         }
@@ -64,7 +64,7 @@ namespace TT
         {
             get
             {
-                if (_comms == null) _comms = Object.FindObjectOfType<CommsObject>();
+                if (!_comms) _comms = Object.FindObjectOfType<CommsObject>();
                 return _comms;
             }
         }
