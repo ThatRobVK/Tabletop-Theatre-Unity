@@ -1,24 +1,3 @@
-﻿/*
- * Tabletop Theatre
- * Copyright (C) 2020-2022 Robert van Kooten
- * Original source code: https://github.com/ThatRobVK/Tabletop-Theatre
- * License: https://github.com/ThatRobVK/Tabletop-Theatre/blob/main/LICENSE
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-using DuloGames.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,12 +5,11 @@ namespace TT.UI.MainMenu
 {
     [RequireComponent(typeof(Button))]
     [RequireComponent(typeof(CanvasGroup))]
-    public class ShowLoginButton : MonoBehaviour
+    public class LogoutButton : MonoBehaviour
     {
-        [SerializeField][Tooltip("The window with the login form.")] private UIWindow loginWindow;
         private Button _button;
         private CanvasGroup _canvasGroup;
-        
+
         private void OnEnable()
         {
             _button = GetComponent<Button>();
@@ -45,7 +23,7 @@ namespace TT.UI.MainMenu
             Helpers.Comms.User.OnLoginSuccess += OnLoginSuccess;
             Helpers.Comms.User.OnLogout += OnLogout;
         }
-
+        
         private void OnDisable()
         {
             if (Helpers.Comms != null && Helpers.Comms.User != null)
@@ -68,17 +46,18 @@ namespace TT.UI.MainMenu
 
         private void ToggleButton(bool userIsLoggedIn)
         {
-            _canvasGroup.alpha = userIsLoggedIn ? 0 : 1;
-            _canvasGroup.interactable = !userIsLoggedIn;
-            _canvasGroup.blocksRaycasts = !userIsLoggedIn;
+            _canvasGroup.alpha = userIsLoggedIn ? 1 : 0;
+            _canvasGroup.interactable = userIsLoggedIn;
+            _canvasGroup.blocksRaycasts = userIsLoggedIn;
         }
 
         private void HandleButtonClick()
         {
-            if (!loginWindow.IsOpen)
+            if (Helpers.Comms.User.IsLoggedIn)
             {
-                loginWindow.Show();
+                Helpers.Comms.User.Logout();
             }
         }
+
     }
 }

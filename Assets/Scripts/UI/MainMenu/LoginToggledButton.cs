@@ -28,7 +28,7 @@ namespace TT.UI.MainMenu
     public class LoginToggledButton : MonoBehaviour
     {
         [SerializeField][Tooltip("When the user is logged in, is this button enabled (ticked) or not (unticked)?")] private bool loggedInStatus = true;
-        
+        [SerializeField][Tooltip("Besides highlight and press transitions, these game objects will be disabled when the user is logged out, and enabled when the user is logged in.")] private GameObject[] additionalGameObjectsToControl;
         private UIHighlightTransition[] _highlightTransitions;
         private UIPressTransition[] _pressTransitions;
         private Button _button;
@@ -68,6 +68,10 @@ namespace TT.UI.MainMenu
             foreach (var pressTransition in _pressTransitions)
             {
                 pressTransition.enabled = userIsLoggedIn == loggedInStatus;
+            }
+            foreach (var additionalObject in additionalGameObjectsToControl)
+            {
+                additionalObject.SetActive(userIsLoggedIn == loggedInStatus);
             }
         }
     }

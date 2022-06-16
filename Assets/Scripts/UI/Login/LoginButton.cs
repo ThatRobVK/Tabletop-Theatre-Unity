@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using DuloGames.UI;
 using TMPro;
@@ -31,31 +31,15 @@ namespace TT.UI.Login
     [RequireComponent(typeof(Button))]
     public class LoginButton : MonoBehaviour
     {
+        private LoginWindow _loginWindow;
         private Button _button;
-        private UIWindow _window;
         [SerializeField][Tooltip("The textbox containing the username.")] private Textbox username;
         [SerializeField][Tooltip("The textbox containing the password.")] private Textbox password;
-        [SerializeField][Tooltip("The panel overlay to tell people to wait during login.")] private GameObject waitPanel;
-        [SerializeField][Tooltip("The area where error messages are shown.")] private GameObject errorArea;
-        [SerializeField][Tooltip("The text field where error messages are shown.")] private TMP_Text errorText;
-
-        private Dictionary<LoginFailureReason, string> failureReasonToTextMap = new Dictionary<LoginFailureReason, string>()
-        {
-            {LoginFailureReason.AuthenticationFailed, "Login failed. Check your credentials and try again."},
-            {
-                LoginFailureReason.ConnectionError,
-                "Could not connect to server. Please try again later or check the website for server status."
-            },
-            {
-                LoginFailureReason.EmailNotVerified,
-                "E-mail address not verified. Check your e-mail or go to https://www.tabletop-theatre.com/verify-email/"
-            }
-        };
 
         void OnEnable()
         {
             _button = GetComponent<Button>();
-            _window = GetComponentInParent<UIWindow>();
+            _loginWindow = GetComponentInParent<LoginWindow>();
 
             _button.onClick.AddListener(OnButtonClick);
         }
@@ -68,34 +52,17 @@ namespace TT.UI.Login
         
         private void OnButtonClick()
         {
-            // Show the wait panel
-            waitPanel.SetActive(true);
+            _loginWindow.ToggleWaitPanel(true);
+            StartCoroutine(DoLogin());
+        }
 
-            // Listen for auth events
-            Helpers.Comms.User.OnLoginSuccess += HandleLoginSuccess;
-            Helpers.Comms.User.OnLoginFailed += HandleLoginFailed;
+        private IEnumerator DoLogin()
+        {
+            // Let one frame go by to update the UI to avoid race conditions on a very fast fail of the login
+            yield return null;
 
             // Request the sign in
-            Helpers.Comms.User.LoginAsync(username.text, password.text);
-        }
-
-        private void HandleLoginFailed(LoginFailureReason reason)
-        {
-            // Stop listening
-            Helpers.Comms.User.OnLoginSuccess -= HandleLoginSuccess;
-            Helpers.Comms.User.OnLoginFailed -= HandleLoginFailed;
-
-            // Show the error
-            errorText.text = failureReasonToTextMap[reason];
-            errorArea.SetActive(true);
-            
-            // Hide wait panel
-            waitPanel.SetActive(false);
-        }
-
-        private void HandleLoginSuccess()
-        {
-            _window.Hide();
+            Helpers.Comms.User.LoginAsync(username.text, password.text).ConfigureAwait(false);
         }
     }
 }

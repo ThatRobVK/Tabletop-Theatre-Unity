@@ -41,8 +41,11 @@ namespace TT.UI.MainMenu
 
         private void OnDisable()
         {
-            Helpers.Comms.User.OnLoginSuccess -= ShowText;
-            Helpers.Comms.User.OnLogout -= ShowText;
+            if (Helpers.Comms != null && Helpers.Comms.User != null)
+            {
+                Helpers.Comms.User.OnLoginSuccess -= ShowText;
+                Helpers.Comms.User.OnLogout -= ShowText;
+            }
         }
 
         private void ShowText()
