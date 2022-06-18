@@ -53,6 +53,8 @@ namespace TT.UI.Login
         [SerializeField][Tooltip("The exit button to use to take the user back to the main menu")]
         private ExitToMenu exitToMenu;
         [SerializeField][Tooltip("When true, this box shows when the user is logged out.")] private bool showOnLogout;
+        [SerializeField] [Tooltip("A Toggle that when ticked stores the user's refresh token.")]
+        private Toggle rememberMeToggle; 
         
         #endregion
         
@@ -78,11 +80,9 @@ namespace TT.UI.Login
 
         #region Lifecycle events
         
-        /// <summary>
-        /// Initialise the window.
-        /// </summary>
         private void OnEnable()
         {
+            // Handle window events
             _window = GetComponent<UIWindow>();
             _window.onTransitionBegin.AddListener(HandleWindowTransitionBegin);
 
@@ -99,16 +99,26 @@ namespace TT.UI.Login
                 ? string.Empty
                 : string.Concat(guidanceMessage, "\n ");
             guidanceTextbox.text = guidanceMessage;
+            
+            // Set the remember me toggle based on prefs
+            rememberMeToggle.isOn = !PlayerPrefs.HasKey(Helpers.PrefsRememberMeKey) 
+                                    || PlayerPrefs.GetInt(Helpers.PrefsRememberMeKey) != 0;
         }
 
-        /// <summary>
-        /// Remove event handlers.
-        /// </summary>
+        private void Start()
+        {
+            // If a refresh token exists in player prefs, attempt to refresh the login
+            if (PlayerPrefs.HasKey(Helpers.PrefsEmailKey) && PlayerPrefs.HasKey(Helpers.PrefsRefreshTokenKey))
+                RefreshLogin();
+        }
+
         private void OnDisable()
         {
+            // Remove window events
             if (_window)
                 _window.onTransitionBegin.RemoveListener(HandleWindowTransitionBegin);
 
+            // Remove auth events
             if (Helpers.Comms != null && Helpers.Comms.User != null)
             {
                 Helpers.Comms.User.OnLoginSuccess -= HandleLoginSuccess;
@@ -119,7 +129,7 @@ namespace TT.UI.Login
 
         #endregion
 
-        
+
         #region Event handlers
 
         /// <summary>
@@ -178,6 +188,22 @@ namespace TT.UI.Login
         /// </summary>
         private void HandleLoginSuccess()
         {
+            if (rememberMeToggle && rememberMeToggle.isOn)
+            {
+                // Remember the user's refresh token
+                PlayerPrefs.SetString(Helpers.PrefsEmailKey, Helpers.Comms.User.Email);
+                PlayerPrefs.SetString(Helpers.PrefsRefreshTokenKey, Helpers.Comms.User.RefreshToken);
+            }
+            else
+            {
+                // Remove any stored refresh token
+                PlayerPrefs.DeleteKey(Helpers.PrefsEmailKey);
+                PlayerPrefs.DeleteKey(Helpers.PrefsRefreshTokenKey);
+            }
+            // Remember whether the user wanted to be remembered
+            PlayerPrefs.SetInt(Helpers.PrefsRememberMeKey, rememberMeToggle.isOn ? 1 : 0);
+            PlayerPrefs.Save();
+
             HideWindow();
         }
 
@@ -197,8 +223,25 @@ namespace TT.UI.Login
 
         #endregion
 
-        
+
         #region Private methods
+
+        /// <summary>
+        /// Attempts to refresh the user's login based on the player prefs.
+        /// </summary>
+        private async void RefreshLogin()
+        {
+            // Ensure the remember me toggle is on as we're refreshing so want to store the new refresh token
+            if (rememberMeToggle) rememberMeToggle.isOn = true;
+            
+            // Show the window with the wait overlay
+            _window.Show();
+            waitPanel.SetActive(true);
+            
+            // Refresh
+            await Helpers.Comms.User.RefreshLoginAsync(PlayerPrefs.GetString(Helpers.PrefsEmailKey),
+                PlayerPrefs.GetString(Helpers.PrefsRefreshTokenKey));
+        }
 
         /// <summary>
         /// Show the login window.
