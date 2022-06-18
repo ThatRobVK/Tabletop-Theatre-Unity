@@ -24,14 +24,31 @@ using UnityEngine.UI;
 
 namespace TT.UI.MainMenu
 {
+    /// <summary>
+    /// Disables a button while the user is logged out, and enables it when the user is logged in.
+    /// </summary>
     [RequireComponent(typeof(Button))]
     public class LoginToggledButton : MonoBehaviour
     {
+        
+        #region Editor fields
+        
         [SerializeField][Tooltip("When the user is logged in, is this button enabled (ticked) or not (unticked)?")] private bool loggedInStatus = true;
         [SerializeField][Tooltip("Besides highlight and press transitions, these game objects will be disabled when the user is logged out, and enabled when the user is logged in.")] private GameObject[] additionalGameObjectsToControl;
+        
+        #endregion
+        
+        
+        #region Private fields
+        
         private UIHighlightTransition[] _highlightTransitions;
         private UIPressTransition[] _pressTransitions;
         private Button _button;
+        
+        #endregion
+        
+        
+        #region Lifecycle events
         
         private void OnEnable()
         {
@@ -40,11 +57,11 @@ namespace TT.UI.MainMenu
             _pressTransitions = GetComponents<UIPressTransition>();
 
             // Enable button based on logged in status
-            SetButtonState();
+            HandleAuthEvents();
 
             // Hook up auth events
-            Helpers.Comms.User.OnLoginSuccess += SetButtonState;
-            Helpers.Comms.User.OnLogout += SetButtonState;
+            Helpers.Comms.User.OnLoginSuccess += HandleAuthEvents;
+            Helpers.Comms.User.OnLogout += HandleAuthEvents;
         }
 
         private void OnDisable()
@@ -52,12 +69,20 @@ namespace TT.UI.MainMenu
             // Unhook auth events
             if (Helpers.Comms != null && Helpers.Comms.User != null)
             {
-                Helpers.Comms.User.OnLoginSuccess -= SetButtonState;
-                Helpers.Comms.User.OnLogout -= SetButtonState;
+                Helpers.Comms.User.OnLoginSuccess -= HandleAuthEvents;
+                Helpers.Comms.User.OnLogout -= HandleAuthEvents;
             }
         }
+        
+        #endregion
 
-        private void SetButtonState()
+        
+        #region Event handlers
+        
+        /// <summary>
+        /// Called when the user is logged in or logged out. Toggles the button on or off based on auth state.
+        /// </summary>
+        private void HandleAuthEvents()
         {
             bool userIsLoggedIn = Helpers.Comms.User.IsLoggedIn;
             _button.interactable = userIsLoggedIn == loggedInStatus;
@@ -74,5 +99,8 @@ namespace TT.UI.MainMenu
                 additionalObject.SetActive(userIsLoggedIn == loggedInStatus);
             }
         }
+        
+        #endregion
+        
     }
 }

@@ -39,6 +39,9 @@ namespace TT
         #region Private properties
 
         private static Camera _mainCamera;
+        /// <summary>
+        /// The first camera in the scene.
+        /// </summary>
         public static Camera MainCamera
         {
             get
@@ -49,6 +52,9 @@ namespace TT
         }
 
         private static SettingsObject _settings;
+        /// <summary>
+        /// The settings to be applied to the current game.
+        /// </summary>
         public static SettingsObject Settings
         {
             get
@@ -59,7 +65,9 @@ namespace TT
         }
 
         private static CommsObject _comms;
-
+        /// <summary>
+        /// Library for communicating with the outside world.
+        /// </summary>
         public static CommsObject Comms
         {
             get
@@ -330,7 +338,11 @@ namespace TT
 
         #region GameObjects
 
-        // Sets the layer on the given object and all its child objects
+        /// <summary>
+        /// Sets the layer on the given object and all its child objects.
+        /// </summary>
+        /// <param name="obj">The object to set the layer on.</param>
+        /// <param name="targetLayer">The layer to set.</param>
         public static void SetLayerRecursive(GameObject obj, int targetLayer)
         {
             if (!obj.CompareTag("DoNotChangeLayer")) obj.layer = targetLayer;

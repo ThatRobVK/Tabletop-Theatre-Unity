@@ -19,43 +19,75 @@
  */
 
 using System.Collections;
-using System.Collections.Generic;
-using DuloGames.UI;
-using TMPro;
-using TT.Shared;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace TT.UI.Login
 {
+    /// <summary>
+    /// Attached to the login button on the login window (see LoginWindow.cs). Logs the user in when clicked.
+    /// </summary>
     [RequireComponent(typeof(Button))]
     public class LoginButton : MonoBehaviour
     {
-        private LoginWindow _loginWindow;
-        private Button _button;
+        
+        #region Editor fields
+        
         [SerializeField][Tooltip("The textbox containing the username.")] private Textbox username;
         [SerializeField][Tooltip("The textbox containing the password.")] private Textbox password;
+        
+        #endregion
+        
+        
+        #region Private fields
+
+        private Button _button;
+        private LoginWindow _loginWindow;
+        
+        #endregion
+        
+        
+        #region Lifecycle events
 
         void OnEnable()
         {
             _button = GetComponent<Button>();
             _loginWindow = GetComponentInParent<LoginWindow>();
 
+            // Handle button click events
             _button.onClick.AddListener(OnButtonClick);
         }
 
         private void OnDisable()
         {
+            // Remove event handlers
             if (_button)
                 _button.onClick.RemoveListener(OnButtonClick);
         }
         
+        #endregion
+        
+        
+        #region Event handlers
+        
+        /// <summary>
+        /// Called when the login button is clicked. Start the login process.
+        /// </summary>
         private void OnButtonClick()
         {
             _loginWindow.ToggleWaitPanel(true);
             StartCoroutine(DoLogin());
         }
+        
+        #endregion
+        
+        
+        #region Private methods
 
+        /// <summary>
+        /// Coroutine to handle login. Forces one frame wait to let the wait panel show before firing off the login.
+        /// </summary>
+        /// <returns>An IEnumerator for coroutine purposes.</returns>
         private IEnumerator DoLogin()
         {
             // Let one frame go by to update the UI to avoid race conditions on a very fast fail of the login
@@ -64,5 +96,8 @@ namespace TT.UI.Login
             // Request the sign in
             Helpers.Comms.User.LoginAsync(username.text, password.text).ConfigureAwait(false);
         }
+        
+        #endregion
+        
     }
 }

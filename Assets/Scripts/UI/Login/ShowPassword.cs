@@ -23,30 +23,51 @@ using UnityEngine.UI;
 
 namespace TT.UI.Login
 {
+    /// <summary>
+    /// Attached to a toggle to switch a textbox between password and standard mode.
+    /// </summary>
     [RequireComponent(typeof(Toggle))]
     public class ShowPassword : MonoBehaviour
     {
+        
+        #region Editor fields
+        
         [SerializeField][Tooltip("The textbox used as the password field.")] private Textbox passwordTextbox;
+        
+        #endregion
+        
+        
+        #region Private fields
 
         private Toggle _toggle;
+        
+        #endregion
+        
+        
+        #region Lifecycle events
         
         void OnEnable()
         {
             // Initialise
             _toggle = GetComponent<Toggle>();
-            SetPasswordType(_toggle.isOn);
+            HandleToggleChanged(_toggle.isOn);
 
             // Add handler
-            _toggle.onValueChanged.AddListener(SetPasswordType);
+            _toggle.onValueChanged.AddListener(HandleToggleChanged);
         }
 
         private void OnDisable()
         {
             // Remove handler
-            if (_toggle) _toggle.onValueChanged.RemoveListener(SetPasswordType);
+            if (_toggle) _toggle.onValueChanged.RemoveListener(HandleToggleChanged);
         }
 
-        private void SetPasswordType(bool value)
+        #endregion
+        
+        
+        #region Event handlers
+        
+        private void HandleToggleChanged(bool value)
         {
             if (passwordTextbox)
             {
@@ -56,5 +77,8 @@ namespace TT.UI.Login
                 passwordTextbox.ForceLabelUpdate();
             }
         }
+        
+        #endregion
+        
     }
 }

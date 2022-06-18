@@ -18,18 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
 using TMPro;
 using UnityEngine;
 
 namespace TT.UI.MainMenu
 {
+    /// <summary>
+    /// Label that shows the currently signed in user name
+    /// </summary>
     [RequireComponent(typeof(TMP_Text))]
     public class ShowUsernameLabel : MonoBehaviour
     {
-        private TMP_Text _text;
+        
+        #region  Editor fields
+        
         [SerializeField][Tooltip("The text to show in the label when the user is not logged in.")] private string notLoggedInText = "Not Logged In";
         
+        #endregion
+        
+        
+        #region Private fields
+        
+        private TMP_Text _text;
+        
+        #endregion
+        
+        
+        #region Lifecycle events
+
         private void OnEnable()
         {
             _text = GetComponent<TMP_Text>();
@@ -47,6 +63,11 @@ namespace TT.UI.MainMenu
                 Helpers.Comms.User.OnLogout -= ShowText;
             }
         }
+        
+        #endregion
+        
+        
+        #region Private methods
 
         private void ShowText()
         {
@@ -64,5 +85,8 @@ namespace TT.UI.MainMenu
                 _text.text = notLoggedInText;
             }
         }
+        
+        #endregion
+        
     }
 }
