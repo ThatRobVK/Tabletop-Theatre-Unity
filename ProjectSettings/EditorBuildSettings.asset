@@ -4,6 +4,12 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 57ca42fdad151004d9223fb21db7040a
+  - enabled: 1
+    path: Assets/Scenes/MapEditor.unity
+    guid: bacf8cf24247a64deb7d6412f153ed1d
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e181c52ae6dd93b488ae46fa072b59b2, type: 2}

@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using TT.CommsLib;
 using UnityEngine;
 using TT.Shared;
 
@@ -25,12 +26,15 @@ namespace TT.Data
 {
     public class CommsObject : MonoBehaviour
     {
-        public IUser User;
+        private IUser _user;
 
-        void Awake()
+        public IUser User
         {
-            // Initialise objects
-            User = new CommsLib.User(Application.version);
+            get
+            {
+                if (_user == null) _user = new User(Application.version);
+                return _user;
+            }
         }
     }
 }

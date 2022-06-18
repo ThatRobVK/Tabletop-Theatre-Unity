@@ -39,32 +39,40 @@ namespace TT
         #region Private properties
 
         private static Camera _mainCamera;
+        /// <summary>
+        /// The first camera in the scene.
+        /// </summary>
         public static Camera MainCamera
         {
             get
             {
-                if (_mainCamera == null) _mainCamera = Object.FindObjectOfType<Camera>();
+                if (!_mainCamera) _mainCamera = Object.FindObjectOfType<Camera>();
                 return _mainCamera;
             }
         }
 
         private static SettingsObject _settings;
+        /// <summary>
+        /// The settings to be applied to the current game.
+        /// </summary>
         public static SettingsObject Settings
         {
             get
             {
-                if (_settings == null) _settings = Object.FindObjectOfType<SettingsObject>();
+                if (!_settings) _settings = Object.FindObjectOfType<SettingsObject>();
                 return _settings;
             }
         }
 
         private static CommsObject _comms;
-
+        /// <summary>
+        /// Library for communicating with the outside world.
+        /// </summary>
         public static CommsObject Comms
         {
             get
             {
-                if (_comms == null) _comms = Object.FindObjectOfType<CommsObject>();
+                if (!_comms) _comms = Object.FindObjectOfType<CommsObject>();
                 return _comms;
             }
         }
@@ -330,7 +338,11 @@ namespace TT
 
         #region GameObjects
 
-        // Sets the layer on the given object and all its child objects
+        /// <summary>
+        /// Sets the layer on the given object and all its child objects.
+        /// </summary>
+        /// <param name="obj">The object to set the layer on.</param>
+        /// <param name="targetLayer">The layer to set.</param>
         public static void SetLayerRecursive(GameObject obj, int targetLayer)
         {
             if (!obj.CompareTag("DoNotChangeLayer")) obj.layer = targetLayer;
