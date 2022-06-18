@@ -36,7 +36,7 @@ namespace TT
 {
     public static class Helpers
     {
-        #region Private properties
+        #region Public properties
 
         private static Camera _mainCamera;
         /// <summary>
@@ -92,6 +92,11 @@ namespace TT
         public static int TraversableMask { get => LayerMask.GetMask(new string[] { "Terrain", "Traversable" }); }
         public static int SelectableMask { get => LayerMask.GetMask(new string[] { "Impassable", "Traversable" }); }
 
+        // Player Prefs keys
+        public const string PrefsEmailKey = "Email";
+        public const string PrefsRefreshTokenKey = "Refresh";
+        public const string PrefsRememberMeKey = "RememberMe";
+        
         #endregion
 
 

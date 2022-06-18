@@ -62,6 +62,11 @@ namespace TT.Shared
         /// The email address of the currently logged in user.
         /// </summary>
         string Email { get; }
+        
+        /// <summary>
+        /// A refresh token for the currently logged in user.
+        /// </summary>
+        string RefreshToken { get; }
 
         #endregion
         
@@ -71,10 +76,18 @@ namespace TT.Shared
         /// <summary>
         /// Attempts to log the user in to the server using the specified credentials. This call is asynchronous and invokes either the OnLoginSuccess or OnLoginFailed event on completion.
         /// </summary>
-        /// <param name="username">The username to sign the user in with.</param>
+        /// <param name="email">The e-mail address to sign the user in with.</param>
         /// <param name="password">The password to sign the user in with.</param>
-        Task<bool> LoginAsync(string username, string password);
+        Task<bool> LoginAsync(string email, string password);
 
+        /// <summary>
+        /// Attempts to log the user in to the server using the specified refresh token. This call is asynchronous and invokes either the OnLoginSuccess or OnLoginFailed event on completion.
+        /// </summary>
+        /// <param name="email">The e-mail address to sign the user in with.</param>
+        /// <param name="refreshToken">A refresh token from this user's previous session.</param>
+        /// <returns></returns>
+        Task<bool> RefreshLoginAsync(string email, string refreshToken);
+        
         /// <summary>
         /// Logs the user out. This call will call the OnLogout event on completion.
         /// </summary>

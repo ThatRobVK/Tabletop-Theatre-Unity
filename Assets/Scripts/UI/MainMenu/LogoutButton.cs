@@ -99,6 +99,10 @@ namespace TT.UI.MainMenu
             if (Helpers.Comms.User.IsLoggedIn)
             {
                 Helpers.Comms.User.Logout();
+
+                // Remove any stored refresh token
+                PlayerPrefs.DeleteKey(Helpers.PrefsEmailKey);
+                PlayerPrefs.DeleteKey(Helpers.PrefsRefreshTokenKey);
             }
         }
 
