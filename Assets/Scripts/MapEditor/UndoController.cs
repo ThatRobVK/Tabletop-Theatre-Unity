@@ -116,7 +116,7 @@ namespace TT.MapEditor
                         switch (UndoActions[undoIndex].Action)
                         {
                             case ActionType.Create:
-                                RegisterRedoAction(ActionType.Create, Guid.Empty, worldObject.ToMapObject());
+                                RegisterRedoAction(ActionType.Create, Guid.Empty, worldObject.ToDataObject());
                                 worldObject.Destroy();
                                 break;
                             case ActionType.Name:
@@ -271,7 +271,7 @@ namespace TT.MapEditor
                 switch (RedoActions[redoIndex].Action)
                 {
                     case ActionType.Delete:
-                        UndoActions.Add(new UndoAction() { Action = ActionType.Delete, ObjectId = worldObject.ObjectId, Value = worldObject.ToMapObject() });
+                        UndoActions.Add(new UndoAction() { Action = ActionType.Delete, ObjectId = worldObject.ObjectId, Value = worldObject.ToDataObject() });
                         worldObject.Destroy();
                         break;
                     case ActionType.Name:

@@ -26,9 +26,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TT.Data;
+using TT.Shared.UserContent;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using TerrainData = TT.Shared.UserContent.TerrainData;
 
 namespace TT.World
 {
@@ -121,10 +123,14 @@ namespace TT.World
             return altitude + (_terrain.terrainData.heightmapScale.y * TERRAINLEVEL);
         }
 
-        public MapTerrain ToMapObject()
+        /// <summary>
+        /// Saves the current state into a data object and returns it.
+        /// </summary>
+        /// <returns>A TerrainData object representing the current state of the terrain.</returns>
+        public TerrainData ToDataObject()
         {
             var terrainData = _terrain.terrainData;
-            return new MapTerrain()
+            return new TerrainData()
             {
                 terrainLayers = _terrainLayers,
                 splatMaps = SaveSplatMaps(),

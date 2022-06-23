@@ -32,6 +32,7 @@ namespace TT.UI.MapEditor.MainMenu
     {
         private UIModalBox _savingModal;
 
+        
         #region Lifecycle events
 #pragma warning disable IDE0051 // Unused members
 
@@ -51,7 +52,7 @@ namespace TT.UI.MapEditor.MainMenu
 
         #region Event handlers
 
-        private void LoadMap()
+        private async void LoadMap()
         {
             // Listen for the map loaded event
             Map.OnMapLoaded += HandleMapLoaded;
@@ -63,35 +64,23 @@ namespace TT.UI.MapEditor.MainMenu
             _savingModal.SetText2("Please wait while your map is being loaded.");
             _savingModal.Show();
 
+            var mapId = Map.Current.Id.ToString();
+            
+            // Unload the map and load the saved data
             Map.Unload();
-
-            string json;
-
-            if (Helpers.Settings.editorSettings.compressSaves)
-            {
-                var filePath = string.Format("{0}\\map.gz", Application.persistentDataPath);
-                Debug.LogFormat("LoadButton :: LoadMap :: Loading from [{0}]", filePath);
-                json = Helpers.Decompress(System.IO.File.ReadAllBytes(filePath));
-            }
-            else
-            {
-                var filePath = string.Format("{0}\\map.json", Application.persistentDataPath);
-                Debug.LogFormat("LoadButton :: LoadMap :: Loading from [{0}]", filePath);
-                json = System.IO.File.ReadAllText(filePath);
-            }
+            Map.Load(mapId);
             
-            Map.Load(json);
- 
             StateController.Current.ChangeState(StateType.EditorIdleState);
-
-            
         }
 
-        private void HandleMapLoaded()
+        private void HandleMapLoaded(bool success)
         {
             // Update text on modal and unhook from event
-            if (_savingModal)
+            if (_savingModal && success)
                 _savingModal.SetText2("Map loaded");
+            else if (_savingModal)
+                _savingModal.SetText2("An error occurred while loading.");
+
             Map.OnMapLoaded -= HandleMapLoaded;
         }
 

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TT.Shared.UserContent;
 using TT.World;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -75,15 +76,15 @@ namespace TT.Data
         }
 
         // Converts an internal Dictionary to List for serialization
-        public static List<MapObjectOption> FromDictionary(Dictionary<WorldObjectOption, object> dictionary)
+        public static List<ObjectOptionData> FromDictionary(Dictionary<WorldObjectOption, object> dictionary)
         {
             if (dictionary == null) return null;
 
-            return dictionary.Select(x => new MapObjectOption(x.Key, x.Value)).ToList();
+            return dictionary.Select(x => new ObjectOptionData() { option = (int)x.Key, value = x.Value.ToString(), valueType = x.Value.GetType().FullName }).ToList();
         }
 
         // Converts a List from serialization to an internal Dictionary
-        public static Dictionary<WorldObjectOption, object> ToDictionary(List<MapObjectOption> options)
+        public static Dictionary<WorldObjectOption, object> ToDictionary(List<ObjectOptionData> options)
         {
             if (options == null) return null;
 

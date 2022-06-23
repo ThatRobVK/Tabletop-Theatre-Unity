@@ -26,6 +26,7 @@ using HighlightPlus;
 using TT.Data;
 using TT.MapEditor;
 using TT.Shared;
+using TT.Shared.UserContent;
 using TT.UI;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -276,25 +277,25 @@ namespace TT.World
             ShowControls();
         }
 
-        public void Initialise(MapScatterObject mapObject)
+        public void Initialise(ScatterAreaData scatterAreaData)
         {
             Start();
-            FromMapObject(mapObject);
+            FromMapObject(scatterAreaData);
 
             ContentItem = new ContentItem()
             {
                 Type = WorldObjectType.ScatterArea
             };
 
-            foreach (var point in mapObject.points)
+            foreach (var point in scatterAreaData.points)
             {
                 _handles.Add(CreateHandle(point));
                 AddPointToMesh(point);
             }
 
-            _targetItems = mapObject.scatterInstances.Count;
+            _targetItems = scatterAreaData.scatterInstances.Count;
 
-            foreach (var scatterInstance in mapObject.scatterInstances)
+            foreach (var scatterInstance in scatterAreaData.scatterInstances)
             {
                 var contentItem = Content.GetContentItemById(WorldObjectType.NatureObject, scatterInstance.prefabAddress);
                 if (contentItem != null)
@@ -547,20 +548,20 @@ namespace TT.World
             }
         }
 
-        public override MapObjectBase ToMapObject()
+        public override BaseObjectData ToDataObject()
         {
-            var mapObject = ToMapObject<MapScatterObject>();
+            var mapObject = ToMapObject<ScatterAreaData>();
             mapObject.points.AddRange(_vertices);
 
             if (_generatedGameObjects.Count != _generatedObjectAddresses.Count)
             {
-                Debug.LogErrorFormat("PolygonObject[{0}] :: ToMapObject :: Item count mismatch. GameObjects ({1}) vs addresses ({2}).", name, _generatedGameObjects.Count, _generatedObjectAddresses.Count);
+                Debug.LogErrorFormat("PolygonObject[{0}] :: ToDataObject :: Item count mismatch. GameObjects ({1}) vs addresses ({2}).", name, _generatedGameObjects.Count, _generatedObjectAddresses.Count);
             }
 
             for (int i = 0; i < _generatedGameObjects.Count; i++)
             {
                 mapObject.scatterInstances.Add(
-                    new MapScatterInstance()
+                    new ScatterObjectData()
                     {
                         prefabAddress = _generatedObjectAddresses[i],
                         position = _generatedGameObjects[i].transform.position,

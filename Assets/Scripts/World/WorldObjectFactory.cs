@@ -22,6 +22,7 @@
 
 using System.Threading.Tasks;
 using TT.Data;
+using TT.Shared.UserContent;
 using UnityEngine;
 
 namespace TT.World
@@ -86,21 +87,17 @@ namespace TT.World
         /// </summary>
         /// <param name="mapObject">A base map object.</param>
         /// <returns>An instance of the world object, as its base class.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(MapObjectBase mapObject)
+        public static async Task<WorldObjectBase> CreateFromMapObject(BaseObjectData mapObject)
         {
-            if (mapObject is MapWorldObject mapWorldObject)
+            if (mapObject is WorldObjectData mapWorldObject)
             {
                 return await CreateFromMapObject(mapWorldObject);
             }
-            else if (mapObject is MapScalableObject mapScalableObject)
-            {
-                return await CreateFromMapObject(mapScalableObject);
-            }
-            else if (mapObject is MapRamObject mapRamObject)
+            else if (mapObject is SplineObjectData mapRamObject)
             {
                 return await CreateFromMapObject(mapRamObject);
             }
-            else if (mapObject is MapScatterObject mapScatterObject)
+            else if (mapObject is ScatterAreaData mapScatterObject)
             {
                 return await CreateFromMapObject(mapScatterObject);
             }

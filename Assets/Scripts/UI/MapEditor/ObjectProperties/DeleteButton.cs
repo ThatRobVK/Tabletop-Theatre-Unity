@@ -61,7 +61,7 @@ namespace TT.UI.MapEditor.ObjectProperties
             {
                 var objectType = WorldObjectBase.Current.Type;
 
-                UndoController.RegisterAction(ActionType.Delete, Guid.Empty, WorldObjectBase.Current.ToMapObject());
+                UndoController.RegisterAction(ActionType.Delete, Guid.Empty, WorldObjectBase.Current.ToDataObject());
                 WorldObjectBase.Current.Destroy();
 
                 StateController.CurrentState.ToIdle(objectType);

@@ -65,27 +65,15 @@ namespace TT.UI.MapEditor.MainMenu
 
             if (Map.Current == null)
             {
+                // TODO: Implement Save As UI and call that instead of hardcoding these values
                 // Create a new map if one doesn't exist
-                Map.Create("new map", "test", GameTerrain.Current.TerrainTextureAddress);
+                Map.New("new map", "test");
             }
 
-            var json = Map.Current.Save();
-            string filePath;
+            // TODO: Check for save success or failure
+            Map.Current.Save();
 
-            if (Helpers.Settings.editorSettings.compressSaves)
-            {
-                filePath = string.Format("{0}\\map.gz", Application.persistentDataPath);
-                Debug.LogFormat("SaveButton :: SaveMap :: Saving to [{0}]", filePath);
-                System.IO.File.WriteAllBytes(filePath, Helpers.Compress(json));
-            }
-            else
-            {
-                filePath = string.Format("{0}\\map.json", Application.persistentDataPath);
-                Debug.LogFormat("SaveButton :: SaveMap :: Saving to [{0}]", filePath);
-                System.IO.File.WriteAllText(filePath, json);
-            }
-
-            savingModal.SetText2(string.Format("Map saved in {0}", filePath));
+            savingModal.SetText2("Map saved in");
         }
 
         /// <summary>

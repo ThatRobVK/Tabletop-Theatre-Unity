@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using HighlightPlus;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.UserContent;
 using TT.State;
 using TT.UI;
 using UnityEngine;
@@ -317,9 +318,9 @@ namespace TT.World
         }
 
         // Initialises the Ram Object on a Map Object
-        public async Task Initialise(MapRamObject mapObject)
+        public async Task Initialise(SplineObjectData splineObjectData)
         {
-            FromMapObject(mapObject);
+            FromMapObject(splineObjectData);
             // Initialise at 0,0,0 as some calculations are local and some global - with this root coord they're the same
             transform.position = Vector3.zero;
 
@@ -327,8 +328,8 @@ namespace TT.World
             GameLayer = isRoad ? Helpers.TraversableLayer : Helpers.WaterLayer;
             gameObject.layer = GameLayer;
 
-            _primaryTerrainAddress = mapObject.primaryTerrainAddress;
-            _secondaryTerrainAddress = mapObject.secondaryTerrainAddress;
+            _primaryTerrainAddress = splineObjectData.primaryTerrainAddress;
+            _secondaryTerrainAddress = splineObjectData.secondaryTerrainAddress;
 
             _spline = gameObject.GetComponent<RamSpline>();
             _spline.maskCarve = Helpers.TerrainMask;
@@ -343,7 +344,7 @@ namespace TT.World
             await SetProfile(PrefabAddress);
 
             // Add all the points back in
-            foreach (var point in mapObject.points)
+            foreach (var point in splineObjectData.points)
             {
                 _spline.AddPoint(point);
                 _handles.Add(CreateHandle(point));
@@ -365,14 +366,14 @@ namespace TT.World
         /// Creates a MapRamObject and sets its properties based on the current state of the RamObject.
         /// </summary>
         /// <returns>A MapRamObject representing this RamObject.</returns>
-        public override MapObjectBase ToMapObject()
+        public override BaseObjectData ToDataObject()
         {
-            var mapObject = ToMapObject<MapRamObject>();
-            mapObject.primaryTerrainAddress = _primaryTerrainAddress;
-            mapObject.secondaryTerrainAddress = _secondaryTerrainAddress;
-            mapObject.points.AddRange(_spline.controlPoints);
+            var splineObjectData = ToMapObject<SplineObjectData>();
+            splineObjectData.primaryTerrainAddress = _primaryTerrainAddress;
+            splineObjectData.secondaryTerrainAddress = _secondaryTerrainAddress;
+            splineObjectData.points.AddRange(_spline.controlPoints);
 
-            return mapObject;
+            return splineObjectData;
         }
 
         /// <summary>

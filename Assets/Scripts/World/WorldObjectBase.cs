@@ -22,9 +22,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TT.Data;
 using TT.MapEditor;
 using TT.Shared;
+using TT.Shared.UserContent;
 using TT.State;
 using TT.UI;
 using UnityEngine;
@@ -518,7 +520,7 @@ namespace TT.World
         /// Converts the object to a MapObject.
         /// </summary>
         /// <returns>The base class of a MapObject.</returns>
-        public abstract MapObjectBase ToMapObject();
+        public abstract BaseObjectData ToDataObject();
 
         #endregion
 
@@ -557,51 +559,68 @@ namespace TT.World
         }
 
         /// <summary>
-        /// Returns an object that derives from MapObjectBase, populated with the general object properties.
+        /// Stores the current state of this object in a data class and returns it.
         /// </summary>
-        /// <typeparam name="T">A type that derives from MapObjectBase and implements a parameterless constructor.</typeparam>
+        /// <typeparam name="T">A type that derives from BaseObjectData and implements a parameterless constructor.</typeparam>
         /// <returns>An instance of T with the general object properties populated.</returns>
-        protected T ToMapObject<T>() where T : MapObjectBase, new()
+        protected T ToMapObject<T>() where T : BaseObjectData, new()
         {
             var thisTransform = transform;
             
             return new T()
             {
-                ObjectId = ObjectId,
+                objectId = ObjectId.ToString(),
                 name = gameObject.name,
                 position = thisTransform.position,
                 rotation = LocalRotation,
                 scale = thisTransform.localScale,
                 prefabAddress = PrefabAddress,
                 gameLayer = LayerMask.LayerToName(GameLayer),
-                options = MapObjectOption.FromDictionary(OptionValues),
+                options = ConvertOptionsDictionaryToList(OptionValues),
                 starred = Starred,
                 scaleMultiplier = ScaleMultiplier,
-                type = Type,
+                objectType = (int)Type,
             };
         }
 
         /// <summary>
-        /// Loads the basic object properties from the passed in MapObjectBase.
+        /// Loads the basic object properties from the passed in data class.
         /// </summary>
-        /// <param name="mapObject">The MapObject to load from.</param>
-        protected void FromMapObject(MapObjectBase mapObject)
+        /// <param name="objectData">The object data to load.</param>
+        protected void FromMapObject(BaseObjectData objectData)
         {
-            ObjectId = mapObject.ObjectId;
-            gameObject.name = mapObject.name;
-            transform.position = mapObject.position;
-            LocalRotation = mapObject.rotation;
+            ObjectId = Guid.Parse(objectData.objectId);
+            gameObject.name = objectData.name;
+            transform.position = objectData.position;
+            LocalRotation = objectData.rotation;
             gameObject.transform.localRotation = Quaternion.Euler(LocalRotation);
-            transform.localScale = mapObject.scale;
-            PrefabAddress = mapObject.prefabAddress;
-            GameLayer = LayerMask.NameToLayer(mapObject.gameLayer);
-            OptionValues = MapObjectOption.ToDictionary(mapObject.options);
-            Starred = mapObject.starred;
-            ScaleMultiplier = mapObject.scaleMultiplier;
-            Type = mapObject.type;
+            transform.localScale = objectData.scale;
+            PrefabAddress = objectData.prefabAddress;
+            GameLayer = LayerMask.NameToLayer(objectData.gameLayer);
+            OptionValues = ConvertOptionsListToDictionary(objectData.options);
+            Starred = objectData.starred;
+            ScaleMultiplier = objectData.scaleMultiplier;
+            Type = (WorldObjectType)objectData.objectType;
 
             SetLayerRecursive(gameObject, GameLayer);
         }
+        
+        // Converts an internal Dictionary to List for serialization
+        private static List<ObjectOptionData> ConvertOptionsDictionaryToList(Dictionary<WorldObjectOption, object> dictionary)
+        {
+            if (dictionary == null) return null;
+
+            return dictionary.Select(x => new ObjectOptionData() { option = (int)x.Key, value = x.Value.ToString(), valueType = x.Value.GetType().FullName }).ToList();
+        }
+
+        // Converts a List from serialization to an internal Dictionary
+        private static Dictionary<WorldObjectOption, object> ConvertOptionsListToDictionary(List<ObjectOptionData> options)
+        {
+            if (options == null) return null;
+
+            return options.ToDictionary(x => (WorldObjectOption)x.option, x => x.ParsedValue);
+        }
+
 
         #endregion
     }

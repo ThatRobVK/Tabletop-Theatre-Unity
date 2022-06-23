@@ -21,6 +21,7 @@
 using TT.CommsLib;
 using UnityEngine;
 using TT.Shared;
+using TT.Shared.UserContent;
 
 namespace TT.Data
 {
@@ -36,5 +37,9 @@ namespace TT.Data
                 return _user;
             }
         }
+
+        private IUserContent _userContent;
+
+        public IUserContent UserContent => _userContent ??= new UserContent(Application.version);
     }
 }

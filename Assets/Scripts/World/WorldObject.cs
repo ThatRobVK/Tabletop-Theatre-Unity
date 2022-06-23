@@ -21,6 +21,7 @@
 using System.Collections.Generic;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.UserContent;
 using UnityEngine;
 
 namespace TT.World
@@ -126,7 +127,7 @@ namespace TT.World
             PickUp();
         }
 
-        public void Initialise(MapWorldObject mapObject)
+        public void Initialise(WorldObjectData mapObject)
         {
             FromMapObject(mapObject);
             
@@ -206,13 +207,13 @@ namespace TT.World
         /// Create a MapWorldObject representing this WorldObject.
         /// </summary>
         /// <returns>A MapWorldObject with all values set based on the current state of this WorldObject.</returns>
-        public override MapObjectBase ToMapObject()
+        public override BaseObjectData ToDataObject()
         {
-            var mapObject = ToMapObject<MapWorldObject>();
-            mapObject.openCloseState = _openCloseState == OpenCloseState.Open;
-            mapObject.automaticElevation = AutomaticElevation;
+            var worldObjectData = ToMapObject<WorldObjectData>();
+            worldObjectData.openCloseState = _openCloseState == OpenCloseState.Open;
+            worldObjectData.automaticElevation = AutomaticElevation;
 
-            return mapObject;
+            return worldObjectData;
         }
 
         /// <summary>
