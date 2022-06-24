@@ -19,37 +19,78 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TT.Shared.UserContent;
-using TT.World;
 using UnityEngine;
-using UnityEngine.Serialization;
+using TT.World;
+using TT.Shared.UserContent;
 
 namespace TT.Data
 {
     public class Map
     {
+        
+        #region Events
+        
+        /// <summary>
+        /// Invoked when a map load has completed. The boolean parameter indicates whether loading was successful.
+        /// </summary>
         public static Action<bool> OnMapLoaded;
+        
+        /// <summary>
+        /// Invoked when a map save has completed. The boolean parameter indicates whether loading was successful.
+        /// </summary>
         public static Action<bool> OnMapSaved;
         
+        #endregion
+        
+        
+        #region Public properties
 
         /// <summary>
         /// The unique identifier of this map.
         /// </summary>
         public Guid Id { get; private set; }
+        
         /// <summary>
-        /// The name 
+        /// A user-defined name for the map.
         /// </summary>
         public string Name { get; set; }
+        
+        /// <summary>
+        /// A user-defined description for the map.
+        /// </summary>
         public string Description { get; set; }
+        
+        /// <summary>
+        /// The user who originally created the map.
+        /// </summary>
         public string Author { get; private set; }
+        
+        /// <summary>
+        /// The last person who has modified the map.
+        /// </summary>
         public string ModifiedBy { get; private set; }
+        
+        /// <summary>
+        /// The date and time on which this map was originally created.
+        /// </summary>
         public DateTime DateCreated { get; private set; }
+        
+        /// <summary>
+        /// The date and time on which this map was last saved.
+        /// </summary>
         public DateTime DateSaved { get; private set; }
 
+        /// <summary>
+        /// The currently loaded map. This may be null until a map is loaded or the New method is called.
+        /// </summary>
         public static Map Current { get; private set; }
+
+        #endregion
+
+        
+        #region Public methods
 
         /// <summary>
         /// Creates a new map and sets it to the current map.
@@ -82,8 +123,11 @@ namespace TT.Data
         /// Loads the map represented by the specified MapData and instantiates all of its objects. This method is
         /// asynchronous and will raise the OnMapLoaded event when completed.
         /// </summary>
-        /// <param name="mapData">The map data to load.</param>
-        public static async void Load(string mapId)
+        /// <param name="mapId">The ID of the map to load. This can be found in the list returned by the GetMapIndex
+        /// method.</param>
+        /// <returns>A boolean value indicating whether the load was successful.</returns>
+        /// <remarks>The loaded map is set as the static Current property from where it can be accessed.</remarks>
+        public static async Task<bool> Load(string mapId)
         {
             try
             {
@@ -118,16 +162,20 @@ namespace TT.Data
                 GameTerrain.Current.LoadSplatMaps(mapData.terrain.splatWidth, mapData.terrain.splatHeight, mapData.terrain.splatMaps);
                 
                 OnMapLoaded?.Invoke(true);
+                return true;
             }
             catch (Exception e)
             {
                 Debug.LogWarningFormat("Map :: Load :: Failed to load map. {0} : {1}", e.GetType().FullName, e.Message);
                 OnMapLoaded?.Invoke(false);
+                return false;
             }
         }
 
-
-        // Serialise the map and all World Objects to json
+        /// <summary>
+        /// Serializes this map into data objects and saves it.
+        /// </summary>
+        /// <returns>A boolean value indicating whether saving was successful.</returns>
         public async Task<bool> Save()
         {
             var mapData = new MapData
@@ -168,7 +216,9 @@ namespace TT.Data
             return result;
         }
 
-        // Destroys all World Objects on the current map
+        /// <summary>
+        /// Destroys all world objects on the current map.
+        /// </summary>
         public static void Unload()
         {
             var worldObjects = UnityEngine.Object.FindObjectsOfType<WorldObjectBase>();
@@ -177,5 +227,8 @@ namespace TT.Data
                 worldObject.Destroy();
             }
         }
+        
+        #endregion
+        
     }
 }

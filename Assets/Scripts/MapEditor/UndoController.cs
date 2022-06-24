@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TT.Data;
 using TT.InputMapping;
+using TT.Shared.UserContent;
 using TT.World;
 using UnityEngine;
 
@@ -209,7 +210,7 @@ namespace TT.MapEditor
                     Debug.LogFormat("UndoController :: Undo :: Index {0} undoing delete on object {1}", undoIndex, UndoActions[undoIndex].ObjectId);
 
                     // Item was deleted, re-create it
-                    var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((MapObjectBase)UndoActions[undoIndex].Value);
+                    var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((BaseObjectData)UndoActions[undoIndex].Value);
                     rehydratedWorldObject.SwitchSelection();
 
                     RegisterRedoAction(ActionType.Delete, rehydratedWorldObject.ObjectId, null);
@@ -337,7 +338,7 @@ namespace TT.MapEditor
             }
             else if (RedoActions[redoIndex].Action == ActionType.Create)
             {
-                var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((MapObjectBase)RedoActions[redoIndex].Value);
+                var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((BaseObjectData)RedoActions[redoIndex].Value);
                 rehydratedWorldObject.SwitchSelection();
                 UndoActions.Add(new UndoAction() { Action = ActionType.Create, ObjectId = rehydratedWorldObject.ObjectId, Value = null });
             }

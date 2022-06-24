@@ -88,7 +88,7 @@ namespace TT.Data
         {
             if (options == null) return null;
 
-            return options.ToDictionary(x => x.option, x => x.ParsedValue);
+            return options.ToDictionary(x => (WorldObjectOption)x.option, x => x.ParsedValue);
         }
     }
 }

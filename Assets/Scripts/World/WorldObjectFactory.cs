@@ -110,7 +110,7 @@ namespace TT.World
         /// </summary>
         /// <param name="mapObject">The map object representation of the object to create.</param>
         /// <returns>An instance of the object represented by the input map object.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(MapWorldObject mapObject)
+        public static async Task<WorldObjectBase> CreateFromMapObject(WorldObjectData mapObject)
         {
             var gameObject = await Helpers.InstantiateAddressable(mapObject.prefabAddress);
             var worldObject = gameObject.AddComponent<WorldObject>();
@@ -121,40 +121,11 @@ namespace TT.World
         }
 
         /// <summary>
-        /// Creates a World Object from a MapWorldObject.
-        /// </summary>
-        /// <param name="mapObject">The map object representation of the object to create.</param>
-        /// <returns>An instance of the object represented by the input map object.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(MapNatureObject mapObject)
-        {
-            var gameObject = await Helpers.InstantiateAddressable(mapObject.prefabAddress);
-            var worldObject = gameObject.AddComponent<NatureObject>();
-            AddStandardComponents(gameObject);
-            AddDraggableComponent(gameObject);
-            worldObject.Initialise(mapObject);
-            return worldObject;
-        }
-
-        /// <summary>
-        /// Creates a World Object from a MapScalableObject.
-        /// </summary>
-        /// <param name="mapObject">The map object representation of the object to create.</param>
-        /// <returns>An instance of the object represented by the input map object.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(MapScalableObject mapObject)
-        {
-            var gameObject = await Helpers.InstantiateAddressable("/General/Prefabs/FloorZone");
-            var worldObject = gameObject.GetComponent<ScalableObject>();
-            AddStandardComponents(gameObject);
-            worldObject.Initialise(mapObject);
-            return worldObject;
-        }
-
-        /// <summary>
         /// Creates a WorldObject from a MapRamObject.
         /// </summary>
         /// <param name="mapObject">The map object representation of the object to create.</param>
         /// <returns>An instance of the object represented by the input map object.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(MapRamObject mapObject)
+        public static async Task<WorldObjectBase> CreateFromMapObject(SplineObjectData mapObject)
         {
             var gameObject = await Helpers.InstantiateAddressable(RAM_OBJECT_PREFAB);
             gameObject.transform.position = Vector3.zero;
@@ -164,7 +135,7 @@ namespace TT.World
             return worldObject;
         }
 
-        public static async Task<WorldObjectBase> CreateFromMapObject(MapScatterObject mapObject)
+        public static async Task<WorldObjectBase> CreateFromMapObject(ScatterAreaData mapObject)
         {
             var gameObject = await Helpers.InstantiateAddressable(SCATTER_AREA_PREFAB);
             gameObject.transform.position = Vector3.zero;

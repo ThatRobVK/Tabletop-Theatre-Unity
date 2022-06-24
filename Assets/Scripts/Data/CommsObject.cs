@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using TT.CommsLib;
 using UnityEngine;
 using TT.Shared;
@@ -27,19 +28,39 @@ namespace TT.Data
 {
     public class CommsObject : MonoBehaviour
     {
+        
+        #region Private fields
+        
         private IUser _user;
-
-        public IUser User
-        {
-            get
-            {
-                if (_user == null) _user = new User(Application.version);
-                return _user;
-            }
-        }
-
         private IUserContent _userContent;
+        
+        #endregion
 
+        
+        #region Lifecycle events
+
+        private void OnApplicationQuit()
+        {
+            // Log out before quitting
+            _user?.Logout();
+        }
+        
+        #endregion
+
+
+        #region Public properties
+
+        /// <summary>
+        /// Authentication 
+        /// </summary>
+        public IUser User => _user ??= new User(Application.version);
+
+        /// <summary>
+        /// User generated content
+        /// </summary>
         public IUserContent UserContent => _userContent ??= new UserContent(Application.version);
+
+        #endregion
+        
     }
 }

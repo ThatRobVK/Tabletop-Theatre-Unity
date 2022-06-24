@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.UserContent;
 using TT.UI;
 using UnityEngine;
 
@@ -156,7 +157,7 @@ namespace TT.World
         // Initialises the Scalable Object based on a Map Object
         public void Initialise(MapScalableObject mapObject)
         {
-            FromMapObject(mapObject);
+            //FromMapObject(mapObject);
             transform.localScale = Vector3.one;
 
             floorPlane.transform.position = mapObject.position;
@@ -203,13 +204,9 @@ namespace TT.World
         }
 
         // Returns a MapScalableObject representing this Scalable Object
-        public override MapObjectBase ToMapObject()
+        public MapObjectBase ToMapObject()
         {
-            var mapObject = ToMapObject<MapScalableObject>();
-            mapObject.position = floorPlane.transform.position;
-            mapObject.scale = floorPlane.transform.localScale;
-
-            return mapObject;
+            return null;
         }
 
         // Apply an option to the Scalable Object
@@ -345,6 +342,11 @@ namespace TT.World
             {
                 base.Click(clickedObject, position);
             }
+        }
+
+        public override BaseObjectData ToDataObject()
+        {
+            throw new System.NotImplementedException();
         }
 
         #endregion
