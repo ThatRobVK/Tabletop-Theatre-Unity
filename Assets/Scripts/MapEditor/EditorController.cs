@@ -18,17 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System.Collections.Generic;
-using TT.Data;
-using TT.Shared;
-using TT.State;
-using TT.World;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using TT.Data;
+using TT.Shared;
+using TT.State;
+using TT.World;
 
 namespace TT.MapEditor
 {
@@ -43,15 +41,7 @@ namespace TT.MapEditor
         #endregion
 
 
-        #region Public properties
-
-        public static readonly List<WorldObjectBase> WorldObjects = new List<WorldObjectBase>();
-
-        #endregion
-
-
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Awake()
         {
@@ -65,21 +55,14 @@ namespace TT.MapEditor
             LoadContent();
         }
 
-        private void Login()
-        {
-            Debug.Log("Logging in");
-            var user = FindObjectOfType<CommsObject>().User;
-            user.OnLoginSuccess += () => Debug.Log("Login successful");
-            user.OnLoginFailed += (LoginFailureReason failure) => Debug.Log("Login failed because " + failure.ToString());
-            user.LoginAsync("testuser@whatever.com", "u$BMLfvtDTmaPBVEA7ts2&Af%AR&SH");
-        }
-
         private async void LoadContent()
         {
+            // Load content definitions
             Debug.Log("EditorController :: Awake :: Loading content");
-            var json = await CommsLib.GameContent.GetContentJsonAsync();
-            Content.Load(json);
+            if (!Content.ContentLoaded)
+                await Content.Load();
 
+            // Load content catalog
             var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
             AssetBundle.UnloadAllAssetBundles(false);
             var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
@@ -88,6 +71,7 @@ namespace TT.MapEditor
 
         private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
         {
+            // TODO: Load terrain texture from map data
             // Load the first game terrain as default
             GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
         }
@@ -98,8 +82,6 @@ namespace TT.MapEditor
             _stateController.ChangeState(StateType.EditorIdleState);
 
             TimeController.Current.CurrentTime = 12;
-            
-            Login();
         }
 
         void Update()
@@ -108,7 +90,6 @@ namespace TT.MapEditor
             _stateController.Update();
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
     }

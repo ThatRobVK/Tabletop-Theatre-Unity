@@ -23,6 +23,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DuloGames.UI;
+using TT.CommsLib;
 using TT.Shared;
 using TT.UI.MapEditor.MainMenu;
 
@@ -110,6 +111,10 @@ namespace TT.UI.Login
 
         private void Start()
         {
+            // Don't do anything if the user is already logged in
+            if (Helpers.Comms.User.IsLoggedIn)
+                return;
+            
             // If a refresh token exists in player prefs, attempt to refresh the login
             if (PlayerPrefs.HasKey(Helpers.PrefsEmailKey) && PlayerPrefs.HasKey(Helpers.PrefsRefreshTokenKey))
                 RefreshLogin();

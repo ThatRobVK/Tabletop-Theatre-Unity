@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using DuloGames.UI;
 using TT.Data;
 using TT.InputMapping;
@@ -31,22 +32,35 @@ namespace TT.UI.MapEditor.MainMenu
     public class SaveButton : MonoBehaviour
     {
 
+        #region Private fields
+        
+        private Button _button;
+        private UIModalBox _savingModal;
+        
+        #endregion
+        
+        
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
-        void Start()
+        private void Start()
         {
-            GetComponent<Button>().onClick.AddListener(SaveMap);
-
+            // Listen for button click events
+            _button = GetComponent<Button>(); 
+            _button.onClick.AddListener(HandleButtonClick);
         }
 
-        void Update()
+        private void Update()
         {
-            if (InputMapper.Current.GeneralInput.Save) SaveMap();
-            if (InputMapper.Current.GeneralInput.SaveAs) Debug.Log("SaveButton :: Update :: Save As not yet supported");
+            // Call save based on key binding
+            if (InputMapper.Current.GeneralInput.Save) HandleButtonClick();
         }
 
-#pragma warning restore IDE0051 // Unused members
+        private void OnDestroy()
+        {
+            // Remove event handler
+            if (_button != null) _button.onClick.RemoveListener(HandleButtonClick);
+        }
+
         #endregion
 
 
@@ -55,33 +69,50 @@ namespace TT.UI.MapEditor.MainMenu
         /// <summary>
         /// Called when the button is clicked or the SaveMap shortcut is used.
         /// </summary>
-        private void SaveMap()
+        private void HandleButtonClick()
         {
-            var savingModal = UIModalBoxManager.Instance.Create(gameObject);
-            savingModal.onConfirm.AddListener(OnModalConfirm);
-            savingModal.SetText1("Saving");
-            savingModal.SetText2("Please wait while your map is being saved.");
-            savingModal.Show();
+            _savingModal = UIModalBoxManager.Instance.Create(gameObject);
+            _savingModal.SetText1("Saving");
+            _savingModal.SetText2("Please wait while your map is being saved.");
+            _savingModal.Show();
 
-            if (Map.Current == null)
-            {
-                // TODO: Implement Save As UI and call that instead of hardcoding these values
-                // Create a new map if one doesn't exist
-                Map.New("new map", "test");
-            }
-
-            // TODO: Check for save success or failure
-            Map.Current.Save();
-
-            savingModal.SetText2("Map saved in");
+            SaveMapAsync();
         }
 
         /// <summary>
-        /// Called when the user clicks "OK" on the modal window.
+        /// Called when the confirm button on a modal box is clicked.
         /// </summary>
-        private void OnModalConfirm()
+        private void HandleModalConfirm()
         {
             UIWindow.GetWindow(UIWindowID.GameMenu).Hide();
+        }
+        
+        #endregion
+        
+        
+        #region Private methods
+        
+        /// <summary>
+        /// Saves the current map.
+        /// </summary>
+        private async void SaveMapAsync()
+        {
+            var success = await Map.Current.Save();
+            _savingModal.Close();
+
+            if (success)
+            {
+                // If successful, return
+                HandleModalConfirm();
+                return;
+            }
+
+            // If not successful, show an error message
+            _savingModal = UIModalBoxManager.Instance.Create(gameObject);
+            _savingModal.SetText1("Error");
+            _savingModal.SetText2("There was a problem saving your map. Please try again.");
+            _savingModal.SetConfirmButtonText("OK");
+            _savingModal.onConfirm.AddListener(HandleModalConfirm);
         }
 
         #endregion

@@ -19,8 +19,8 @@ namespace TT.Shared.UserContent
         public float windDirection;
         public int lightingMode;
         public TerrainData terrain;
-        public List<WorldObjectData> worldObjects;
-        public List<SplineObjectData> splineObjects;
-        public List<ScatterAreaData> scatterAreas;
+        public List<WorldObjectData> worldObjects = new List<WorldObjectData>();
+        public List<SplineObjectData> splineObjects = new List<SplineObjectData>();
+        public List<ScatterAreaData> scatterAreas = new List<ScatterAreaData>();
     }
 }

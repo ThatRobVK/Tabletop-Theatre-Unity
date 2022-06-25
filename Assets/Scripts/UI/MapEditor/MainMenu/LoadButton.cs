@@ -67,7 +67,7 @@ namespace TT.UI.MapEditor.MainMenu
             var mapId = Map.Current.Id.ToString();
             
             // Unload the map and load the saved data
-            Map.Unload();
+            Map.Current.Unload();
             Map.Load(mapId);
             
             StateController.Current.ChangeState(StateType.EditorIdleState);

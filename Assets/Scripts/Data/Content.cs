@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -67,6 +68,35 @@ namespace TT.Data
 
         #region Public methods
 
+        /// <summary>
+        /// Loads content available to the current user.
+        /// </summary>
+        public static async Task Load()
+        {
+            if (!Helpers.Comms.User.IsLoggedIn)
+            {
+                Current = null;
+                ContentLoaded = false;
+            }
+
+            try
+            {
+                var json = await CommsLib.GameContent.GetContentJsonAsync();
+                Current = JsonConvert.DeserializeObject<Content>(json);
+                SetDerivedValues();
+                CombinePacks();
+
+                ContentLoaded = true;
+                OnContentChanged?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogErrorFormat("Content :: Load :: Exception {0}: {1}", ex.GetType().FullName, ex.Message);
+                Current = null;
+                ContentLoaded = false;
+            }
+        }
+        
         /// <summary>
         /// Loads the given JSON string into a Content object.
         /// </summary>

@@ -14,7 +14,7 @@ namespace TT.Shared.UserContent
         public Vector3 scale;
         public string prefabAddress;
         public string gameLayer;
-        public List<ObjectOptionData> options;
+        public List<ObjectOptionData> options = new List<ObjectOptionData>();
         public bool starred;
         public float scaleMultiplier;
         public int objectType;
