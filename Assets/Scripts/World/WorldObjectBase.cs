@@ -571,9 +571,9 @@ namespace TT.World
             {
                 objectId = ObjectId.ToString(),
                 name = gameObject.name,
-                position = thisTransform.position,
-                rotation = LocalRotation,
-                scale = thisTransform.localScale,
+                position = new Vector4Data(thisTransform.position),
+                rotation = new Vector4Data(LocalRotation),
+                scale = new Vector4Data(thisTransform.localScale),
                 prefabAddress = PrefabAddress,
                 gameLayer = LayerMask.LayerToName(GameLayer),
                 options = ConvertOptionsDictionaryToList(OptionValues),
@@ -591,10 +591,10 @@ namespace TT.World
         {
             ObjectId = Guid.Parse(objectData.objectId);
             gameObject.name = objectData.name;
-            transform.position = objectData.position;
-            LocalRotation = objectData.rotation;
+            transform.position = objectData.position.ToVector4();
+            LocalRotation = objectData.rotation.ToVector4();
             gameObject.transform.localRotation = Quaternion.Euler(LocalRotation);
-            transform.localScale = objectData.scale;
+            transform.localScale = objectData.scale.ToVector4();
             PrefabAddress = objectData.prefabAddress;
             GameLayer = LayerMask.NameToLayer(objectData.gameLayer);
             OptionValues = ConvertOptionsListToDictionary(objectData.options);

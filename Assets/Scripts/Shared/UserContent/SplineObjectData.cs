@@ -9,6 +9,6 @@ namespace TT.Shared.UserContent
     {
         public string primaryTerrainAddress;
         public string secondaryTerrainAddress;
-        public List<Vector4> points = new List<Vector4>();
+        public List<Vector4Data> points = new List<Vector4Data>();
     }
 }

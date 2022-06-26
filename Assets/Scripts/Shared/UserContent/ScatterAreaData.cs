@@ -7,7 +7,7 @@ namespace TT.Shared.UserContent
     [Serializable]
     public class ScatterAreaData : BaseObjectData
     {
-        public List<Vector3> points = new List<Vector3>();
+        public List<Vector4Data> points = new List<Vector4Data>();
         public List<ScatterObjectData> scatterInstances = new List<ScatterObjectData>();
     }
 }

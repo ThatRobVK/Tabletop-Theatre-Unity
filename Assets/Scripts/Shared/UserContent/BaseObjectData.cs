@@ -9,9 +9,9 @@ namespace TT.Shared.UserContent
     {
         public string objectId;
         public string name;
-        public Vector3 position;
-        public Vector3 rotation;
-        public Vector3 scale;
+        public Vector4Data position;
+        public Vector4Data rotation;
+        public Vector4Data scale;
         public string prefabAddress;
         public string gameLayer;
         public List<ObjectOptionData> options = new List<ObjectOptionData>();

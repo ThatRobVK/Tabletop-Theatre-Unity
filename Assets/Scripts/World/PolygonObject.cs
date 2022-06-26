@@ -289,8 +289,9 @@ namespace TT.World
 
             foreach (var point in scatterAreaData.points)
             {
-                _handles.Add(CreateHandle(point));
-                AddPointToMesh(point);
+                Vector3 vector = point.ToVector4();
+                _handles.Add(CreateHandle(vector));
+                AddPointToMesh(vector);
             }
 
             _targetItems = scatterAreaData.scatterInstances.Count;
@@ -309,7 +310,7 @@ namespace TT.World
                             break;
                         }
                     }
-                    PlacePrefab(contentItem, itemIndex, scatterInstance.position, scatterInstance.rotation, transform);
+                    PlacePrefab(contentItem, itemIndex, scatterInstance.position.ToVector4(), scatterInstance.rotation, transform);
                 }
             }
 
@@ -551,7 +552,7 @@ namespace TT.World
         public override BaseObjectData ToDataObject()
         {
             var mapObject = ToMapObject<ScatterAreaData>();
-            mapObject.points.AddRange(_vertices);
+            mapObject.points.AddRange(Vector4Data.FromVector3List(_vertices));
 
             if (_generatedGameObjects.Count != _generatedObjectAddresses.Count)
             {
@@ -564,7 +565,7 @@ namespace TT.World
                     new ScatterObjectData()
                     {
                         prefabAddress = _generatedObjectAddresses[i],
-                        position = _generatedGameObjects[i].transform.position,
+                        position = new Vector4Data(_generatedGameObjects[i].transform.position),
                         rotation = _generatedGameObjects[i].transform.rotation
                     }
                 );

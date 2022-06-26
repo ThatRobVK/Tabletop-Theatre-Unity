@@ -142,14 +142,14 @@ namespace TT.World
         /// <summary>
         /// Loads the terrain from a saved map object.
         /// </summary>
-        /// <param name="mapTerrain">The saved map object to load the terrain from.</param>
+        /// <param name="terrainData">The saved map object to load the terrain from.</param>
         /// <returns>An awaitable task.</returns>
-        public async Task FromMapObject(MapTerrain mapTerrain)
+        public async Task FromMapObject(TerrainData terrainData)
         {
             Debug.Log("GameTerrain :: FromMapObject");
             
-            await LoadTerrainTextures(mapTerrain.terrainLayers.ToArray());
-            LoadSplatMaps(mapTerrain.splatWidth, mapTerrain.splatHeight, mapTerrain.splatMaps);
+            await LoadTerrainTextures(terrainData.terrainLayers.ToArray());
+            LoadSplatMaps(terrainData.splatWidth, terrainData.splatHeight, terrainData.splatMaps);
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace TT.World
         /// <param name="width">The width of the splat map.</param>
         /// <param name="height">The height of the splat map.</param>
         /// <param name="splatValues">A list of values to paint.</param>
-        public void LoadSplatMaps(int width, int height, List<Vector4> splatValues)
+        public void LoadSplatMaps(int width, int height, List<Vector4Data> splatValues)
         {
             Debug.Log("GameTerrain :: LoadSplatMaps");
 
@@ -400,7 +400,7 @@ namespace TT.World
         /// Transforms the current terrain's splat maps to a list of Vector4 values ready for saving.
         /// </summary>
         /// <returns>A list of splat values that have been painted on the current terrain.</returns>
-        private List<Vector4> SaveSplatMaps()
+        private List<Vector4Data> SaveSplatMaps()
         {
             Debug.Log("GameTerrain :: SaveSplatMaps");
 
@@ -408,7 +408,7 @@ namespace TT.World
             int width = terrainData.alphamapWidth;
             int height = terrainData.alphamapHeight;
             int layers = terrainData.terrainLayers.Length;
-            List<Vector4> outputArray = new List<Vector4>();
+            List<Vector4Data> outputArray = new List<Vector4Data>();
             float[,,] splatArray = _terrain.terrainData.GetAlphamaps(0, 0, width, height);
 
             // Reset terrain splat maps
@@ -418,7 +418,7 @@ namespace TT.World
                 {
                     for (int z = 1; z < layers; z++)
                     {
-                        if (splatArray[x, y, z] > 0f) outputArray.Add(new Vector4(x, y, z, splatArray[x, y, z]));
+                        if (splatArray[x, y, z] > 0f) outputArray.Add(new Vector4Data(x, y, z, splatArray[x, y, z]));
                     }
                 }
             }

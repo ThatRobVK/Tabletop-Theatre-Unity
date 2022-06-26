@@ -346,8 +346,9 @@ namespace TT.World
             // Add all the points back in
             foreach (var point in splineObjectData.points)
             {
-                _spline.AddPoint(point);
-                _handles.Add(CreateHandle(point));
+                Vector4 vector = point.ToVector4();
+                _spline.AddPoint(vector);
+                _handles.Add(CreateHandle(vector));
             }
 
             // Load terrain textures if any were saved
@@ -371,7 +372,7 @@ namespace TT.World
             var splineObjectData = ToMapObject<SplineObjectData>();
             splineObjectData.primaryTerrainAddress = _primaryTerrainAddress;
             splineObjectData.secondaryTerrainAddress = _secondaryTerrainAddress;
-            splineObjectData.points.AddRange(_spline.controlPoints);
+            splineObjectData.points.AddRange(Vector4Data.FromVector4List(_spline.controlPoints));
 
             return splineObjectData;
         }

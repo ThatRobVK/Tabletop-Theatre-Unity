@@ -6,7 +6,7 @@ namespace TT.Shared.UserContent
     [Serializable]
     public class ScatterObjectData
     {
-        public Vector3 position;
+        public Vector4Data position;
         public Quaternion rotation;
         public string prefabAddress;
     }
