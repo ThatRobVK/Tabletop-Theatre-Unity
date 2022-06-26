@@ -3289,7 +3289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameTextbox: {fileID: 1032389168}
   descriptionTextbox: {fileID: 966506572}
-  terrainDropdown: {fileID: 0}
+  terrainDropdown: {fileID: 1130869295}
 --- !u!1 &1092243660 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1092508537528884596, guid: d9948d709f223d34686cba0622c111f6, type: 3}
@@ -3343,6 +3343,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5fb9f586981ebe48a7819a6978b946e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1130869295 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5012021040741034960, guid: 48d7db99c0a68bf4d80209fd9caa1c94, type: 3}
+  m_PrefabInstance: {fileID: 635786773}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130869286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -605657407, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &1209992591 stripped

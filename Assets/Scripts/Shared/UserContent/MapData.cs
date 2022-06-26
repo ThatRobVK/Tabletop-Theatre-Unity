@@ -9,8 +9,10 @@ namespace TT.Shared.UserContent
         public string id;
         public string name;
         public string description;
-        public string author;
-        public string modifiedBy;
+        public string authorUUID;
+        public string authorDisplayname;
+        public string modifiedByUUID;
+        public string modifiedByDisplayname;
         public long dateCreated;
         public long dateSaved;
         public string terrainTextureAddress;

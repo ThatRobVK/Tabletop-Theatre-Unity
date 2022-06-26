@@ -1,5 +1,9 @@
-﻿using DuloGames.UI;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DuloGames.UI;
+using TT.CommsLib;
 using TT.Data;
+using TT.Shared.UserContent;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -26,7 +30,12 @@ namespace TT.UI.MainMenu
         /// </summary>
         private void HandleButtonClicked()
         {
-            Map.New(nameTextbox.text, descriptionTextbox.text);
+            var selectedTerrain = terrainDropdown.options[terrainDropdown.selectedOptionIndex];
+            var terrainLayer = Content.Current.Combined.TerrainLayers.FirstOrDefault(x => x.Name == selectedTerrain);
+            var terrainId = terrainLayer != null ? terrainLayer.ID : "0";
+            
+            Map.New(nameTextbox.text, descriptionTextbox.text, terrainId);
+
             SceneManager.LoadScene("MapEditor", LoadSceneMode.Single);
         }
     }

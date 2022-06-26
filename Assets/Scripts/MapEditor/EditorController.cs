@@ -71,9 +71,10 @@ namespace TT.MapEditor
 
         private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
         {
+            Map.Current.Render().ConfigureAwait(false);
             // TODO: Load terrain texture from map data
             // Load the first game terrain as default
-            GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
+            //GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
         }
 
         void Start()

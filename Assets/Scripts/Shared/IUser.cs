@@ -54,6 +54,11 @@ namespace TT.Shared
         bool IsLoggedIn { get; }
 
         /// <summary>
+        /// The unique ID of the currently logged in user.
+        /// </summary>
+        string Id { get; }
+        
+        /// <summary>
         /// The username of the currently logged in user.
         /// </summary>
         string Username { get; }

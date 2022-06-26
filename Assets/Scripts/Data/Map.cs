@@ -19,6 +19,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -69,12 +70,12 @@ namespace TT.Data
         /// <summary>
         /// The user who originally created the map.
         /// </summary>
-        public string Author => _mapData.author;
+        public string Author => _mapData.authorDisplayname;
 
         /// <summary>
         /// The last person who has modified the map.
         /// </summary>
-        public string ModifiedBy => _mapData.modifiedBy;
+        public string ModifiedBy => _mapData.modifiedByDisplayname;
 
         /// <summary>
         /// The date and time on which this map was originally created.
@@ -122,8 +123,9 @@ namespace TT.Data
         /// </summary>
         /// <param name="name">A user defined name for the map. This can be null and set later through the Name property.</param>
         /// <param name="description">A user defined description for the map. This can be null and set later through the Description property.</param>
+        /// <param name="terrainId"></param>
         /// <remarks>This method requires that the user is logged in.</remarks>
-        public static void New(string name, string description)
+        public static void New(string name, string description, string terrainId = "")
         {
             if (!Helpers.Comms.User.IsLoggedIn)
             {
@@ -132,16 +134,31 @@ namespace TT.Data
                 return;
             }
 
+            var id = Helpers.Comms.User.Id;
             var user = Helpers.Comms.User.Username;
             var mapData = new MapData()
             {
                 id = Guid.NewGuid().ToString(),
                 name = name,
                 description = description,
-                author = user,
-                modifiedBy = user,
+                authorUUID = id,
+                authorDisplayname = user,
+                modifiedByUUID = id,
+                modifiedByDisplayname = user,
                 dateCreated = DateTime.Now.ToFileTimeUtc()
             };
+
+            if (!string.IsNullOrEmpty(terrainId))
+            {
+                mapData.terrainTextureAddress = terrainId;
+                mapData.terrain = new Shared.UserContent.TerrainData
+                {
+                    splatMaps = new List<Vector4Data>(),
+                    splatHeight = 1,
+                    splatWidth = 1,
+                    terrainLayers = new List<string> { terrainId }
+                };
+            }
             Current = new Map(mapData);
         }
 
@@ -193,6 +210,7 @@ namespace TT.Data
 
             try
             {
+                GameTerrain.Current.LoadDefaultTexture(_mapData.terrainTextureAddress);
                 await GameTerrain.Current.LoadTerrainTextures(_mapData.terrain.terrainLayers.ToArray());
 
                 TimeController.Current.LightingMode = (LightingMode) _mapData.lightingMode;
