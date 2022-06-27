@@ -54,7 +54,7 @@ namespace TT.UI.MainMenu
             if (mapIndex.Any(x => x.name.Equals(nameTextbox.text, StringComparison.InvariantCultureIgnoreCase)))
             {
                 _savingModal = UIModalBoxManager.Instance.Create(gameObject);
-                _savingModal.SetText1("Name already exists");
+                _savingModal.SetText1("Name already in use");
                 _savingModal.SetText2("The name you have specified is already in use for another map. You can have multiple maps with the same name, but you are recommended to use a unique name to avoid confusion.");
                 _savingModal.SetConfirmButtonText("Continue anyway");
                 _savingModal.SetCancelButtonText("Cancel");
