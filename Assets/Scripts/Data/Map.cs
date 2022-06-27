@@ -285,6 +285,27 @@ namespace TT.Data
         }
 
         /// <summary>
+        /// Saves this map as a copy of the original.
+        /// </summary>
+        /// <param name="newName">A name for the new map.</param>
+        /// <returns>A boolean value indicating whether the save was successful.</returns>
+        public async Task<bool> SaveCopy(string newName)
+        {
+            // Generate new ID so this is treated as a new map
+            _mapData.id = Guid.NewGuid().ToString();
+            
+            // Set the new name
+            _mapData.name = newName;
+            
+            // Set other map properties
+            _mapData.dateCreated = DateTime.Now.ToFileTimeUtc();
+            _mapData.modifiedByUUID = Helpers.Comms.User.Id;
+            _mapData.modifiedByDisplayname = Helpers.Comms.User.Username;
+
+            return await Save();
+        }
+
+        /// <summary>
         /// Destroys all world objects on the current map.
         /// </summary>
         public void Unload()
