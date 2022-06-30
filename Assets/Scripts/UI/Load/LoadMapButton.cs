@@ -26,6 +26,7 @@ using UnityEngine.UI;
 namespace TT.UI.Load
 {
     [RequireComponent(typeof(Button))]
+    [RequireComponent(typeof(ToggledButton))]
     public class LoadMapButton : MonoBehaviour
     {
         
@@ -47,6 +48,7 @@ namespace TT.UI.Load
         #region Private fields
 
         private Button _button;
+        private ToggledButton _toggledButton;
         
         #endregion
         
@@ -58,6 +60,8 @@ namespace TT.UI.Load
             // Listen for button click events
             _button = GetComponent<Button>();
             _button.onClick.AddListener(HandleButtonClick);
+
+            _toggledButton = GetComponent<ToggledButton>();
         }
         
         
@@ -79,6 +83,10 @@ namespace TT.UI.Load
         /// </summary>
         private async void HandleButtonClick()
         {
+            // Don't act if the button is toggled off
+            if (!_toggledButton.Enabled)
+                return;
+            
             // Load the selected map
             await Map.Load(mapList.SelectedMap.id);
 

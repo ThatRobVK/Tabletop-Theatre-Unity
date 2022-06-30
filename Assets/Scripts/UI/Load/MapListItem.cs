@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Globalization;
 using TMPro;
 using TT.Shared.UserContent;
 using UnityEngine;
@@ -27,6 +26,7 @@ using UnityEngine.UI;
 
 namespace TT.UI.Load
 {
+    [RequireComponent(typeof(Toggle))]
     public class MapListItem : MonoBehaviour
     {
         
@@ -41,7 +41,7 @@ namespace TT.UI.Load
         
         [SerializeField] private TMP_Text mapNameText;
         [SerializeField] private TMP_Text saveDateText;
-        [SerializeField] private Button button;
+        [SerializeField] private CanvasGroup activeOverlay;
         
         #endregion
         
@@ -49,6 +49,8 @@ namespace TT.UI.Load
         #region Private fields
 
         private MapMetadata _mapMetadata;
+        private Toggle _toggle;
+        private ToggleGroup _toggleGroup;
         
         #endregion
         
@@ -57,12 +59,17 @@ namespace TT.UI.Load
 
         private void Start()
         {
-            button.onClick.AddListener(HandleButtonClicked);
+            _toggle = GetComponent<Toggle>();
+            _toggle.onValueChanged.AddListener(OnToggleChanged);
+            _toggle.group = _toggleGroup;
+            _toggle.isOn = false;
+            activeOverlay.alpha = 0;
         }
 
         private void OnDestroy()
         {
-            button.onClick.RemoveListener(HandleButtonClicked);
+            if (_toggle != null)
+                _toggle.onValueChanged.AddListener(OnToggleChanged);
         }
         
         #endregion
@@ -70,10 +77,16 @@ namespace TT.UI.Load
         
         #region Public methods
 
-        public void Initialise(MapMetadata mapMetadata)
+        /// <summary>
+        /// Shows the specified map metadata in this list item.
+        /// </summary>
+        /// <param name="mapMetadata">The map to show.</param>
+        /// <param name="toggleGroup">The toggle group to bind this toggle to.</param>
+        public void Initialise(MapMetadata mapMetadata, ToggleGroup toggleGroup)
         {
             _mapMetadata = mapMetadata;
-            
+            _toggleGroup = toggleGroup;
+
             mapNameText.text = mapMetadata.name;
             saveDateText.text = Helpers.FormatShortDateString(mapMetadata.dateSaved);
         }
@@ -83,7 +96,11 @@ namespace TT.UI.Load
         
         #region Private methoads
 
-        private void HandleButtonClicked()
+        /// <summary>
+        /// Called when the toggle is changed. Notify listeners of the click.
+        /// </summary>
+        /// <param name="isOn"></param>
+        private void OnToggleChanged(bool isOn)
         {
             OnClick?.Invoke(_mapMetadata);
         }

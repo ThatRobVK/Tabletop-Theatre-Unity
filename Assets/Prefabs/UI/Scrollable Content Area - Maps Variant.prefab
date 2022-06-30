@@ -109,7 +109,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6724274499915289935, guid: 901634c522d46234fba440907aad6b59, type: 3}
       propertyPath: m_Name
-      value: Scrollable Content Area - Maps
+      value: Scrollable Content Area - Maps Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6724274500195557865, guid: 901634c522d46234fba440907aad6b59, type: 3}
       propertyPath: m_AnchorMax.x
@@ -150,7 +150,21 @@ MonoBehaviour:
   mapItemPrefab: {fileID: 5256737194306960544, guid: c974c851cc6a77e459726be95be6287d, type: 3}
   mapListDetails: {fileID: 0}
   loadMapMapButton: {fileID: 0}
+  loadMapFromListToggle: {fileID: 0}
   inactiveUIElements: {fileID: 0}
+--- !u!114 &1235455702349030560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2469899176685758847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AllowSwitchOff: 1
 --- !u!114 &542263645
 MonoBehaviour:
   m_ObjectHideFlags: 0

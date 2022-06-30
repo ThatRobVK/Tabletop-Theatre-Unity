@@ -128,9 +128,9 @@ namespace TT.Data
         /// </summary>
         /// <param name="name">A user defined name for the map. This can be null and set later through the Name property.</param>
         /// <param name="description">A user defined description for the map. This can be null and set later through the Description property.</param>
-        /// <param name="terrainId"></param>
+        /// <param name="terrainId">The addressable ID of the texture to load as the base terrain layer.</param>
         /// <remarks>This method requires that the user is logged in.</remarks>
-        public static void New(string name, string description, string terrainId = "")
+        public static void New(string name, string description, string terrainId)
         {
             if (!Helpers.Comms.User.IsLoggedIn)
             {

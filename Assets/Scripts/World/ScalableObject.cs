@@ -155,11 +155,11 @@ namespace TT.World
         }
 
         // Initialises the Scalable Object based on a Map Object
-        public void Initialise(MapScalableObject mapObject)
+        public void Initialise()
         {
             //FromMapObject(mapObject);
             transform.localScale = Vector3.one;
-
+/*
             floorPlane.transform.position = mapObject.position;
             floorPlane.transform.rotation = Quaternion.Euler(mapObject.rotation);
             floorPlane.transform.localScale = mapObject.scale;
@@ -167,7 +167,7 @@ namespace TT.World
             roofPlane.transform.position = mapObject.position + Vector3.up * 3;
             roofPlane.transform.rotation = Quaternion.Euler(new Vector3(180, mapObject.rotation.y, mapObject.rotation.z));
             roofPlane.transform.localScale = mapObject.scale;
-
+*/
             _resizeHandles = new List<ScalableObjectHandle>(GetComponentsInChildren<ScalableObjectHandle>());
             foreach (var handle in _resizeHandles)
             {
@@ -201,12 +201,6 @@ namespace TT.World
             SetMaterial(PrefabAddress).ConfigureAwait(false);
             roofPlane.SetActive((bool)OptionValues[WorldObjectOption.Roof]);
             ToggleHandles(false);
-        }
-
-        // Returns a MapScalableObject representing this Scalable Object
-        public MapObjectBase ToMapObject()
-        {
-            return null;
         }
 
         // Apply an option to the Scalable Object

@@ -18,13 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
+using UnityEngine;
+using UnityEngine.UI;
 using DuloGames.UI;
 using TT.Data;
 using TT.InputMapping;
-using TT.World;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace TT.UI.MapEditor.MainMenu
 {

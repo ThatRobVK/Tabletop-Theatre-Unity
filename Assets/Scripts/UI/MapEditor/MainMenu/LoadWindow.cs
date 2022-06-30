@@ -175,6 +175,10 @@ namespace TT.UI.MapEditor.MainMenu
         /// </summary>
         private async void LoadMap()
         {
+            // Don't act if the load button is disabled
+            if (!loadButton.GetComponent<ToggledButton>().Enabled)
+                return;
+            
             var mapId = currentMapToggle.isOn ? Map.Current.Id.ToString() : mapList.SelectedMap.id;
             
             Debug.Log($"LoadWindow :: LoadMap :: Loading map {mapId}");
