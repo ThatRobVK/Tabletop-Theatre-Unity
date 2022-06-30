@@ -50,7 +50,7 @@ namespace TT.UI.MainMenu
         private async void HandleButtonClicked()
         {
             // If the index contains a map with the same name, then warn the user of a clash
-            var mapIndex = await Helpers.Comms.UserContent.GetMapIndex();
+            var mapIndex = await Helpers.Comms.UserContent.GetMapList();
             if (mapIndex.Any(x => x.name.Equals(nameTextbox.text, StringComparison.InvariantCultureIgnoreCase)))
             {
                 _savingModal = UIModalBoxManager.Instance.Create(gameObject);

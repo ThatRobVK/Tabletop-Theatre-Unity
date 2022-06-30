@@ -9,5 +9,7 @@ namespace TT.Shared.UserContent
         public string name;
         public string description;
         public long dateSaved;
+        public long dateCreated;
+        public string authorUsername;
     }
 }

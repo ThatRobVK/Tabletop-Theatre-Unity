@@ -20,7 +20,9 @@
 
 #pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -31,6 +33,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.EventSystems;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Object = UnityEngine.Object;
 
 namespace TT
 {
@@ -337,6 +340,29 @@ namespace TT
             return newButton;
         }
 
+        /// <summary>
+        /// Returns a string representing the specified datetime, in the local timezone, in the format "[time] [date]"
+        /// where the date is double digit numbers for day, month and year, formatted as per the current UI culture.
+        /// </summary>
+        /// <param name="fileTimeUtc">The date and time in a UTC file time format.</param>
+        /// <returns>A string representing the passed in date and time.</returns>
+        public static string FormatShortDateString(long fileTimeUtc)
+        {
+            return FormatShortDateString(DateTime.FromFileTimeUtc(fileTimeUtc));
+        }
+
+        /// <summary>
+        /// Returns a string representing the specified datetime, in the format "[time] [date]" where the date is
+        /// double digit numbers for day, month and year, formatted as per the current UI culture.
+        /// </summary>
+        /// <param name="dateTime">The date and time to format.</param>
+        /// <returns>A string representing the passed in date and time.</returns>
+        public static string FormatShortDateString(DateTime dateTime)
+        {
+            var formatInfo = CultureInfo.CurrentUICulture.DateTimeFormat;
+            var shorterDateString = formatInfo.ShortDatePattern.Replace("yyyy", "yy");
+            return string.Concat(dateTime.ToLocalTime().ToString("t"), " ", dateTime.ToString(shorterDateString));
+        }
 
         #endregion
 
@@ -384,6 +410,6 @@ namespace TT
             return Encoding.UTF8.GetString(bigStreamOut.ToArray());
         }
         #endregion
-
+        
     }
 }

@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,13 +38,34 @@ namespace TT.MapEditor
         private static readonly int MaxActionNum = 100;
 
         #endregion
+        
+        #region Public properties
+        
+        /// <summary>
+        /// The number of changes that have been registered since the map was last saved.
+        /// </summary>
+        public static long NumChangesSinceLastSave { get; private set; }
+        
+        #endregion
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
-        void Update()
+        private void Start()
         {
+            // Listen for map save events
+            Map.OnMapSaved += HandleMapSaved;
+        }
+
+        private void OnDestroy()
+        {
+            // Stop listening for map save events
+            Map.OnMapSaved -= HandleMapSaved;
+        }
+
+        private void Update()
+        {
+            // Handle undo and redo key bindings
             if (InputMapper.Current.WorldObjectInput.Undo)
             {
                 Undo();
@@ -57,7 +76,6 @@ namespace TT.MapEditor
             }
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 
@@ -82,6 +100,9 @@ namespace TT.MapEditor
 
             // Clear the redo queue now the user has taken a new action
             RedoActions.Clear();
+
+            // Add an action to the counter
+            NumChangesSinceLastSave++;
         }
 
         public static void RegisterRedoAction(ActionType action, Guid objectId, object value)
@@ -257,9 +278,15 @@ namespace TT.MapEditor
                     UndoActions.RemoveAt(undoIndex);
                     undoIndex--;
                 }
+                
+                // Remove an action from the counter
+                NumChangesSinceLastSave--;
             }
         }
 
+        /// <summary>
+        /// Re-applies the last action that was undone.
+        /// </summary>
         public static async void Redo()
         {
             if (RedoActions.Count == 0) return;
@@ -371,11 +398,30 @@ namespace TT.MapEditor
             }
 
             RedoActions.RemoveAt(redoIndex);
+            
+            // Add an action to the counter
+            NumChangesSinceLastSave++;
         }
 
 
         #endregion
+        
+        
+        #region Event handlers
+        
+        /// <summary>
+        /// Called when the map is saved. If successful, reset the changes counter.
+        /// </summary>
+        /// <param name="success"></param>
+        private void HandleMapSaved(bool success)
+        {
+            if (success)
+                NumChangesSinceLastSave = 0;
+        }
 
+        #endregion
+
+        
         /// <summary>
         /// Internal representation of an undo action. Only used to stuff the action in a list.
         /// </summary>

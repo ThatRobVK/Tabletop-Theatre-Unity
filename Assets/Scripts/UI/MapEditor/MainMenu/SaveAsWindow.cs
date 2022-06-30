@@ -96,7 +96,7 @@ namespace TT.UI.MapEditor.MainMenu
         private async void HandleConfirmButtonClick()
         {
             // If the index contains a map with a different ID but the same name, then warn the user of a clash
-            var mapIndex = await Helpers.Comms.UserContent.GetMapIndex();
+            var mapIndex = await Helpers.Comms.UserContent.GetMapList();
             if (mapIndex.Any(x => !x.id.Equals(Map.Current.Id.ToString()) &&
                                     x.name.Equals(nameTextbox.text, StringComparison.InvariantCultureIgnoreCase)))
             {

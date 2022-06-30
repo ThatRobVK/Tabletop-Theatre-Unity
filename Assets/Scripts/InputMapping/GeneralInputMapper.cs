@@ -28,13 +28,14 @@ namespace TT.InputMapping
         { }
 
         // Either Control held down and S pressed, but Shift is not held down (that is Save As)
-        public bool Save { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.S) && !IsShiftDown(); }
+        public bool Save => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.S) && !IsShiftDown();
 
         // Either Control held down, either Shift held down, and S pressed
-        public bool SaveAs { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.S) && IsShiftDown(); }
+        public bool SaveAs => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.S) && IsShiftDown();
 
         // Either Control held down and O pressed
-        public bool Load { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.O); }
+        public bool Load => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.O) && !IsShiftDown();
 
+        public bool LoadOther => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.O) && IsShiftDown();
     }
 }

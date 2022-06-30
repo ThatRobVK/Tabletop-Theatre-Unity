@@ -55,37 +55,42 @@ namespace TT.Data
         /// <summary>
         /// The unique identifier of this map.
         /// </summary>
-        public Guid Id => Guid.Parse(_mapData.id ?? string.Empty);
+        public Guid Id => Guid.Parse(_mapData.metadata.id ?? string.Empty);
 
         /// <summary>
         /// A user-defined name for the map.
         /// </summary>
-        public string Name { get => _mapData.name; set => _mapData.name = value; }
+        public string Name { get => _mapData.metadata.name; set => _mapData.metadata.name = value; }
 
         /// <summary>
         /// A user-defined description for the map.
         /// </summary>
-        public string Description { get => _mapData.description; set => _mapData.description = value; }
+        public string Description { get => _mapData.metadata.description; set => _mapData.metadata.description = value; }
 
         /// <summary>
         /// The user who originally created the map.
         /// </summary>
-        public string Author => _mapData.authorDisplayname;
+        public string Author => _mapData.metadata.authorName;
 
         /// <summary>
         /// The last person who has modified the map.
         /// </summary>
-        public string ModifiedBy => _mapData.modifiedByDisplayname;
+        public string ModifiedBy => _mapData.metadata.modifiedByName;
 
         /// <summary>
         /// The date and time on which this map was originally created.
         /// </summary>
-        public DateTime DateCreated => DateTime.FromFileTimeUtc(_mapData.dateCreated);
+        public DateTime DateCreated => DateTime.FromFileTimeUtc(_mapData.metadata.dateCreated);
 
         /// <summary>
         /// The date and time on which this map was last saved.
         /// </summary>
-        public DateTime DateSaved => DateTime.FromFileTimeUtc(_mapData.dateSaved);
+        public DateTime DateSaved => DateTime.FromFileTimeUtc(_mapData.metadata.dateSaved);
+        
+        /// <summary>
+        /// The date and time when the map was last loaded.
+        /// </summary>
+        public DateTime DateLoaded { get; private set; }
 
         /// <summary>
         /// The currently loaded map. This may be null until a map is loaded or the New method is called.
@@ -136,16 +141,19 @@ namespace TT.Data
 
             var id = Helpers.Comms.User.Id;
             var user = Helpers.Comms.User.Username;
-            var mapData = new MapData()
+            var mapData = new MapData
             {
-                id = Guid.NewGuid().ToString(),
-                name = name,
-                description = description,
-                authorUUID = id,
-                authorDisplayname = user,
-                modifiedByUUID = id,
-                modifiedByDisplayname = user,
-                dateCreated = DateTime.Now.ToFileTimeUtc()
+                metadata = new MapMetadata
+                {
+                    id = Guid.NewGuid().ToString(),
+                    name = name,
+                    description = description,
+                    authorId = id,
+                    authorName = user,
+                    modifiedById = id,
+                    modifiedByName = user,
+                    dateCreated = DateTime.Now.ToFileTimeUtc()
+                }
             };
 
             if (!string.IsNullOrEmpty(terrainId))
@@ -160,6 +168,9 @@ namespace TT.Data
                 };
             }
             Current = new Map(mapData);
+            
+            // Set the load date time
+            Current.DateLoaded = DateTime.Now;
         }
 
         /// <summary>
@@ -187,6 +198,9 @@ namespace TT.Data
                     Current.Unload();
 
                 Current = new Map(mapData);
+
+                // Set the load date time
+                Current.DateLoaded = DateTime.Now;
 
                 OnMapLoaded?.Invoke(true);
                 return true;
@@ -254,7 +268,7 @@ namespace TT.Data
         public async Task<bool> Save()
         {
             // Update the basic properties in the map data
-            _mapData.dateSaved = DateTime.Now.ToFileTimeUtc();
+            _mapData.metadata.dateSaved = DateTime.Now.ToFileTimeUtc();
             _mapData.terrainTextureAddress = GameTerrain.Current.TerrainTextureAddress;
             _mapData.time = TimeController.Current.CurrentTime;
             _mapData.wind = WindController.Current.CurrentWind;
@@ -292,15 +306,15 @@ namespace TT.Data
         public async Task<bool> SaveCopy(string newName)
         {
             // Generate new ID so this is treated as a new map
-            _mapData.id = Guid.NewGuid().ToString();
+            _mapData.metadata.id = Guid.NewGuid().ToString();
             
             // Set the new name
-            _mapData.name = newName;
+            _mapData.metadata.name = newName;
             
             // Set other map properties
-            _mapData.dateCreated = DateTime.Now.ToFileTimeUtc();
-            _mapData.modifiedByUUID = Helpers.Comms.User.Id;
-            _mapData.modifiedByDisplayname = Helpers.Comms.User.Username;
+            _mapData.metadata.dateCreated = DateTime.Now.ToFileTimeUtc();
+            _mapData.metadata.modifiedById = Helpers.Comms.User.Id;
+            _mapData.metadata.modifiedByName = Helpers.Comms.User.Username;
 
             return await Save();
         }
