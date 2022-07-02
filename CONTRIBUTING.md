@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-## How to request changes
+## Reporting a bug or requesting a feature
 
 For now, the easiest way is to raise an issue in Github, either a bug or a
 feature request. Other options will be created in the not too distant future.
@@ -64,11 +64,12 @@ Within the TT solution, I don't feel the need for the overhead of implementing
 interfaces in the main. There are few places where classes are swapped out or
 common functionality handles multiple types of objects. Where this is the case,
 there is common functionality so this uses a base class and inheritance
-instead.
+instead. E.g. see [WorldObjectBase.cs](https://github.com/ThatRobVK/Tabletop-Theatre/blob/3f5b0480a89b88434778288cf261988ea113923e/Assets/Scripts/World/WorldObjectBase.cs)
 
 Interfaces are used where calling other code I have created. Third party
 libraries often don't have interfaces, so direct dependencies are created. In
-many cases these objects are used directly in Unity.
+many cases these objects are used directly in Unity, which makes creating a
+shim more difficult.
 
 #### Common functionality
 
@@ -117,7 +118,8 @@ a broader context, it should be moved to a location that makes sense.
 
 #### File name
 
-
+The filename must match the class name, which in itself should be descriptive 
+enough to guess its general purpose and what it is attached to.
 
 ### File Contents
 
@@ -166,9 +168,30 @@ camelCase:
 - _privateFields (note the leading underscore)
 - localVariables
 - methodParameters
+- publicFieldsInSerializableClasses
 
 UPPER_SNAKE_CASE:
 - CONSTANT_VALUES
+
+Note there is a difference in public fields between classes specifically
+marked as Serializable (e.g. data classes that can be serialized for saving
+and loading) and all other classes. When a class is explicitly marked as
+Serializable, then public fields should use camelCase. All other classes,
+including MonoBehaviours which are implicitly serializable, should use
+PascalCase for public fields.
+
+#### Editor fields
+
+All editor fields should be private and have the [SerializeField] and
+[Tooltip] attributes. The tooltip serves as the description, so no further
+code comments are required on editor fields.
+
+MonoBehaviours should have no public fields, these should be turned into
+public properties to prevent them from being exposed in the Unity editor.
+
+Using SerializeField instead of making the field public makes it explicit
+that you intend for that field to be set through the editor, and prevents
+accidental setting of fields that should only be accessed through code.
 
 #### Static vs Instance
 
@@ -196,8 +219,12 @@ Code should be descriptive and easy to understand based on method and variable
 names. However, often it is useful to add a comment to describe a multi-part
 if statement, or a block of code that creates a single outcome in multiple
 lines of code.
+  
+Ideally classes themselves should have XML Documentation Comments as well,
+describing what they are attached to if one or two specific objects / UI
+elements, and what their general purpose is.
 
-#### Regions
+#### Code #regions
 
 All but the most basic classes (e.g. with just one lifecycle event and one
 private field) should be subdivided with `#region` and `#endregion`. The
