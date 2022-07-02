@@ -20,7 +20,7 @@ TT is built on Unity 2020.3.latest (LTS) on the built-in render pipeline. This i
 
 ### Setting up the project
 
-1. Clone the repository.
+1. Fork the repository and clone it to your machine.
 1. Unzip the file `Library.zip` into the root of the cloned folder, this gives you an asset database that allows the assets below to be loaded correctly.
 1. Copy the contents of the `LicensedAssets` folder into the `Assets` folder, so that you get `Assets\Licensed` and `Assets\Plugins\Licensed`. This gives you mock versions of licensed assets, allowing your copy to load, build and run without requiring licenses to these assets.
 1. Fire up Unity and load the project.
