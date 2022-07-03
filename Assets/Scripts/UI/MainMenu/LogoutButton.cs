@@ -27,69 +27,36 @@ namespace TT.UI.MainMenu
     /// A logout button that shows when logged in, logs the user out when clicked, and hides when logged out.
     /// </summary>
     [RequireComponent(typeof(Button))]
-    [RequireComponent(typeof(CanvasGroup))]
     public class LogoutButton : MonoBehaviour
     {
         
         #region Private fields
         
         private Button _button;
-        private CanvasGroup _canvasGroup;
         
         #endregion
         
         
         #region Lifecycle events
 
-        private void OnEnable()
+        private void Start()
         {
-            _button = GetComponent<Button>();
-
-            // Set initial state
-            bool userIsLoggedIn = Helpers.Comms.User.IsLoggedIn;
-            _canvasGroup = GetComponent<CanvasGroup>();
-            ToggleButton(userIsLoggedIn);
-
             // Add handlers
+            _button = GetComponent<Button>();
             _button.onClick.AddListener(HandleButtonClick);
-            Helpers.Comms.User.OnLoginSuccess += HandleLoginSuccess;
-            Helpers.Comms.User.OnLogout += HandleLogout;
         }
         
-        private void OnDisable()
+        private void OnDestroy()
         {
-            if (Helpers.Comms != null && Helpers.Comms.User != null)
-            {
-                // Remove handlers
-                Helpers.Comms.User.OnLoginSuccess -= HandleLoginSuccess;
-                Helpers.Comms.User.OnLogout -= HandleLogout;
-            }
-
             // Remove button handler
             if (_button)
-                _button.onClick.AddListener(HandleButtonClick);
+                _button.onClick.RemoveListener(HandleButtonClick);
         }
         
         #endregion
         
         
         #region Event handlers
-
-        /// <summary>
-        /// Called when the user is logged out. Hide the button.
-        /// </summary>
-        private void HandleLogout()
-        {
-            ToggleButton(false);
-        }
-
-        /// <summary>
-        /// Called when the user is logged in successfully. Show the button.
-        /// </summary>
-        private void HandleLoginSuccess()
-        {
-            ToggleButton(true);
-        }
 
         /// <summary>
         /// Called when the button is clicked. Log the user out.
@@ -107,22 +74,6 @@ namespace TT.UI.MainMenu
         }
 
         #endregion
-
-
-        #region Private methods
-
-        /// <summary>
-        /// Shows or hides the button.
-        /// </summary>
-        /// <param name="userIsLoggedIn">A boolean indicating whether the user is currently logged in or not.</param>
-        private void ToggleButton(bool userIsLoggedIn)
-        {
-            _canvasGroup.alpha = userIsLoggedIn ? 1 : 0;
-            _canvasGroup.interactable = userIsLoggedIn;
-            _canvasGroup.blocksRaycasts = userIsLoggedIn;
-        }
-
-        #endregion
-
+        
     }
 }

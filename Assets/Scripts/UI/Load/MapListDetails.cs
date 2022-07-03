@@ -55,8 +55,8 @@ namespace TT.UI.Load
                 nameLabel.text = mapMetadata.name;
                 authorLabel.text = $"By {mapMetadata.authorName}";
                 descriptionLabel.text = $"Description:\n{mapMetadata.description}";
-                createDateLabel.text = $"Created {DateTime.FromFileTimeUtc(mapMetadata.dateCreated).ToString("g")}";
-                saveDateLabel.text = $"Last saved {DateTime.FromFileTimeUtc(mapMetadata.dateSaved).ToString("g")}";
+                createDateLabel.text = $"Created {Helpers.FormatShortDateString(mapMetadata.dateCreated)}";
+                saveDateLabel.text = $"Last saved {Helpers.FormatShortDateString(mapMetadata.dateSaved)}";
                 deleteButton.gameObject.SetActive(true);
             }
             else

@@ -57,7 +57,7 @@ namespace TT.UI.Load
         #region Private fields
 
         private Transform _content;
-        private List<MapListItem> _items = new List<MapListItem>();
+        private readonly List<MapListItem> _items = new List<MapListItem>();
         private ToggleGroup _toggleGroup;
         private UIWindow _window;
 

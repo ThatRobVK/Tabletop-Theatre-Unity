@@ -80,7 +80,7 @@ namespace TT.UI
             if (warnAtLength > 0 && newValue.Length >= warnAtLength)
             {
                 active = true;
-                label = $"{_inputField.text.Length}/{maxLength} characters";
+                label = $"{_inputField.text.Length} / {maxLength}";
             }
             
             // Set the warning objects if they exist

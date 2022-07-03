@@ -18,14 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using TT.CommsLib;
 using UnityEngine;
+using TT.CommsLib;
 using TT.Shared;
 using TT.Shared.UserContent;
 
 namespace TT.Data
 {
+    /// <summary>
+    /// Object used to access classes in the external CommsLib. Exposed through the SettingsObject.
+    /// </summary>
     public class CommsObject : MonoBehaviour
     {
         

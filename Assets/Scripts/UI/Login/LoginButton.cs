@@ -42,23 +42,21 @@ namespace TT.UI.Login
         #region Private fields
 
         private Button _button;
-        private LoginWindow _loginWindow;
         
         #endregion
         
         
         #region Lifecycle events
 
-        void OnEnable()
+        void Start()
         {
             _button = GetComponent<Button>();
-            _loginWindow = GetComponentInParent<LoginWindow>();
 
             // Handle button click events
             _button.onClick.AddListener(OnButtonClick);
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             // Remove event handlers
             if (_button)
@@ -75,29 +73,11 @@ namespace TT.UI.Login
         /// </summary>
         private void OnButtonClick()
         {
-            _loginWindow.ToggleWaitPanel(true);
-            StartCoroutine(DoLogin());
-        }
-        
-        #endregion
-        
-        
-        #region Private methods
-
-        /// <summary>
-        /// Coroutine to handle login. Forces one frame wait to let the wait panel show before firing off the login.
-        /// </summary>
-        /// <returns>An IEnumerator for coroutine purposes.</returns>
-        private IEnumerator DoLogin()
-        {
-            // Let one frame go by to update the UI to avoid race conditions on a very fast fail of the login
-            yield return null;
-
             // Request the sign in
             Helpers.Comms.User.LoginAsync(username.text, password.text).ConfigureAwait(false);
         }
         
         #endregion
-        
+
     }
 }

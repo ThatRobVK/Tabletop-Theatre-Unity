@@ -27,6 +27,11 @@ namespace TT.Shared
     {
         
         #region Events
+
+        /// <summary>
+        /// Invoked when authentication begins.
+        /// </summary>
+        event Action OnLoginStart;
         
         /// <summary>
         /// Invoked when the user is successfully authenticated.

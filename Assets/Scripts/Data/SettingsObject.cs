@@ -25,6 +25,6 @@ namespace TT.Data
 {
     public class SettingsObject : MonoBehaviour
     {
-        [FormerlySerializedAs("EditorSettings")] public EditorSettings editorSettings;
+        public EditorSettings editorSettings;
     }
 }

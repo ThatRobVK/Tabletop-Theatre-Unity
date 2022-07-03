@@ -1510,7 +1510,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1873640386326741568, guid: ead41ff1cfe267b458c3d851a699ccdf, type: 3}
       propertyPath: m_Name
-      value: Window - Login Variant
+      value: Window - Login
       objectReference: {fileID: 0}
     - target: {fileID: 1873640386326741569, guid: ead41ff1cfe267b458c3d851a699ccdf, type: 3}
       propertyPath: m_Pivot.x

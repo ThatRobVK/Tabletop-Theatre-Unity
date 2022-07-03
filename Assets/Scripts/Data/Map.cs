@@ -250,12 +250,16 @@ namespace TT.Data
 
                 foreach (var x in _mapData.scatterAreas) await WorldObjectFactory.CreateFromMapObject(x);
 
-                GameTerrain.Current.LoadSplatMaps(_mapData.terrain.splatWidth, _mapData.terrain.splatHeight,
-                    _mapData.terrain.splatMaps);
+                if (_mapData.terrain.splatMaps.Count > 0)
+                {
+                    // Load splat maps if any are present (only present when terrain has been painted)
+                    GameTerrain.Current.LoadSplatMaps(_mapData.terrain.splatWidth, _mapData.terrain.splatHeight,
+                        _mapData.terrain.splatMaps);
+                }
             }
             catch (Exception e)
             {
-                Debug.LogErrorFormat("Map :: Render :: Error rendering: {0}: {1}", e.GetType().FullName, e.Message);
+                Debug.LogErrorFormat("Map :: Render :: Error rendering: {0}: {1}", e.GetType().FullName, e);
             }
             
             OnMapRendered?.Invoke();
