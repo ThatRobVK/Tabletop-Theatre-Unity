@@ -302,7 +302,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 1.5
 --- !u!114 &4017397903692671081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -837,6 +837,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4017397904456175909}
     m_Modifications:
+    - target: {fileID: 155213801647299236, guid: 26e8df716b1afea4cb03c4d39d4187f2, type: 3}
+      propertyPath: buttonEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5014485938235542657, guid: 26e8df716b1afea4cb03c4d39d4187f2, type: 3}
       propertyPath: m_Text
       value: 
@@ -977,6 +981,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4017397904456175909}
     m_Modifications:
+    - target: {fileID: 155213801647299236, guid: 26e8df716b1afea4cb03c4d39d4187f2, type: 3}
+      propertyPath: buttonEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5014485938235542657, guid: 26e8df716b1afea4cb03c4d39d4187f2, type: 3}
       propertyPath: m_Text
       value: 
