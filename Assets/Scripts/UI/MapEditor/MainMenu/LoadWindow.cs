@@ -116,24 +116,8 @@ namespace TT.UI.MapEditor.MainMenu
 
             // Build up message about state of current map
             StringBuilder currentMapText = new StringBuilder(Map.Current.Name);
-            if (Map.Current.DateSaved < Map.Current.DateLoaded)
-            {
-                currentMapText.Append(" - last saved ").Append(Helpers.FormatShortDateString(Map.Current.DateSaved));
-            }
-            else
-            {
-                currentMapText.Append(" has not been saved since it was last loaded");
-            }
-
-            if (UndoController.NumChangesSinceLastSave > 0)
-            {
-                currentMapText.Append($"; you have made {UndoController.NumChangesSinceLastSave} unsaved changes.");
-            }
-            else
-            {
-                string savedOrLoadedText = Map.Current.DateSaved > Map.Current.DateLoaded ? "last saved" : "loaded";
-                currentMapText.Append($"; you have not made any changes since the map was {savedOrLoadedText}.");
-            }
+            currentMapText.Append(" - saved ").Append(Helpers.FormatShortDateString(Map.Current.DateSaved));
+            currentMapText.Append($"- {UndoController.NumChangesSinceLastSave} unsaved changes.");
 
             currentMapSavedText.text = currentMapText.ToString();
             currentMapToggle.enabled = true;

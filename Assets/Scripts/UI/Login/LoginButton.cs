@@ -54,6 +54,9 @@ namespace TT.UI.Login
 
             // Handle button click events
             _button.onClick.AddListener(OnButtonClick);
+
+            // Listen for auth events
+            Helpers.Comms.User.OnLogout += HandleLogout;
         }
 
         private void OnDestroy()
@@ -61,13 +64,17 @@ namespace TT.UI.Login
             // Remove event handlers
             if (_button)
                 _button.onClick.RemoveListener(OnButtonClick);
+            
+            // Stop listening for auth events
+            if (Helpers.Comms != null && Helpers.Comms.User != null)
+                Helpers.Comms.User.OnLogout -= HandleLogout;
         }
-        
+
         #endregion
-        
-        
+
+
         #region Event handlers
-        
+
         /// <summary>
         /// Called when the login button is clicked. Start the login process.
         /// </summary>
@@ -76,7 +83,17 @@ namespace TT.UI.Login
             // Request the sign in
             Helpers.Comms.User.LoginAsync(username.text, password.text).ConfigureAwait(false);
         }
-        
+
+        /// <summary>
+        /// Called when the user is logged out. Clear the form.
+        /// </summary>
+        private void HandleLogout()
+        {
+            // On logout clear the boxes to stop others logging in later
+            username.text = string.Empty;
+            password.text = string.Empty;
+        }
+
         #endregion
 
     }
