@@ -68,12 +68,6 @@ namespace TT.UI.MapEditor.MainMenu
             if (InputMapper.Current.GeneralInput.Load)
             {
                 // Handle load key combination
-                currentMapToggle.isOn = true;
-                HandleLoadButtonClick();
-            }
-            else if (InputMapper.Current.GeneralInput.LoadOther)
-            {
-                // Handle Load Other key combination
                 _window.Show();
             }
         }

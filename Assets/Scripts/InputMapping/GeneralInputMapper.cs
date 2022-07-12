@@ -34,8 +34,6 @@ namespace TT.InputMapping
         public bool SaveAs => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.S) && IsShiftDown();
 
         // Either Control held down and O pressed
-        public bool Load => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.O) && !IsShiftDown();
-
-        public bool LoadOther => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.O) && IsShiftDown();
+        public bool Load => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.L);
     }
 }
