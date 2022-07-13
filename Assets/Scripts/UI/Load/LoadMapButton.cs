@@ -25,6 +25,9 @@ using UnityEngine.UI;
 
 namespace TT.UI.Load
 {
+    /// <summary>
+    /// Attached to the Load button in the Load window. Loads the selected map when clicked.
+    /// </summary>
     [RequireComponent(typeof(Button))]
     [RequireComponent(typeof(ToggledButton))]
     public class LoadMapButton : MonoBehaviour

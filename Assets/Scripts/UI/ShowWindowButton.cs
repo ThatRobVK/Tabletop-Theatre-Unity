@@ -18,12 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DuloGames.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using DuloGames.UI;
 
 namespace TT.UI
 {
+    /// <summary>
+    /// Attached to a button. Shows a window when the button is clicked.
+    /// </summary>
     [RequireComponent(typeof(Button))]
     public class ShowWindowButton : MonoBehaviour
     {

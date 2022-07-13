@@ -28,9 +28,20 @@ using UnityEngine.UI;
 
 namespace TT.UI.Load
 {
+    /// <summary>
+    /// Attached to the map details panel in the load window. Shows the details when called.
+    /// </summary>
     public class MapListDetails : MonoBehaviour
     {
+        
+        #region Events
+        
         public event Action OnDelete;
+        
+        #endregion
+        
+        
+        #region Editor fields
         
         [SerializeField] private TMP_Text nameLabel;
         [SerializeField] private TMP_Text authorLabel;
@@ -38,39 +49,33 @@ namespace TT.UI.Load
         [SerializeField] private TMP_Text createDateLabel;
         [SerializeField] private TMP_Text saveDateLabel;
         [SerializeField] private Button deleteButton;
+        
+        #endregion
+        
+        
+        #region Private fields
 
         private string _id;
         private UIModalBox _deleteModal;
+        
+        #endregion
+        
+        
+        #region Lifecycle events
 
         private void Start()
         {
             deleteButton.onClick.AddListener(HandleButtonClick);
         }
         
-        public void ShowMapDetails(MapMetadata mapMetadata)
-        {
-            if (mapMetadata != null)
-            {
-                _id = mapMetadata.id;
-                nameLabel.text = mapMetadata.name;
-                authorLabel.text = $"By {mapMetadata.authorName}";
-                descriptionLabel.text = $"Description:\n{mapMetadata.description}";
-                createDateLabel.text = $"Created {Helpers.FormatShortDateString(mapMetadata.dateCreated)}";
-                saveDateLabel.text = $"Last saved {Helpers.FormatShortDateString(mapMetadata.dateSaved)}";
-                deleteButton.gameObject.SetActive(true);
-            }
-            else
-            {
-                _id = null;
-                nameLabel.text = string.Empty;
-                authorLabel.text = string.Empty;
-                descriptionLabel.text = string.Empty;
-                createDateLabel.text = string.Empty;
-                saveDateLabel.text = string.Empty;
-                deleteButton.gameObject.SetActive(false);
-            }
-        }
+        #endregion
 
+
+        #region Event handlers
+
+        /// <summary>
+        /// Called when the delete button is clicked. Confirm whether the user wants to delete the map.
+        /// </summary>
         private void HandleButtonClick()
         {
             if (Map.Current != null && Map.Current.Id.ToString().Equals(_id))
@@ -94,6 +99,9 @@ namespace TT.UI.Load
             _deleteModal.Show();
         }
 
+        /// <summary>
+        /// Called when the user confirms the delete prompt. Delete the map.
+        /// </summary>
         private async void HandleModalConfirm()
         {
             // Delete, if successful invoke the event and clear the details
@@ -103,5 +111,41 @@ namespace TT.UI.Load
                 ShowMapDetails(null);
             }
         }
+
+        #endregion
+
+        
+        #region Public methods
+        
+        /// <summary>
+        /// Shows the passed in map metadata, or clears the display if null is passed in.
+        /// </summary>
+        /// <param name="mapMetadata">Metadata about a map to show, or null to clear.</param>
+        public void ShowMapDetails(MapMetadata mapMetadata)
+        {
+            if (mapMetadata != null)
+            {
+                _id = mapMetadata.id;
+                nameLabel.text = mapMetadata.name;
+                authorLabel.text = $"By {mapMetadata.authorName}";
+                descriptionLabel.text = $"Description:\n{mapMetadata.description}";
+                createDateLabel.text = $"Created {Helpers.FormatShortDateString(mapMetadata.dateCreated)}";
+                saveDateLabel.text = $"Last saved {Helpers.FormatShortDateString(mapMetadata.dateSaved)}";
+                deleteButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                _id = null;
+                nameLabel.text = string.Empty;
+                authorLabel.text = string.Empty;
+                descriptionLabel.text = string.Empty;
+                createDateLabel.text = string.Empty;
+                saveDateLabel.text = string.Empty;
+                deleteButton.gameObject.SetActive(false);
+            }
+        }
+        
+        #endregion
+        
     }
 }

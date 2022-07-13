@@ -25,12 +25,32 @@ using UnityEngine;
 
 namespace TT.Shared.UserContent
 {
+    /// <summary>
+    /// A class used to serialize Vector3 and Vector4 objects, working around some serialization issues with Unity
+    /// built-in objects (self reference via the normalized field).
+    /// </summary>
     [Serializable]
-    public class Vector4Data
+    public class VectorData
     {
+        
+        /// <summary>
+        /// The X axis for this vector.
+        /// </summary>
         public float x;
+        
+        /// <summary>
+        /// The Y axis for this vector.
+        /// </summary>
         public float y;
+        
+        /// <summary>
+        /// The Z axis for this vector.
+        /// </summary>
         public float z;
+
+        /// <summary>
+        /// The W axis for this vector.
+        /// </summary>
         public float w;
 
         #region Constructors
@@ -38,7 +58,7 @@ namespace TT.Shared.UserContent
         /// <summary>
         /// Default constructor for deserialization.
         /// </summary>
-        public Vector4Data()
+        public VectorData()
         {}
         
         /// <summary>
@@ -48,7 +68,7 @@ namespace TT.Shared.UserContent
         /// <param name="y">The Y coordinate.</param>
         /// <param name="z">The Z coordinate.</param>
         /// <param name="w">The W coordinate.</param>
-        public Vector4Data(float x, float y, float z, float w)
+        public VectorData(float x, float y, float z, float w)
         {
             this.x = x;
             this.y = y;
@@ -60,16 +80,40 @@ namespace TT.Shared.UserContent
         /// Creates a new instance with values based on the passed in Vector4.
         /// </summary>
         /// <param name="vector">The vector to base the Vector4Data instance on.</param>
-        public Vector4Data(Vector4 vector)
+        public VectorData(Vector4 vector)
         {
             x = vector.x;
             y = vector.y;
             z = vector.z;
             w = vector.w;
         }
+
+        /// <summary>
+        /// Creates a new instance with values based on the passed in Vector4.
+        /// </summary>
+        /// <param name="vector">The vector to base the Vector4Data instance on.</param>
+        public VectorData(Vector3 vector)
+        {
+            x = vector.x;
+            y = vector.y;
+            z = vector.z;
+            w = 0;
+        }
         
         #endregion
 
+        
+        #region Public methods
+
+        /// <summary>
+        /// Converts this object to a Unity Vector3.
+        /// </summary>
+        /// <returns>A Vector3 with the same values as this data object.</returns>
+        public Vector3 ToVector3()
+        {
+            return new Vector3(x, y, z);
+        }
+        
         /// <summary>
         /// Converts this object to a Unity Vector4.
         /// </summary>
@@ -84,9 +128,9 @@ namespace TT.Shared.UserContent
         /// </summary>
         /// <param name="list">The list of Vectors to convert.</param>
         /// <returns>A list of data objects with the same values as the passed in vectors.</returns>
-        public static List<Vector4Data> FromVector4List(List<Vector4> list)
+        public static List<VectorData> FromVector4List(List<Vector4> list)
         {
-            return list.ConvertAll(x => new Vector4Data(x)).ToList();
+            return list.ConvertAll(x => new VectorData(x)).ToList();
         }
 
         /// <summary>
@@ -94,7 +138,7 @@ namespace TT.Shared.UserContent
         /// </summary>
         /// <param name="list">The list of data objects to convert.</param>
         /// <returns>A list of Vector4 objects with the same values as the passed in data objects.</returns>
-        public static List<Vector4> ToVector4List(List<Vector4Data> list)
+        public static List<Vector4> ToVector4List(List<VectorData> list)
         {
             return list.ConvertAll(x => x.ToVector4()).ToList();
         }
@@ -104,9 +148,9 @@ namespace TT.Shared.UserContent
         /// </summary>
         /// <param name="list">The list of Vectors to convert.</param>
         /// <returns>A list of data objects with the same values as the passed in vectors.</returns>
-        public static List<Vector4Data> FromVector3List(List<Vector3> list)
+        public static List<VectorData> FromVector3List(List<Vector3> list)
         {
-            return list.ConvertAll(x => new Vector4Data(x)).ToList();
+            return list.ConvertAll(x => new VectorData(x)).ToList();
         }
 
         /// <summary>
@@ -114,9 +158,12 @@ namespace TT.Shared.UserContent
         /// </summary>
         /// <param name="list">The list of data objects to convert.</param>
         /// <returns>A list of Vector4 objects with the same values as the passed in data objects.</returns>
-        public static List<Vector3> ToVector3List(List<Vector4Data> list)
+        public static List<Vector3> ToVector3List(List<VectorData> list)
         {
-            return list.ConvertAll(x => (Vector3)x.ToVector4()).ToList();
+            return list.ConvertAll(x => x.ToVector3()).ToList();
         }
+        
+        #endregion
+        
     }
 }

@@ -19,12 +19,18 @@
  */
 
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TT.Data
 {
+    /// <summary>
+    /// Exposes configurable settings. Attached to a GameObject in the scene and exposed by the Helpers class. There
+    /// should only ever be one of this in a scene or unexpected behaviour may result.
+    /// </summary>
     public class SettingsObject : MonoBehaviour
     {
+        /// <summary>
+        /// Settings related to the map editor.
+        /// </summary>
         public EditorSettings editorSettings;
     }
 }

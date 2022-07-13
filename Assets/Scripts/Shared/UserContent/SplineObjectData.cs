@@ -23,11 +23,25 @@ using System.Collections.Generic;
 
 namespace TT.Shared.UserContent
 {
+    /// <summary>
+    /// Data about an object that is based on a spline (e.g. road, river).
+    /// </summary>
     [Serializable]
     public class SplineObjectData : BaseObjectData
     {
+        /// <summary>
+        /// The Addressables address of the texture to use for the terrain under the spline.
+        /// </summary>
         public string primaryTerrainAddress;
+        
+        /// <summary>
+        /// The Addressables address of the texture to use for detailing around the spline.
+        /// </summary>
         public string secondaryTerrainAddress;
-        public List<Vector4Data> points = new List<Vector4Data>();
+        
+        /// <summary>
+        /// A list of points in world space along which the spline runs. This list must be in the correct order.
+        /// </summary>
+        public List<VectorData> points = new List<VectorData>();
     }
 }

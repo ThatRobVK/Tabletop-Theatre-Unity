@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 namespace TT.UI.MainMenu
 {
@@ -41,25 +41,28 @@ namespace TT.UI.MainMenu
 
         private void OnEnable()
         {
-            ShowText();
+            HandleLoginSuccess();
 
-            Helpers.Comms.User.OnLoginSuccess += ShowText;
+            Helpers.Comms.User.OnLoginSuccess += HandleLoginSuccess;
         }
 
         private void OnDisable()
         {
             if (Helpers.Comms != null && Helpers.Comms.User != null)
             {
-                Helpers.Comms.User.OnLoginSuccess -= ShowText;
+                Helpers.Comms.User.OnLoginSuccess -= HandleLoginSuccess;
             }
         }
         
         #endregion
         
         
-        #region Private methods
+        #region Event handlers
 
-        private void ShowText()
+        /// <summary>
+        /// Called when the user successfully logs in.
+        /// </summary>
+        private void HandleLoginSuccess()
         {
             var user = Helpers.Comms.User;
             usernameLabel.text = user.Username;

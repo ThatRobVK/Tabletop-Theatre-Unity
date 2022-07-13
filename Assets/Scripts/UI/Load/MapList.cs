@@ -28,7 +28,7 @@ using UnityEngine.UI;
 namespace TT.UI.Load
 {
     /// <summary>
-    /// Attached to a list of maps for loading.
+    /// Attached to a list of maps. Populates the list when the parent window opens.
     /// </summary>
     [RequireComponent(typeof(ScrollRect))]
     [RequireComponent(typeof(ToggleGroup))]

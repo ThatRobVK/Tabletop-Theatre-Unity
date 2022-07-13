@@ -26,6 +26,9 @@ using UnityEngine.UI;
 
 namespace TT.UI.Load
 {
+    /// <summary>
+    /// Attached to an item representing a single map in the MapList.
+    /// </summary>
     [RequireComponent(typeof(Toggle))]
     public class MapListItem : MonoBehaviour
     {

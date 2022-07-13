@@ -20,29 +20,50 @@
 
 using System;
 using System.Linq;
-using DuloGames.UI;
-using TT.Data;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DuloGames.UI;
+using TT.Data;
 
 namespace TT.UI.MainMenu
 {
+    /// <summary>
+    /// Attached to the button on the New Map window in the main menu.
+    /// </summary>
     [RequireComponent(typeof(Button))]
     public class NewMapButton : MonoBehaviour
     {
+        
+        #region Editor fields
+        
         [SerializeField] private Textbox nameTextbox;
         [SerializeField] private Textbox descriptionTextbox;
         [SerializeField] private UISelectField terrainDropdown;
         
+        #endregion
+        
+        
+        #region Private fields
+        
         private Button _button;
         private UIModalBox _savingModal;
+        
+        #endregion
+        
+        
+        #region Lifecycle events
 
         private void Start()
         {
             _button = GetComponent<Button>();
             _button.onClick.AddListener(HandleButtonClicked);
         }
+        
+        #endregion
+        
+        
+        #region Event handlers
 
         /// <summary>
         /// Called when the attached button is clicked. Create a new map and load the map editor scene.
@@ -58,16 +79,24 @@ namespace TT.UI.MainMenu
                 _savingModal.SetText2("The name you have specified is already in use for another map. You can have multiple maps with the same name, but you are recommended to use a unique name to avoid confusion.");
                 _savingModal.SetConfirmButtonText("Continue anyway");
                 _savingModal.SetCancelButtonText("Cancel");
-                _savingModal.onConfirm.AddListener(DoNewMap);
+                _savingModal.onConfirm.AddListener(LoadNewMap);
                 _savingModal.Show();
             }
             else
             {
-                DoNewMap();
+                LoadNewMap();
             }
         }
 
-        private void DoNewMap()
+        #endregion
+        
+        
+        #region Private methods
+        
+        /// <summary>
+        /// Creates a new map and loads the map editor scene.
+        /// </summary>
+        private void LoadNewMap()
         {
             var selectedTerrain = terrainDropdown.options[terrainDropdown.selectedOptionIndex];
             var terrainLayer = Content.Current.Combined.TerrainLayers.FirstOrDefault(x => x.Name == selectedTerrain);
@@ -77,5 +106,8 @@ namespace TT.UI.MainMenu
 
             SceneManager.LoadScene("MapEditor", LoadSceneMode.Single);
         }
+        
+        #endregion
+        
     }
 }

@@ -28,6 +28,10 @@ using TT.Shared.UserContent;
 
 namespace TT.Data
 {
+    /// <summary>
+    /// Properties describing the current map and static and instance methods for dealing with maps, such as loading,
+    /// saving and rendering the loaded map.
+    /// </summary>
     public class Map
     {
         #region Events
@@ -60,12 +64,20 @@ namespace TT.Data
         /// <summary>
         /// A user-defined name for the map.
         /// </summary>
-        public string Name { get => _mapData.metadata.name; set => _mapData.metadata.name = value; }
+        public string Name
+        {
+            get => _mapData.metadata.name;
+            set => _mapData.metadata.name = value;
+        }
 
         /// <summary>
         /// A user-defined description for the map.
         /// </summary>
-        public string Description { get => _mapData.metadata.description; set => _mapData.metadata.description = value; }
+        public string Description
+        {
+            get => _mapData.metadata.description;
+            set => _mapData.metadata.description = value;
+        }
 
         /// <summary>
         /// The user who originally created the map.
@@ -86,7 +98,7 @@ namespace TT.Data
         /// The date and time on which this map was last saved.
         /// </summary>
         public DateTime DateSaved => DateTime.FromFileTimeUtc(_mapData.metadata.dateSaved);
-        
+
         /// <summary>
         /// The date and time when the map was last loaded.
         /// </summary>
@@ -126,8 +138,10 @@ namespace TT.Data
         /// <summary>
         /// Creates a new map and sets it to the current map.
         /// </summary>
-        /// <param name="name">A user defined name for the map. This can be null and set later through the Name property.</param>
-        /// <param name="description">A user defined description for the map. This can be null and set later through the Description property.</param>
+        /// <param name="name">A user defined name for the map. This can be null and set later through the Name
+        ///     property.</param>
+        /// <param name="description">A user defined description for the map. This can be null and set later through
+        ///     the Description property.</param>
         /// <param name="terrainId">The addressable ID of the texture to load as the base terrain layer.</param>
         /// <remarks>This method requires that the user is logged in.</remarks>
         public static void New(string name, string description, string terrainId)
@@ -161,14 +175,15 @@ namespace TT.Data
                 mapData.terrainTextureAddress = terrainId;
                 mapData.terrain = new Shared.UserContent.TerrainData
                 {
-                    splatMaps = new List<Vector4Data>(),
+                    splatMaps = new List<VectorData>(),
                     splatHeight = 1,
                     splatWidth = 1,
-                    terrainLayers = new List<string> { terrainId }
+                    terrainLayers = new List<string> {terrainId}
                 };
             }
+
             Current = new Map(mapData);
-            
+
             // Set the load date time
             Current.DateLoaded = DateTime.Now;
         }
@@ -178,18 +193,18 @@ namespace TT.Data
         /// asynchronous and will raise the OnMapLoaded event when completed.
         /// </summary>
         /// <param name="mapId">The ID of the map to load. This can be found in the list returned by the GetMapIndex
-        /// method.</param>
+        ///     method.</param>
         /// <returns>A boolean value indicating whether the load was successful.</returns>
         /// <remarks>The loaded map is set as the static Current property from where it can be accessed.</remarks>
-        public static async Task<bool> Load(string mapId)
+        public static async Task Load(string mapId)
         {
             if (!Helpers.Comms.User.IsLoggedIn)
             {
                 Debug.LogError("Map :: New :: User not logged in. Unable to create new map.");
                 Current = null;
-                return false;
+                return;
             }
-            
+
             try
             {
                 var mapData = await Helpers.Comms.UserContent.LoadMap(mapId);
@@ -203,16 +218,19 @@ namespace TT.Data
                 Current.DateLoaded = DateTime.Now;
 
                 OnMapLoaded?.Invoke(true);
-                return true;
+                return;
             }
             catch (Exception e)
             {
                 Debug.LogWarningFormat("Map :: Load :: Failed to load map. {0} : {1}", e.GetType().FullName, e.Message);
                 OnMapLoaded?.Invoke(false);
-                return false;
+                return;
             }
         }
 
+        /// <summary>
+        /// Renders the currently loaded map onto the game terrain.
+        /// </summary>
         public async Task Render()
         {
             if (_mapData == null)
@@ -236,32 +254,26 @@ namespace TT.Data
 
                 foreach (var x in _mapData.splineObjects.Where(x =>
                              (WorldObjectType) x.objectType == WorldObjectType.River))
-                {
                     // Load rivers before roads as they create more terrain height variations
                     await WorldObjectFactory.CreateFromMapObject(x);
-                }
 
                 foreach (var x in _mapData.splineObjects.Where(x =>
                              (WorldObjectType) x.objectType == WorldObjectType.Road))
-                {
                     // Load roads after rivers so they correctly adapt to the carved terrain
                     await WorldObjectFactory.CreateFromMapObject(x);
-                }
 
                 foreach (var x in _mapData.scatterAreas) await WorldObjectFactory.CreateFromMapObject(x);
 
                 if (_mapData.terrain.splatMaps.Count > 0)
-                {
                     // Load splat maps if any are present (only present when terrain has been painted)
                     GameTerrain.Current.LoadSplatMaps(_mapData.terrain.splatWidth, _mapData.terrain.splatHeight,
                         _mapData.terrain.splatMaps);
-                }
             }
             catch (Exception e)
             {
                 Debug.LogErrorFormat("Map :: Render :: Error rendering: {0}: {1}", e.GetType().FullName, e);
             }
-            
+
             OnMapRendered?.Invoke();
         }
 
@@ -307,20 +319,20 @@ namespace TT.Data
         /// </summary>
         /// <param name="newName">A name for the new map.</param>
         /// <returns>A boolean value indicating whether the save was successful.</returns>
-        public async Task<bool> SaveCopy(string newName)
+        public async Task SaveCopy(string newName)
         {
             // Generate new ID so this is treated as a new map
             _mapData.metadata.id = Guid.NewGuid().ToString();
-            
+
             // Set the new name
             _mapData.metadata.name = newName;
-            
+
             // Set other map properties
             _mapData.metadata.dateCreated = DateTime.Now.ToFileTimeUtc();
             _mapData.metadata.modifiedById = Helpers.Comms.User.Id;
             _mapData.metadata.modifiedByName = Helpers.Comms.User.Username;
 
-            return await Save();
+            await Save();
         }
 
         /// <summary>

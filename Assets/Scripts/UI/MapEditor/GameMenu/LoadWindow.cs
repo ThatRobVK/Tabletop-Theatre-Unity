@@ -29,8 +29,11 @@ using TT.UI.Load;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TT.UI.MapEditor.MainMenu
+namespace TT.UI.MapEditor.GameMenu
 {
+    /// <summary>
+    /// Attached to the Load window in the map editor. 
+    /// </summary>
     [RequireComponent(typeof(UIWindow))]
     public class LoadWindow : MonoBehaviour
     {

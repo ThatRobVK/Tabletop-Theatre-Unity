@@ -18,13 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 using TT.Data;
@@ -37,11 +33,25 @@ using Object = UnityEngine.Object;
 
 namespace TT
 {
+    /// <summary>
+    /// Methods and properties that are used in many places.
+    /// </summary>
     public static class Helpers
     {
+        
+        #region Private fields
+        
+        private static Camera _mainCamera;
+        private static SettingsObject _settings;
+        private static CommsObject _comms;
+        private static readonly List<AsyncOperationHandle> AsyncOperationHandles = new List<AsyncOperationHandle>();
+
+
+        #endregion
+
+
         #region Public properties
 
-        private static Camera _mainCamera;
         /// <summary>
         /// The first camera in the scene.
         /// </summary>
@@ -54,7 +64,6 @@ namespace TT
             }
         }
 
-        private static SettingsObject _settings;
         /// <summary>
         /// The settings to be applied to the current game.
         /// </summary>
@@ -67,7 +76,6 @@ namespace TT
             }
         }
 
-        private static CommsObject _comms;
         /// <summary>
         /// Library for communicating with the outside world.
         /// </summary>
@@ -80,26 +88,67 @@ namespace TT
             }
         }
 
-        // Layers
-        public static int IgnoreRaycastLayer { get => LayerMask.NameToLayer("Ignore Raycast"); }
-        public static int TraversableLayer { get => LayerMask.NameToLayer("Traversable"); }
-        public static int ImpassableLayer { get => LayerMask.NameToLayer("Impassable"); }
-        public static int WaterLayer { get => LayerMask.NameToLayer("Water"); }
+        /// <summary>
+        /// The layer IgnoreRaycast.
+        /// </summary>
+        public static int IgnoreRaycastLayer => LayerMask.NameToLayer("Ignore Raycast");
+        /// <summary>
+        /// The layer Traversable.
+        /// </summary>
+        public static int TraversableLayer => LayerMask.NameToLayer("Traversable");
+        /// <summary>
+        /// The layer Impassable.
+        /// </summary>
+        public static int ImpassableLayer => LayerMask.NameToLayer("Impassable");
+        /// <summary>
+        /// The layer Water.
+        /// </summary>
+        public static int WaterLayer => LayerMask.NameToLayer("Water");
 
-        // Layer masks
-        public static int TerrainMask { get => LayerMask.GetMask("Terrain"); }
-        public static int WaterMask { get => LayerMask.GetMask("Water"); }
-        public static int TerrainAndWaterMask { get => LayerMask.GetMask(new string[] { "Terrain", "Water" }); }
-        public static int StackableMask { get => LayerMask.GetMask(new string[] { "Terrain", "Impassable" }); }
-        public static int ImpassableMask { get => LayerMask.GetMask(new string[] { "Water", "Impassable" }); }
-        public static int TraversableMask { get => LayerMask.GetMask(new string[] { "Terrain", "Traversable" }); }
-        public static int SelectableMask { get => LayerMask.GetMask(new string[] { "Impassable", "Traversable" }); }
 
-        // Player Prefs keys
+        /// <summary>
+        /// A layer mask for the Terrain.
+        /// </summary>
+        public static int TerrainMask => LayerMask.GetMask("Terrain");
+        /// <summary>
+        /// A layer mask for Water.
+        /// </summary>
+        public static int WaterMask => LayerMask.GetMask("Water");
+        /// <summary>
+        /// A layer mask for Terrain and Water.
+        /// </summary>
+        public static int TerrainAndWaterMask => LayerMask.GetMask("Terrain", "Water");
+        /// <summary>
+        /// A layer mask for objects that are stackable.
+        /// </summary>
+        public static int StackableMask => LayerMask.GetMask("Terrain", "Impassable");
+        /// <summary>
+        /// A layer mask for areas that are impassable.
+        /// </summary>
+        public static int ImpassableMask => LayerMask.GetMask("Water", "Impassable");
+        /// <summary>
+        /// A layer mask for areas that are traversable.
+        /// </summary>
+        public static int TraversableMask => LayerMask.GetMask("Terrain", "Traversable");
+        /// <summary>
+        /// A layer mask for objects that are selectable.
+        /// </summary>
+        public static int SelectableMask => LayerMask.GetMask("Impassable", "Traversable");
+
+
+        /// <summary>
+        /// The PlayerPrefs key used to store the signed in user's e-mail address.
+        /// </summary>
         public const string PrefsEmailKey = "Email";
+        /// <summary>
+        /// The PlayerPrefs key used to store the user's auth refresh token.
+        /// </summary>
         public const string PrefsRefreshTokenKey = "Refresh";
+        /// <summary>
+        /// The PlayerPrefs key used to store whether the user wanted their auth to be remembered.
+        /// </summary>
         public const string PrefsRememberMeKey = "RememberMe";
-        
+
         #endregion
 
 
@@ -115,7 +164,8 @@ namespace TT
             if (raycastLayerMask == -1) raycastLayerMask = TerrainMask;
 
             // If the ray doesn't hit anything, return nothing
-            if (!Physics.Raycast(MainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, raycastLayerMask))
+            if (!Physics.Raycast(MainCamera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity,
+                    raycastLayerMask))
                 return new Vector3();
 
             // Return the hit point
@@ -129,34 +179,40 @@ namespace TT
         /// <returns>A Vector3 containing coordinates in world space where the mouse position raycast hit.</returns>
         public static Vector3 GetWorldPointFromMouse(float elevation)
         {
-            Plane plane = new Plane(Vector3.up, new Vector3(0, elevation, 0));
+            var plane = new Plane(Vector3.up, new Vector3(0, elevation, 0));
             var ray = MainCamera.ScreenPointToRay(Input.mousePosition);
-            plane.Raycast(ray, out float enter);
+            plane.Raycast(ray, out var enter);
             return ray.GetPoint(enter);
         }
 
 
         /// <summary>
-        /// Gets the preferred object of the right type at the mouse position. If no types are specified, all types are returned.
+        /// Gets the preferred object of the right type at the mouse position. If no types are specified, all types are
+        /// returned.
         /// </summary>
-        /// <param name="types">A list of types to return. If null or an empty list is specified, this returns any type.</param>
+        /// <param name="types">A list of types to return. If null or an empty list is specified, this returns any
+        ///     type.</param>
         /// <param name="raycastLayerMask">The layer mask of objects to hit.</param>
-        /// <param name="returnRoot">If true the root object is returned. If false the object that was hit is returned, which could for example be a handle, or a sub-component of an object.</param>
-        /// <returns>The object under the cursor, in the order of a drag handle on the current object, the currently selected object, an object of a WorldObjectType in types, in that order.</returns>
-        public static GameObject GetObjectAtMouse(List<WorldObjectType> types, int raycastLayerMask = 1, bool returnRoot = true)
+        /// <param name="returnRoot">If true the root object is returned. If false the object that was hit is returned,
+        ///     which could for example be a handle, or a sub-component of an object.</param>
+        /// <returns>The object under the cursor, in the order of a drag handle on the current object, the currently
+        ///     selected object, an object of a WorldObjectType in types, in that order.</returns>
+        public static GameObject GetObjectAtMouse(List<WorldObjectType> types, int raycastLayerMask = 1,
+            bool returnRoot = true)
         {
             // Get all objects at the pointer
-            var hits = Physics.RaycastAll(MainCamera.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, raycastLayerMask);
+            var hits = Physics.RaycastAll(MainCamera.ScreenPointToRay(Input.mousePosition), 
+                Mathf.Infinity, raycastLayerMask);
             GameObject newObjectHit = null;
             GameObject dragHandleHit = null;
             GameObject currentObjectHit = null;
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.Append($"Raycasting for [{string.Join(",", types)}] with mask [{raycastLayerMask}]\n");
             builder.Append(string.Format("Hit {0} objects\n", hits.Length));
             foreach (var hit in hits)
             {
                 // Try to get a WorldObjectBase from the object we've hit
-                WorldObjectBase worldObjectHit = hit.collider.transform.root.gameObject.GetComponent<WorldObjectBase>();
+                var worldObjectHit = hit.collider.transform.root.gameObject.GetComponent<WorldObjectBase>();
 
                 builder.Append(string.Format("Hit {0} ", hit.collider.gameObject.name));
                 if (types.Count > 0 && !types.Contains(worldObjectHit.Type))
@@ -166,7 +222,9 @@ namespace TT
                     continue;
                 }
 
-                if ((hit.collider.transform.GetComponentInParent<DraggableObject>() || hit.collider.transform.GetComponent<DraggableObject>()) && worldObjectHit == WorldObjectBase.Current)
+                if ((hit.collider.transform.GetComponentInParent<DraggableObject>() ||
+                     hit.collider.transform.GetComponent<DraggableObject>()) &&
+                    worldObjectHit == WorldObjectBase.Current)
                 {
                     builder.Append("which is draggable and on the currently selected object.\n");
                     // If the object is draggable, pick it over others
@@ -191,7 +249,8 @@ namespace TT
             }
 
             // Priority = 1. Drag handle / 2. Current object / 3. New object
-            GameObject chosenObject = dragHandleHit != null ? dragHandleHit : currentObjectHit != null ? currentObjectHit : newObjectHit;
+            var chosenObject = dragHandleHit != null ? dragHandleHit :
+                currentObjectHit != null ? currentObjectHit : newObjectHit;
             if (chosenObject != null)
             {
                 builder.Append(string.Format("Returning {0} as the chosen object.", chosenObject.name));
@@ -210,24 +269,20 @@ namespace TT
         public static bool IsPointerOverUIElement()
         {
             // Raycast to the mouse position based on the event system
-            PointerEventData eventData = new PointerEventData(EventSystem.current)
+            var eventData = new PointerEventData(EventSystem.current)
             {
                 position = Input.mousePosition
             };
-            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            var raycastResults = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, raycastResults);
 
             // UI layer to check
             var uiLayer = LayerMask.NameToLayer("UI");
 
             foreach (var raycastResult in raycastResults)
-            {
                 if (raycastResult.gameObject.layer == uiLayer)
-                {
                     // If the result is on a UI layer
                     return true;
-                }
-            }
             // No hits on the UI
             return false;
         }
@@ -236,8 +291,6 @@ namespace TT
 
 
         #region Addressables
-
-        private static readonly List<AsyncOperationHandle> AsyncOperationHandles = new List<AsyncOperationHandle>();
 
         /// <summary>
         /// Initialises the Addressables system to speed up asset loading once required.
@@ -256,13 +309,15 @@ namespace TT
         public static async Task<IList<T>> LoadAddressables<T>(string[] addresses)
         {
             // Get resource locators for all items in the array
-            var locatorsHandle = Addressables.LoadResourceLocationsAsync((IEnumerable<string>)addresses, Addressables.MergeMode.Union, typeof(T));
+            var locatorsHandle = Addressables.LoadResourceLocationsAsync((IEnumerable<string>) addresses,
+                Addressables.MergeMode.Union, typeof(T));
             await locatorsHandle.Task;
             var locators = locatorsHandle.Result;
 
             if (locators.Count == 0)
             {
-                Debug.LogErrorFormat("Helpers :: LoadAddressables :: No addressable found for ['{0}']", string.Join("', '", addresses));
+                Debug.LogErrorFormat("Helpers :: LoadAddressables :: No addressable found for ['{0}']",
+                    string.Join("', '", addresses));
                 return null;
             }
 
@@ -282,7 +337,8 @@ namespace TT
         /// Instantiates a GameObject from Addressables and returns it.
         /// </summary>
         /// <param name="address">The address of the prefab to instantiate.</param>
-        /// <returns>A GameObject instance of the prefab at the given address, or null if no prefab exists at the given address.</returns>
+        /// <returns>A GameObject instance of the prefab at the given address, or null if no prefab exists at the given
+        /// address.</returns>
         public static async Task<GameObject> InstantiateAddressable(string address)
         {
             var objectHandle = Addressables.InstantiateAsync(address);
@@ -300,14 +356,13 @@ namespace TT
         /// <summary>
         /// Releases all async operation handles used for loading addressables.
         /// </summary>
-        /// <remarks>DO NOT call this until all the addressables have been released, or this may destroy objects used by said addressables.</remarks>
+        /// <remarks>DO NOT call this until all the addressables have been released, or this may destroy objects used
+        /// by said addressables.</remarks>
         public static void ReleaseHandles()
         {
             if (AsyncOperationHandles != null && AsyncOperationHandles.Count > 0)
-            {
                 // Tell Addressables to release every handle
                 AsyncOperationHandles.ForEach(x => Addressables.Release(x));
-            }
         }
 
         #endregion
@@ -316,7 +371,8 @@ namespace TT
         #region UI
 
         /// <summary>
-        /// Finds an available button in the collection. When none are found, a new one is instantiated, added to the collection and returned.
+        /// Finds an available button in the collection. When none are found, a new one is instantiated, added to the
+        /// collection and returned.
         /// </summary>
         /// <typeparam name="T">Any object that is a UnityEngine.MonoBehaviour.</typeparam>
         /// <param name="prefab">The prefab to instantiate if no available buttons are found.</param>
@@ -325,13 +381,9 @@ namespace TT
         /// <returns>A button of type T that is available for use.</returns>
         public static T GetAvailableButton<T>(T prefab, List<T> collection, Transform inactiveUIElementParent)
         {
-            for (int i = 0; i < collection.Count; i++)
-            {
+            for (var i = 0; i < collection.Count; i++)
                 if ((collection[i] as MonoBehaviour)?.transform.parent == inactiveUIElementParent)
-                {
                     return collection[i];
-                }
-            }
 
             var genericPrefab = prefab as MonoBehaviour;
             var genericButton = Object.Instantiate(genericPrefab);
@@ -379,37 +431,11 @@ namespace TT
             if (!obj.CompareTag("DoNotChangeLayer")) obj.layer = targetLayer;
 
             foreach (Transform child in obj.transform)
-            {
-                if (child != null && !child.CompareTag("DoNotChangeLayer")) SetLayerRecursive(child.gameObject, targetLayer);
-            }
+                if (child != null && !child.CompareTag("DoNotChangeLayer"))
+                    SetLayerRecursive(child.gameObject, targetLayer);
         }
-
 
         #endregion
 
-
-        #region Data
-
-        public static byte[] Compress(string text)
-        {
-            using var outStream = new MemoryStream();
-            using (var tinyStream = new GZipStream(outStream, CompressionMode.Compress))
-            using (var mStream = new MemoryStream(Encoding.UTF8.GetBytes(text)))
-                mStream.CopyTo(tinyStream);
-
-            return outStream.ToArray();
-        }
-
-        public static string Decompress(byte[] bytes)
-        {
-            using var inStream = new MemoryStream(bytes);
-            using var bigStream = new GZipStream(inStream, CompressionMode.Decompress);
-            using var bigStreamOut = new MemoryStream();
-                bigStream.CopyTo(bigStreamOut);
-
-            return Encoding.UTF8.GetString(bigStreamOut.ToArray());
-        }
-        #endregion
-        
     }
 }

@@ -19,30 +19,67 @@
  */
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace TT.UI.MapEditor.MainMenu
+namespace TT.UI.MapEditor.GameMenu
 {
+    /// <summary>
+    /// Attached to the Exit button. Returns the user to the main menu when clicked.
+    /// </summary>
     [RequireComponent(typeof(Button))]
-    public class Quit : MonoBehaviour
+    public class ExitToMenu : MonoBehaviour
     {
+        
+        #region Editor fields
+        
+        [FormerlySerializedAs("MainMenuSceneName")] public string mainMenuSceneName = "MainMenu";
+        
+        #endregion
+        
+        
+        #region Lifecycle events
+
         void OnEnable()
         {
+            // Handle button clicks
             GetComponent<Button>().onClick.AddListener(HandleClick);
         }
 
         void OnDisable()
         {
+            // Remove event handler
             GetComponent<Button>().onClick.RemoveListener(HandleClick);
         }
+        
+        #endregion
+        
+        
+        #region Public methods
 
+        /// <summary>
+        /// Exits to the main menu scene.
+        /// </summary>
+        public void Exit()
+        {
+            HandleClick();
+        }
+        
+        #endregion
+        
+        
+        #region Private methods
+
+        /// <summary>
+        /// Called when the button is clicked. Return to main menu scene.
+        /// </summary>
         private void HandleClick()
         {
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-            #else
-            Application.Quit();
-            #endif
+            SceneManager.LoadScene(mainMenuSceneName, LoadSceneMode.Single);
         }
+        
+        #endregion
+        
     }
 }

@@ -25,7 +25,7 @@ using TMPro;
 using DuloGames.UI;
 using TT.CommsLib;
 using TT.Shared;
-using TT.UI.MapEditor.MainMenu;
+using TT.UI.MapEditor.GameMenu;
 
 namespace TT.UI.Login
 {

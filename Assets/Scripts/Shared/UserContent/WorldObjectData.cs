@@ -22,10 +22,20 @@ using System;
 
 namespace TT.Shared.UserContent
 {
+    /// <summary>
+    /// Data about a general object placed in the world.
+    /// </summary>
     [Serializable]
     public class WorldObjectData : BaseObjectData
     {
+        /// <summary>
+        /// For objects that can be opened, their current state, true for open, false for closed.
+        /// </summary>
         public bool openCloseState;
+        
+        /// <summary>
+        /// Whether the object should snap to the highest surface underneath, or stay at the same elevation when moved.
+        /// </summary>
         public bool automaticElevation;
     }
 }

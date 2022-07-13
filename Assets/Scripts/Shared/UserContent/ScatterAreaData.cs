@@ -23,10 +23,20 @@ using System.Collections.Generic;
 
 namespace TT.Shared.UserContent
 {
+    /// <summary>
+    /// Data about a scatter area and the objects within it.
+    /// </summary>
     [Serializable]
     public class ScatterAreaData : BaseObjectData
     {
-        public List<Vector4Data> points = new List<Vector4Data>();
+        /// <summary>
+        /// A list of world points that are the vertices of the area.
+        /// </summary>
+        public List<VectorData> points = new List<VectorData>();
+        
+        /// <summary>
+        /// A list of objects within the scatter area.
+        /// </summary>
         public List<ScatterObjectData> scatterInstances = new List<ScatterObjectData>();
     }
 }

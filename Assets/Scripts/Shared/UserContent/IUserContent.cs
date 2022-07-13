@@ -23,6 +23,9 @@ using System.Threading.Tasks;
 
 namespace TT.Shared.UserContent
 {
+    /// <summary>
+    /// Interface exposing methods for interacting with user generated content, e.g. saving and loading maps.
+    /// </summary>
     public interface IUserContent
     {
         /// <summary>

@@ -29,13 +29,18 @@ using UnityEngine;
 
 namespace TT.MapEditor
 {
+    /// <summary>
+    /// Manages undo and redo actions.
+    /// </summary>
     public class UndoController : MonoBehaviour
     {
+        //TODO: Refactor this class to use the command pattern - this is getting unwieldy now. Issue #16
+        
         #region Private fields
 
+        private const int MAX_ACTION_NUM = 100;
         private static readonly List<UndoAction> UndoActions = new List<UndoAction>();
         private static readonly List<UndoAction> RedoActions = new List<UndoAction>();
-        private static readonly int MaxActionNum = 100;
 
         #endregion
         
@@ -92,9 +97,9 @@ namespace TT.MapEditor
             // Add object, remove any items over the limit from the start of the list
             Debug.LogFormat("UndoController :: RegisterAction :: Registering undo action {0} on object {1} with value {2}", action.ToString(), objectId, (value != null) ? value.ToString() : "null");
             UndoActions.Add(new UndoAction() { Action = action, ObjectId = objectId, Value = value });
-            while (UndoActions.Count > MaxActionNum)
+            while (UndoActions.Count > MAX_ACTION_NUM)
             {
-                Debug.LogFormat("UndoController :: RegisterAction :: List count {0} is over limit {1}, removing an item.", UndoActions.Count, MaxActionNum);
+                Debug.LogFormat("UndoController :: RegisterAction :: List count {0} is over limit {1}, removing an item.", UndoActions.Count, MAX_ACTION_NUM);
                 UndoActions.RemoveAt(0);
             }
 
@@ -105,7 +110,7 @@ namespace TT.MapEditor
             NumChangesSinceLastSave++;
         }
 
-        public static void RegisterRedoAction(ActionType action, Guid objectId, object value)
+        private static void RegisterRedoAction(ActionType action, Guid objectId, object value)
         {
             Debug.LogFormat("UndoController :: RegisterRedoAction :: Registering redo action {0} on object {1} with value {2}", action.ToString(), objectId, (value != null) ? value.ToString() : "null");
             RedoActions.Add(new UndoAction() { Action = action, ObjectId = objectId, Value = value });
@@ -114,7 +119,7 @@ namespace TT.MapEditor
         /// <summary>
         /// Performs an undo the last performed action.
         /// </summary>
-        public static async void Undo()
+        private static async void Undo()
         {
             if (UndoActions.Count == 0) return;
 
@@ -287,12 +292,12 @@ namespace TT.MapEditor
         /// <summary>
         /// Re-applies the last action that was undone.
         /// </summary>
-        public static async void Redo()
+        private static async void Redo()
         {
             if (RedoActions.Count == 0) return;
 
             var redoIndex = RedoActions.Count - 1;
-            var worldObject = WorldObjectBase.All.Where(x => x.ObjectId.Equals(RedoActions[redoIndex].ObjectId)).FirstOrDefault();
+            var worldObject = WorldObjectBase.All.FirstOrDefault(x => x.ObjectId.Equals(RedoActions[redoIndex].ObjectId));
 
             if (worldObject)
             {

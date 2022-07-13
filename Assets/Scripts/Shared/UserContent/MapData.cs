@@ -20,22 +20,64 @@
 
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace TT.Shared.UserContent
 {
+    /// <summary>
+    /// Metadata about a map for saving and loading. This class is used as the root of the map, containing collections
+    /// of data classes representing objects on the map.
+    /// </summary>
     [Serializable]
     public class MapData
     {
+        /// <summary>
+        /// Metadata about the map itself.
+        /// </summary>
         public MapMetadata metadata;
+        
+        /// <summary>
+        /// The Addressables address of the default texture to be loaded on the game terrain.
+        /// </summary>
         public string terrainTextureAddress;
+        
+        /// <summary>
+        /// The time of day the map defaults to when loaded.
+        /// </summary>
         public float time = 12;
+        
+        /// <summary>
+        /// The wind speed.
+        /// </summary>
         public float wind = 0.1f;
+        
+        /// <summary>
+        /// The wind direction, expressed as a rotation.
+        /// </summary>
         public float windDirection;
+        
+        /// <summary>
+        /// An integer representation of the LightingMode enum value used by the map.
+        /// </summary>
         public int lightingMode;
+        
+        /// <summary>
+        /// Information about the game terrain.
+        /// </summary>
         public TerrainData terrain;
+        
+        /// <summary>
+        /// A list of general world objects populating the map.
+        /// </summary>
         public List<WorldObjectData> worldObjects = new List<WorldObjectData>();
+        
+        /// <summary>
+        /// A list of objects based around splines on the map (roads, rivers).
+        /// </summary>
         public List<SplineObjectData> splineObjects = new List<SplineObjectData>();
+        
+        /// <summary>
+        /// A list of scatter areas on the map.
+        /// </summary>
         public List<ScatterAreaData> scatterAreas = new List<ScatterAreaData>();
     }
 }

@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -28,7 +26,11 @@ using UnityEngine;
 
 namespace TT.Data
 {
-    
+    /// <summary>
+    /// The root class through which game content is accessed. Use the Current static singleton property to interact
+    /// with the loaded content. Note this property may be null before the content is loaded. The OnContentChanged
+    /// event can be used to be notified of changes to the loaded content (including the initial load).
+    /// </summary>
     public class Content
     {
         #region Events
@@ -44,12 +46,14 @@ namespace TT.Data
         #region Public properties
 
         /// <summary>
-        /// All packs that were loaded from the content file. This may include packs that were not selected for the editor.
+        /// All packs that were loaded from the content file. This may include packs that were not selected for the
+        /// editor.
         /// </summary>
-        public ContentPack[] Packs = new ContentPack[] { };
+        public ContentPack[] Packs = { };
 
         /// <summary>
-        /// A pack that represents the combination of all selected packs. This can be used to access the content that should be displayed to the user.
+        /// A pack that represents the combination of all selected packs. This can be used to access the content that
+        /// should be displayed to the user.
         /// </summary>
         public ContentPack Combined = new ContentPack();
 
@@ -96,38 +100,17 @@ namespace TT.Data
                 ContentLoaded = false;
             }
         }
-        
-        /// <summary>
-        /// Loads the given JSON string into a Content object.
-        /// </summary>
-        /// <param name="json">The JSON to load.</param>
-        public static void Load(string json)
-        {
-            try
-            {
-                Current = JsonConvert.DeserializeObject<Content>(json);
-
-                SetDerivedValues();
-                CombinePacks();
-
-                ContentLoaded = true;
-                OnContentChanged?.Invoke();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogErrorFormat("Failed to load content. Exception [{0}] with message [{1}]", ex.GetType(), ex.Message);
-            }
-        }
 
         /// <summary>
-        /// Finds the ContentItem with the specified ID of the specified type, and returns it. If no item is found, null is returned.
+        /// Finds the ContentItem with the specified ID of the specified type, and returns it. If no item is found,
+        /// null is returned.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="id"></param>
         /// <returns>A ContentItem if found, otherwise null.</returns>
         public static ContentItem GetContentItemById(WorldObjectType type, string id)
         {
-            ContentItemCategory[] categories = GetCategoryByType(type);
+            var categories = GetCategoryByType(type);
 
             if (categories.Length > 0)
             {
@@ -141,15 +124,9 @@ namespace TT.Data
             {
                 var items = GetItemsByType(type);
                 foreach (var item in items)
-                {
-                    foreach (var itemId in item.IDs)
-                    {
-                        if (itemId.Equals(id))
-                        {
-                            return item;
-                        }
-                    }
-                }
+                foreach (var itemId in item.IDs)
+                    if (itemId.Equals(id))
+                        return item;
             }
 
             return null;
@@ -175,7 +152,10 @@ namespace TT.Data
         /// Returns an array of content items based on the specified type.
         /// </summary>
         /// <param name="type">The WorldObjectType to return ContentItems for.</param>
-        /// <returns>An array of ContentItems representing the type. If the type has categories, an empty list is returned instead.</returns>
+        /// <returns>
+        /// An array of ContentItems representing the type. If the type has categories, an empty list is returned
+        /// instead.
+        /// </returns>
         public static ContentItem[] GetItemsByType(WorldObjectType type)
         {
             string[] items = null;
@@ -183,13 +163,12 @@ namespace TT.Data
             if (type == WorldObjectType.Road) items = Current.Combined.RiversRoads.Roads;
             if (type == WorldObjectType.Bridge) items = Current.Combined.RiversRoads.Bridges;
 
-            List<ContentItem> contentItems = new List<ContentItem>();
+            var contentItems = new List<ContentItem>();
 
             if (items != null)
             {
                 var contentItemTemplate = TypeToContentItemMap[type];
                 foreach (var item in items)
-                {
                     contentItems.Add(new ContentItem()
                     {
                         Name = contentItemTemplate.Name,
@@ -197,9 +176,8 @@ namespace TT.Data
                         Type = type,
                         Scale = contentItemTemplate.Scale,
                         Lights = contentItemTemplate.Lights,
-                        IDs = new[] { item }
+                        IDs = new[] {item}
                     });
-                }
             }
 
             return contentItems.ToArray();
@@ -243,27 +221,25 @@ namespace TT.Data
                 }
 
                 if (category.Categories.Length > 0)
-                {
                     // Recurse over subcategories
                     SetDerivedValues(category.Categories, type);
-                }
             }
         }
 
-
+        /// <summary>
+        /// Loops through all Items in the specified category, searching for an Item with the specified id. This method
+        /// is recursive and will call itself on all sub-Categories in the specified Category.
+        /// </summary>
+        /// <param name="category">The category to search.</param>
+        /// <param name="id">The ID to search for.</param>
+        /// <returns>A content item with the specified ID, or null if none is found.</returns>
         private static ContentItem SearchItemRecursively(ContentItemCategory category, string id)
         {
             // Go through all items and their ID's, return the item if the search ID is found
-            foreach(var item in category.Items)
-            {
-                foreach (var itemId in item.IDs)
-                {
-                    if (itemId.Equals(id))
-                    {
-                        return item;
-                    }
-                }
-            }
+            foreach (var item in category.Items)
+            foreach (var itemId in item.IDs)
+                if (itemId.Equals(id))
+                    return item;
 
             // Go through all sub-categories and recurse over them
             foreach (var subcategory in category.Categories)
@@ -275,23 +251,25 @@ namespace TT.Data
             return null;
         }
 
+        /// <summary>
+        /// Populates the Combined property with a union of all selected content packs.
+        /// </summary>
         private static void CombinePacks()
         {
-            List<ContentItemCategory> constructionBuildings = new List<ContentItemCategory>();
-            List<ContentItemCategory> constructionProps = new List<ContentItemCategory>();
-            List<string> constructionCeilings = new List<string>();
-            List<string> constructionFloors = new List<string>();
-            List<string> constructionWalls = new List<string>();
-            List<ContentItemCategory> items = new List<ContentItemCategory>();
-            List<ContentItemCategory> lightsources = new List<ContentItemCategory>();
-            List<ContentItemCategory> nature = new List<ContentItemCategory>();
-            List<string> rivers = new List<string>();
-            List<string> roads = new List<string>();
-            List<string> bridges = new List<string>();
-            List<ContentTerrainLayer> terrainLayers = new List<ContentTerrainLayer>();
+            var constructionBuildings = new List<ContentItemCategory>();
+            var constructionProps = new List<ContentItemCategory>();
+            var constructionCeilings = new List<string>();
+            var constructionFloors = new List<string>();
+            var constructionWalls = new List<string>();
+            var items = new List<ContentItemCategory>();
+            var lightsources = new List<ContentItemCategory>();
+            var nature = new List<ContentItemCategory>();
+            var rivers = new List<string>();
+            var roads = new List<string>();
+            var bridges = new List<string>();
+            var terrainLayers = new List<ContentTerrainLayer>();
 
             foreach (var pack in Current.Packs)
-            {
                 if (pack.Selected)
                 {
                     constructionBuildings.AddRange(pack.Construction.Buildings);
@@ -307,7 +285,6 @@ namespace TT.Data
                     bridges.AddRange(pack.RiversRoads.Bridges);
                     terrainLayers.AddRange(pack.TerrainLayers);
                 }
-            }
 
             Current.Combined.Construction.Buildings = constructionBuildings.ToArray();
             Current.Combined.Construction.Props = constructionProps.ToArray();
@@ -323,14 +300,17 @@ namespace TT.Data
             Current.Combined.TerrainLayers = terrainLayers.ToArray();
         }
 
-        private static Dictionary<WorldObjectType, ContentItem> TypeToContentItemMap = new Dictionary<WorldObjectType, ContentItem>()
-        {
-            {WorldObjectType.Bridge, new ContentItem() { Name = "Bridge", Traversable = true }},
-            {WorldObjectType.River, new ContentItem() { Name = "River", Traversable = false }},
-            {WorldObjectType.Road, new ContentItem() { Name = "Road", Traversable = true }}
-        };
+        /// <summary>
+        /// A map of WorldObjectType to ContentItem templates.
+        /// </summary>
+        private static readonly Dictionary<WorldObjectType, ContentItem> TypeToContentItemMap =
+            new Dictionary<WorldObjectType, ContentItem>()
+            {
+                {WorldObjectType.Bridge, new ContentItem() {Name = "Bridge", Traversable = true}},
+                {WorldObjectType.River, new ContentItem() {Name = "River", Traversable = false}},
+                {WorldObjectType.Road, new ContentItem() {Name = "Road", Traversable = true}}
+            };
 
         #endregion
-
     }
 }

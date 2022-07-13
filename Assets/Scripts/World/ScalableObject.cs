@@ -30,6 +30,8 @@ namespace TT.World
 {
     public class ScalableObject : WorldObjectBase
     {
+        //TODO: Remove this class - ensure it's not used
+
         #region Editor fields
 
         public GameObject floorPlane;

@@ -22,44 +22,114 @@ using UnityEngine;
 
 namespace TT.InputMapping
 {
+    /// <summary>
+    /// Base class for all InputMapper classes. Do not use this class directly.
+    /// </summary>
     public abstract class InputMapperBase
     {
-        // Constructor taking in a parent (or null)
-        private InputMapperBase parent;
-        public InputMapperBase(InputMapperBase parent)
+        
+        #region Private fields
+        
+        private readonly InputMapperBase _parent;
+        private bool _active = true;
+        
+        #endregion
+        
+        
+        #region Constructors
+
+        /// <summary>
+        /// Initialises this mapper. This must be called in the constructor of all inheriting classes.
+        /// </summary>
+        /// <param name="parent">The parent InputMapper for chaining of active states.</param>
+        protected InputMapperBase(InputMapperBase parent)
         {
-            this.parent = parent;
-            Active = true;
+            _parent = parent;
+        }
+        
+        #endregion
+
+        #region Public properties
+
+        /// <summary>
+        /// True if this class is active in itself. It may still be inactive due to parents being set to inactive.
+        /// </summary>
+        public bool Active
+        {
+            get => (_parent == null || _parent.Active) && _active;
+            set => _active = value;
         }
 
-        // Returns whether controls within this controller is active
-        public bool Active { get; private set; }
-
-        // Activates the controls within this controller
-        public void SetActive(bool active)
+        #endregion
+        
+        /// <summary>
+        /// Returns whether this mapper is active and the specified key is pressed or held down.
+        /// </summary>
+        /// <param name="keyCode">The key to check for.</param>
+        /// <param name="keyDown">When true, this only returns true on the frame the key was pressed down. When false,
+        /// this will also return true on every frame the key is held down for.</param>
+        /// <returns>True when the mapper is active, and either the key was pressed down during this frame (keyDown =
+        /// true) or the key is being held down (keyDown = false). Otherwise false.</returns>
+        protected bool GetKey(KeyCode keyCode, bool keyDown = false)
         {
-            Active = active;
+            if (!Active) return false;
+
+            return keyDown ? Input.GetKeyDown(keyCode) : Input.GetKey(keyCode);
         }
 
-        // Returns whether this control set is active, taking into account the parent's Active state
-        public bool IsActive()
+        /// <summary>
+        /// Returns whether the mapper is active and the specified key was pressed down in the current frame.
+        /// </summary>
+        /// <param name="keyCode">The key to check for.</param>
+        /// <returns>True when the mapper is active and the key was pressed down during this frame. False otherwise.
+        ///     </returns>
+        protected bool GetKeyDown(KeyCode keyCode)
         {
-            return (parent == null || parent.IsActive()) && Active;
+            return Active && Input.GetKeyDown(keyCode);
         }
 
-        // Returns true if the key is pressed down in snap to grid mode, or held in freeform mode
-        protected bool GetKey(KeyCode keyCode, bool snapToGrid)
+        /// <summary>
+        /// Returns whether the mapper is active and the specified key was released in the current frame.
+        /// </summary>
+        /// <param name="keyCode">The key to check for.</param>
+        /// <returns>True when the mapper is active and the key was released during this frame. False otherwise.
+        ///     </returns>
+        protected bool GetKeyUp(KeyCode keyCode)
         {
-            if (!IsActive()) return false;
+            return Active && Input.GetKeyUp(keyCode);
+        }
 
-            return snapToGrid ? Input.GetKeyDown(keyCode) : Input.GetKey(keyCode);
+        /// <summary>
+        /// Returns whether this mapper is active and the specified mouse button is pressed or held down.
+        /// </summary>
+        /// <param name="mouseButton">The mouse button index to check for.</param>
+        /// <param name="buttonDown">When true, this only returns true on the frame the mouse button was pressed down.
+        ///     When false, this will also return true on every frame the mouse button is held down for.</param>
+        /// <returns>True when the mapper is active, and either the button was pressed down during this frame
+        ///     (buttonDown = true) or the button is being held down (buttonDown = false). Otherwise false.</returns>
+        protected bool GetMouseButton(int mouseButton, bool buttonDown = false)
+        {
+            if (!Active) return false;
+            return buttonDown ? Input.GetMouseButtonDown(mouseButton) : Input.GetMouseButton(mouseButton);
+        }
+
+        /// <summary>
+        /// Returns whether the mapper is active and the specified mouse button was pressed down during the current
+        /// frame.
+        /// </summary>
+        /// <param name="mouseButton">The mouse button to check for.</param>
+        /// <returns>True if the mouse button was pressed down during the current frame. False otherwise.</returns>
+        protected bool GetMouseButtonDown(int mouseButton)
+        {
+            return Active && Input.GetMouseButtonDown(mouseButton);
         }
 
         /// <summary>
         /// Checks if a control key is down.
         /// </summary>
         /// <returns>True if either control key is held down.</returns>
-        /// <remarks>When running in Unity, this returns true when the Alt GR key is down to avoid clashes with Unity keybindings.</remarks>
+        /// <remarks>When running in Unity, this returns true when the Alt GR key is down to avoid clashes with Unity
+        ///     keybindings.</remarks>
         protected bool IsControlDown()
         {
 #if UNITY_EDITOR
@@ -69,6 +139,10 @@ namespace TT.InputMapping
 #endif
         }
 
+        /// <summary>
+        /// Checks if a shift key is down.
+        /// </summary>
+        /// <returns>True if either left or right shift is held down.</returns>
         protected bool IsShiftDown()
         {
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);

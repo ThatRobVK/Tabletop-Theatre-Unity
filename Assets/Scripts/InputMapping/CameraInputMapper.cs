@@ -22,32 +22,76 @@ using UnityEngine;
 
 namespace TT.InputMapping
 {
+    /// <summary>
+    /// Exposes properties indicating whether certain key combinations are being pressed relating to camera control.
+    /// Access this through InputMapper.Current.
+    /// </summary>
     public class CameraInputMapper : InputMapperBase
     {
+        
+        #region Constructors
+        
         public CameraInputMapper(InputMapperBase parent) : base(parent)
         {
         }
+        
+        #endregion
+        
+        
+        #region Public properties
 
-        // Camera movement
-        public bool RotateLeft { get => IsActive() && Input.GetKey(KeyCode.Q); }
-        public bool RotateRight { get => IsActive() && Input.GetKey(KeyCode.E); }
-        public bool Fast { get => GetKey(KeyCode.LeftShift, false) || GetKey(KeyCode.RightShift, false); }
-        public bool TopDownToggle { get => GetKey(KeyCode.O, true) && !IsControlDown(); }
-        public bool Drag { get => GetKey(KeyCode.Space, false); }
+        /// <summary>
+        /// Q - rotate camera counter clockwise
+        /// </summary>
+        public bool RotateLeft => Input.GetKey(KeyCode.Q);
 
+        /// <summary>
+        /// E - rotate camera clockwise
+        /// </summary>
+        public bool RotateRight => Input.GetKey(KeyCode.E);
+
+        /// <summary>
+        /// Shift - increase speed of camera movements
+        /// </summary>
+        public bool Fast => IsShiftDown();
+
+        /// <summary>
+        /// O pressed - toggle between top-down lock and tilt-able camera.
+        /// </summary>
+        public bool TopDownToggle => GetKeyDown(KeyCode.O);
+
+        /// <summary>
+        /// Space - Let user drag camera by clicking and dragging the map.
+        /// </summary>
+        public bool Drag => GetKey(KeyCode.Space);
+        
+        #endregion
+
+        
+        #region Public methods
+        
+        /// <summary>
+        /// Returns a vector indicating which directions the user is pressing for camera movement.
+        /// </summary>
+        /// <returns>
+        /// A Vector3 indicating which direction the camera should move along each axis. The Y axis is always zero.
+        /// Note this only returns 1, 0 or -1 for each axis and does not take into consideration movement speed.
+        /// </returns>
         public Vector3 GetCameraMovementVector()
         {
             // Return if not active or if control is down (e.g. Ctrl+S should not move camera)
-            if (!IsActive() || IsControlDown()) return Vector3.zero;
+            if (!Active || IsControlDown()) return Vector3.zero;
 
-            var x = GetKey(KeyCode.A, false) ? -1 : 0;
-            if (GetKey(KeyCode.D, false)) x++;
+            var x = GetKey(KeyCode.A) ? -1 : 0;
+            if (GetKey(KeyCode.D)) x++;
 
-            var z = GetKey(KeyCode.W, false) ? 1 : 0;
-            if (GetKey(KeyCode.S, false)) z--;
+            var z = GetKey(KeyCode.W) ? 1 : 0;
+            if (GetKey(KeyCode.S)) z--;
 
             return new Vector3(x, 0, z);
         }
 
+        #endregion
+        
     }
 }

@@ -20,12 +20,12 @@
 
 using System;
 using System.Linq;
-using UnityEngine;
-using UnityEngine.UI;
 using DuloGames.UI;
 using TT.Data;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace TT.UI.MapEditor.MainMenu
+namespace TT.UI.MapEditor.GameMenu
 {
     /// <summary>
     /// Assigned to the Save As window to handle user input and save as if confirmed.

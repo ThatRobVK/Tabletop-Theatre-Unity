@@ -23,8 +23,11 @@ using TT.InputMapping;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TT.UI.MapEditor.MainMenu
+namespace TT.UI.MapEditor.GameMenu
 {
+    /// <summary>
+    /// Attached to the Save As button in the map editor game menu. Shows the Save As window.
+    /// </summary>
     [RequireComponent(typeof(Button))]
     public class SaveAsButton : MonoBehaviour
     {

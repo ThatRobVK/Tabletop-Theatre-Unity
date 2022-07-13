@@ -18,34 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 using HighlightPlus;
 using TT.Data;
 using TT.MapEditor;
 using TT.Shared.UserContent;
 using TT.State;
 using TT.UI;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TT.World
 {
+    /// <summary>
+    /// Attached to spline objects on the map.
+    /// </summary>
     public class RamObject : WorldObjectBase
     {
 
+        //TODO: Rename RamObject to SplineObject
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
-        [FormerlySerializedAs("AddHandleAtEndButton")] [SerializeField] private GameObject addHandleAtEndButton;
-        [FormerlySerializedAs("AddHandleAtStartButton")] [SerializeField] private GameObject addHandleAtStartButton;
+        [SerializeField] private GameObject addHandleAtEndButton;
+        [SerializeField] private GameObject addHandleAtStartButton;
         [SerializeField] private GameObject handlePrefab;
         [SerializeField] private GameObject colliderPrefab;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -74,8 +73,14 @@ namespace TT.World
 
         #region Public properties
 
+        /// <summary>
+        /// Splines always use continuous placement as the user places handles.
+        /// </summary>
         public override bool ContinuousPlacementMode => true;
 
+        /// <summary>
+        /// The position of the spline.
+        /// </summary>
         public override Vector3 Position
         {
             get
@@ -125,7 +130,6 @@ namespace TT.World
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         protected override void Start()
         {
@@ -167,7 +171,6 @@ namespace TT.World
             _fixRaceConditionWhenAddingHandles = false;
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 
@@ -317,7 +320,10 @@ namespace TT.World
             Select();
         }
 
-        // Initialises the Ram Object on a Map Object
+        /// <summary>
+        /// Initialises the object on the given data.
+        /// </summary>
+        /// <param name="splineObjectData">The data to initialise on.</param>
         public async Task Initialise(SplineObjectData splineObjectData)
         {
             FromMapObject(splineObjectData);
@@ -372,7 +378,7 @@ namespace TT.World
             var splineObjectData = ToMapObject<SplineObjectData>();
             splineObjectData.primaryTerrainAddress = _primaryTerrainAddress;
             splineObjectData.secondaryTerrainAddress = _secondaryTerrainAddress;
-            splineObjectData.points.AddRange(Vector4Data.FromVector4List(_spline.controlPoints));
+            splineObjectData.points.AddRange(VectorData.FromVector4List(_spline.controlPoints));
 
             return splineObjectData;
         }
@@ -405,6 +411,9 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Shows the handles on this object.
+        /// </summary>
         public override void ShowControls()
         {
             base.ShowControls();
@@ -412,6 +421,9 @@ namespace TT.World
             _handles.ForEach(x => x.gameObject.SetActive(true));
         }
 
+        /// <summary>
+        /// Hides the handles on this object.
+        /// </summary>
         public override void HideControls()
         {
             base.HideControls();

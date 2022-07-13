@@ -24,7 +24,7 @@ using UnityEngine.UI;
 namespace TT.UI.MainMenu
 {
     /// <summary>
-    /// A logout button that shows when logged in, logs the user out when clicked, and hides when logged out.
+    /// Attached to a button. Logs the user out when clicked.
     /// </summary>
     [RequireComponent(typeof(Button))]
     public class LogoutButton : MonoBehaviour

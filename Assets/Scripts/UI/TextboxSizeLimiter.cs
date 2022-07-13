@@ -24,6 +24,10 @@ using UnityEngine.UI;
 
 namespace TT.UI
 {
+    /// <summary>
+    /// Attached to an InputField. Limits the length the user can input into the field, and optionally shows a warning
+    /// at a threshold of how many characters the user has left to enter.
+    /// </summary>
     [RequireComponent(typeof(InputField))]
     public class TextboxSizeLimiter : MonoBehaviour
     {

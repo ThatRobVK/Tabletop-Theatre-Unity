@@ -23,11 +23,25 @@ using UnityEngine;
 
 namespace TT.Shared.UserContent
 {
+    /// <summary>
+    /// Data about a single object within a scatter area.
+    /// </summary>
     [Serializable]
     public class ScatterObjectData
     {
-        public Vector4Data position;
+        /// <summary>
+        /// The position of the object within the scatter area.
+        /// </summary>
+        public VectorData position;
+        
+        /// <summary>
+        /// The rotation of the object.
+        /// </summary>
         public Quaternion rotation;
+        
+        /// <summary>
+        /// The Addressables address of the prefab from which the object is instantiated.
+        /// </summary>
         public string prefabAddress;
     }
 }

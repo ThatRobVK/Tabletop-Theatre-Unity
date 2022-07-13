@@ -18,12 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using UnityEngine;
 using DuloGames.UI;
 using TT.Data;
-using UnityEngine;
 
 namespace TT.UI.MainMenu
 {
+    /// <summary>
+    /// Attached to a select field. Loads the available terrain layers on load and every time content is loaded.
+    /// </summary>
     [RequireComponent(typeof(UISelectField))]
     public class LoadTerrainDropdown : MonoBehaviour
     {

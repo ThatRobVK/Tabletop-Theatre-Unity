@@ -18,14 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using UnityEngine;
-using UnityEngine.UI;
 using DuloGames.UI;
 using TT.Data;
 using TT.InputMapping;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace TT.UI.MapEditor.MainMenu
+namespace TT.UI.MapEditor.GameMenu
 {
+    /// <summary>
+    /// Attached to the Save button in the map editor game menu.
+    /// </summary>
     [RequireComponent(typeof(Button))]
     public class SaveButton : MonoBehaviour
     {

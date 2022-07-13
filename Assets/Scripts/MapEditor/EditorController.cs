@@ -23,19 +23,21 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using TT.Data;
-using TT.Shared;
 using TT.State;
 using TT.World;
 
 namespace TT.MapEditor
 {
+    /// <summary>
+    /// Responsible for setting up the Map Editor and managing the StateController. The MapEditor scene must have one
+    /// and only one instance of this class running or unexpected behaviour will result.
+    /// </summary>
     public class EditorController : MonoBehaviour
     {
 
         #region Private fields
 
         private StateController _stateController;
-        private IUser _user;
 
         #endregion
 
@@ -46,36 +48,15 @@ namespace TT.MapEditor
         {
             // Limit the application to the screen's refresh rate so we don't hammer the GPU for no reason
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
-            Debug.LogFormat("EditorController :: Awake :: Setting target framerate to {0}", Application.targetFrameRate.ToString());
+            Debug.LogFormat("EditorController :: Awake :: Setting target framerate to {0}", 
+                Application.targetFrameRate.ToString());
 
             // Instantiate state controller
             _stateController = new StateController();
 
             LoadContent();
         }
-
-        private async void LoadContent()
-        {
-            // Load content definitions
-            Debug.Log("EditorController :: Awake :: Loading content");
-            if (!Content.ContentLoaded)
-                await Content.Load();
-
-            // Load content catalog
-            var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
-            AssetBundle.UnloadAllAssetBundles(false);
-            var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
-            loadContentCatalogAsync.Completed += OnContentCatalogLoaded;
-        }
-
-        private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
-        {
-            Map.Current.Render().ConfigureAwait(false);
-            // TODO: Load terrain texture from map data
-            // Load the first game terrain as default
-            //GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
-        }
-
+        
         void Start()
         {
             // Set state controller to initial idle state
@@ -92,5 +73,37 @@ namespace TT.MapEditor
 
         #endregion
 
+        
+        #region Event handlers
+        
+        private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
+        {
+            Map.Current.Render().ConfigureAwait(false);
+            // TODO: Load terrain texture from map data
+            // Load the first game terrain as default
+            //GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
+        }
+
+        #endregion
+        
+        
+        #region Private methods
+        
+        private async void LoadContent()
+        {
+            // Load content definitions
+            Debug.Log("EditorController :: Awake :: Loading content");
+            if (!Content.ContentLoaded)
+                await Content.Load();
+
+            // Load content catalog
+            var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
+            AssetBundle.UnloadAllAssetBundles(false);
+            var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
+            loadContentCatalogAsync.Completed += OnContentCatalogLoaded;
+        }
+        
+        #endregion
+        
     }
 }

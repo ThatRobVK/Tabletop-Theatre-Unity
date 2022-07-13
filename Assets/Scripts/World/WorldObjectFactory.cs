@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0083 // "Use patern matching" - not supported in the .NET version used by Unity 2020.3
-
 using System.Threading.Tasks;
 using TT.Data;
 using TT.Shared.UserContent;
@@ -27,10 +25,19 @@ using UnityEngine;
 
 namespace TT.World
 {
+    /// <summary>
+    /// Factory that creates WorldObjects.
+    /// </summary>
     public static class WorldObjectFactory
     {
+        
+        #region Private fields
+        
         private const string SCATTER_AREA_PREFAB = "ScatterArea";
         private const string RAM_OBJECT_PREFAB = "RamObject";
+        
+        #endregion
+        
 
         #region Public methods
 
@@ -121,7 +128,7 @@ namespace TT.World
         }
 
         /// <summary>
-        /// Creates a WorldObject from a MapRamObject.
+        /// Creates a spline object from a data object.
         /// </summary>
         /// <param name="mapObject">The map object representation of the object to create.</param>
         /// <returns>An instance of the object represented by the input map object.</returns>
@@ -135,6 +142,11 @@ namespace TT.World
             return worldObject;
         }
 
+        /// <summary>
+        /// Creates a scatter area from a data object.
+        /// </summary>
+        /// <param name="mapObject">The map object representation of the object to create.</param>
+        /// <returns>An instance of the object represented by the input map object.</returns>
         public static async Task<WorldObjectBase> CreateFromMapObject(ScatterAreaData mapObject)
         {
             var gameObject = await Helpers.InstantiateAddressable(SCATTER_AREA_PREFAB);

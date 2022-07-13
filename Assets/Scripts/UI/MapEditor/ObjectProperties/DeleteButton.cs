@@ -19,14 +19,17 @@
  */
 
 using System;
+using UnityEngine;
 using TT.InputMapping;
 using TT.MapEditor;
 using TT.State;
 using TT.World;
-using UnityEngine;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
+    /// <summary>
+    /// Attached to the delete button on the object properties window. Deletes an object when clicked.
+    /// </summary>
     [RequireComponent(typeof(ToggledButton))]
     public class DeleteButton : MonoBehaviour
     {
