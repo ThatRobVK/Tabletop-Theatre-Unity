@@ -43,12 +43,12 @@ namespace TT.InputMapping
         /// <summary>
         /// Q - rotate camera counter clockwise
         /// </summary>
-        public bool RotateLeft => Input.GetKey(KeyCode.Q);
+        public bool RotateLeft => GetKey(KeyCode.Q);
 
         /// <summary>
         /// E - rotate camera clockwise
         /// </summary>
-        public bool RotateRight => Input.GetKey(KeyCode.E);
+        public bool RotateRight => GetKey(KeyCode.E);
 
         /// <summary>
         /// Shift - increase speed of camera movements

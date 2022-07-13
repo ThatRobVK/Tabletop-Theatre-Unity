@@ -53,8 +53,13 @@ namespace TT.InputMapping
         /// Ctrl + L
         /// </summary>
         public bool Load => Active && IsControlDown() && GetKeyDown(KeyCode.L);
-        
+
+        /// <summary>
+        /// F1
+        /// </summary>
+        public bool Help => Active && GetKeyDown(KeyCode.F1);
+
         #endregion
-        
+
     }
 }

@@ -64,7 +64,7 @@ namespace TT.Shared.UserContent
                     return new Color(float.Parse(colorElements[0]), float.Parse(colorElements[1]), float.Parse(colorElements[2]), float.Parse(colorElements[3]));
                 }
 
-                if (valueType == "MOD.World.LightsMode")
+                if (valueType == "TT.World.LightsMode")
                 {
                     if (value.Equals("On")) return 1;
                     if (value.Equals("Off")) return 2;

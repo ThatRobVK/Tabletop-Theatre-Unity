@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using TT.InputMapping;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,10 +32,9 @@ namespace TT.UI
 #pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("True if the object is shown, false otherwise.")] private bool state;
-        [SerializeField][Tooltip("The objects to show/hide when the button is clicked.")] private GameObject[] toggledObjects = new GameObject[] { };
+        [SerializeField][Tooltip("The objects to show/hide when the button is clicked.")] private GameObject[] toggledObjects = { };
         [SerializeField][Tooltip("The text to show when the objects are hidden.")] private string showText = "SHOW";
         [SerializeField][Tooltip("The text to show when the objects are shown.")] private string hideText = "HIDE";
-        [SerializeField][Tooltip("The key that toggles this panel.")] private KeyCode toggleKey;
 
 #pragma warning restore IDE0044
         #endregion
@@ -67,7 +67,7 @@ namespace TT.UI
 
         void Update()
         {
-            if (Input.GetKeyDown(toggleKey)) HandleButtonClick();
+            if (InputMapper.Current.GeneralInput.Help) HandleButtonClick();
         }
 
 #pragma warning restore IDE0051 // Unused members
