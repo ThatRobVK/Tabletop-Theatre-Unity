@@ -20,8 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using UnityEditorInternal.VersionControl;
 using UnityEngine;
 
 namespace TT.Data
@@ -272,13 +274,17 @@ namespace TT.Data
             foreach (var pack in Current.Packs)
                 if (pack.Selected)
                 {
-                    constructionBuildings.AddRange(pack.Construction.Buildings);
-                    constructionProps.AddRange(pack.Construction.Props);
+                    //constructionBuildings.AddRange(pack.Construction.Buildings);
+                    //constructionProps.AddRange(pack.Construction.Props);
+                    CombineCategories(ref constructionBuildings, pack.Construction.Buildings);
+                    CombineCategories(ref constructionProps, pack.Construction.Props);
                     constructionCeilings.AddRange(pack.Construction.Ceilings);
                     constructionFloors.AddRange(pack.Construction.Floors);
                     constructionWalls.AddRange(pack.Construction.Walls);
-                    items.AddRange(pack.Items);
-                    lightsources.AddRange(pack.Lightsources);
+                    CombineCategories(ref items, pack.Items);
+                    CombineCategories(ref lightsources, pack.Lightsources);
+                    //items.AddRange(pack.Items);
+                    //lightsources.AddRange(pack.Lightsources);
                     nature.AddRange(pack.Nature);
                     rivers.AddRange(pack.RiversRoads.Rivers);
                     roads.AddRange(pack.RiversRoads.Roads);
@@ -298,6 +304,54 @@ namespace TT.Data
             Current.Combined.RiversRoads.Roads = roads.ToArray();
             Current.Combined.RiversRoads.Bridges = bridges.ToArray();
             Current.Combined.TerrainLayers = terrainLayers.ToArray();
+        }
+
+        /// <summary>
+        /// Adds items to the specified list, combining any categories of the same name into one and adding new
+        /// categories to the end of the list. This method is recursive and will combine all subcategories as well.
+        /// </summary>
+        /// <param name="listToAddTo">The list of categories to merge into. This is a ref parameter and will be changed
+        ///     by this method.</param>
+        /// <param name="itemsToAdd">The list of items to add. This parameter will not be changed.</param>
+        private static void CombineCategories(ref List<ContentItemCategory> listToAddTo, IEnumerable<ContentItemCategory> itemsToAdd)
+        {
+            foreach (var itemToAdd in itemsToAdd)
+            {
+                bool categoryFound = false;
+                foreach (var listItem in listToAddTo)
+                {
+                    if (listItem.Name.Equals(itemToAdd.Name))
+                    {
+                        // Same category
+                        categoryFound = true;
+                        
+                        if (itemToAdd.Categories.Length > 0)
+                        {
+                            // If there are further subcategories, combine them
+                            var listCategories = listItem.Categories.ToList();
+                            CombineCategories(ref listCategories, itemToAdd.Categories);
+                            listItem.Categories = listCategories.ToArray();
+                        }
+
+                        if (itemToAdd.Items.Length > 0)
+                        {
+                            // If there are items, combine them
+                            var itemList = listItem.Items.ToList();
+                            itemList.AddRange(itemToAdd.Items);
+                            listItem.Items = itemList.ToArray();
+                        }
+
+                        // End loop if found
+                        break;
+                    }
+                }
+
+                if (!categoryFound)
+                {
+                    // If not found, add it
+                    listToAddTo.Add(itemToAdd);
+                }
+            }
         }
 
         /// <summary>

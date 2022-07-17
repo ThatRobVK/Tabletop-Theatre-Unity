@@ -24,6 +24,9 @@ using TT.InputMapping;
 
 namespace TT.UI
 {
+    /// <summary>
+    /// Extends the standard Unity InputField disabling keybindings while selected.
+    /// </summary>
     public class Textbox : InputField
     {
 
