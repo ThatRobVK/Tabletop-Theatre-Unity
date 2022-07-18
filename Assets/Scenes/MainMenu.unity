@@ -274,6 +274,29 @@ MonoBehaviour:
   warnAtLength: 40
   warningPanel: {fileID: 0}
   warningLabel: {fileID: 564552409}
+--- !u!114 &34865150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 34865141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The map name is shown in loading menus and when you share the map. You
+      can change this in the editor in the map properties window.
+    IsSpacer: 0
 --- !u!1 &63472049 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1092508537528884596, guid: d9948d709f223d34686cba0622c111f6, type: 3}
@@ -3928,6 +3951,41 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5012021040741034968, guid: 48d7db99c0a68bf4d80209fd9caa1c94, type: 3}
   m_PrefabInstance: {fileID: 635786773}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1047404782 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1034864238369639639, guid: e2f12bb3fb2f64a42b7f48e848fa0c53, type: 3}
+  m_PrefabInstance: {fileID: 6379905819230912344}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1047404788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1047404782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Delete this map. It will not be available to load anymore.
+    IsSpacer: 0
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: 
+    IsSpacer: 1
+  - LineStyle: 2
+    CustomLineStyle: 
+    Content: This can not be undone!
+    IsSpacer: 0
 --- !u!1 &1084202451 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5014485939221297960, guid: 26e8df716b1afea4cb03c4d39d4187f2, type: 3}
@@ -4006,6 +4064,29 @@ MonoBehaviour:
   m_Script: {fileID: -605657407, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1130869296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130869286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The base terrain texture. You can change this in the editor in the terrain
+      window, and you can paint other textures on top.
+    IsSpacer: 0
 --- !u!1 &1163859398
 GameObject:
   m_ObjectHideFlags: 0
@@ -5972,6 +6053,29 @@ MonoBehaviour:
   warnAtLength: 750
   warningPanel: {fileID: 0}
   warningLabel: {fileID: 331175395}
+--- !u!114 &1805072233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805072224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: This short description is shown when you share the map. You can change
+      this in the editor in the map properties window.
+    IsSpacer: 0
 --- !u!1001 &1852615049
 PrefabInstance:
   m_ObjectHideFlags: 0

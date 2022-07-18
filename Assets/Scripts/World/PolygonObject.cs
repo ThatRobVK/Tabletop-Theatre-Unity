@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using HighlightPlus;
@@ -85,6 +83,7 @@ namespace TT.World
         // state, causing it to tell the WorldObjectBase to place the handle. This var is set to true
         // for one frame when adding a handle to skip over that click.
         private bool _fixRaceConditionWhenAddingHandles;
+        private bool _showControlsOnComplete = true;
         private int _targetItems;
         private int _placedItems;
         private bool _initialised;
@@ -155,6 +154,16 @@ namespace TT.World
             else if (!_initialised)
             {
                 _initialised = true;
+
+                // Once initialised, show or hide the controls
+                if (_showControlsOnComplete)
+                {
+                    ShowControls();
+                }
+                else
+                {
+                    HideControls();
+                }
             }
         }
 
@@ -310,6 +319,7 @@ namespace TT.World
                 AddPointToMesh(vector);
             }
 
+            _showControlsOnComplete = false;
             _targetItems = scatterAreaData.scatterInstances.Count;
 
             foreach (var scatterInstance in scatterAreaData.scatterInstances)
@@ -332,7 +342,6 @@ namespace TT.World
 
             UpdateMesh();
             PositionAddHandleButton();
-            HideControls();
         }
 
         /// <summary>
@@ -536,6 +545,7 @@ namespace TT.World
             
             // Store the number of items being created so we know when to clear the wait cursor
             _targetItems += positions.Count;
+            _showControlsOnComplete = false;
 
             PlacePrefabs(positions, categories, transform);
         }

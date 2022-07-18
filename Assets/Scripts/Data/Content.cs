@@ -274,8 +274,6 @@ namespace TT.Data
             foreach (var pack in Current.Packs)
                 if (pack.Selected)
                 {
-                    //constructionBuildings.AddRange(pack.Construction.Buildings);
-                    //constructionProps.AddRange(pack.Construction.Props);
                     CombineCategories(ref constructionBuildings, pack.Construction.Buildings);
                     CombineCategories(ref constructionProps, pack.Construction.Props);
                     constructionCeilings.AddRange(pack.Construction.Ceilings);
@@ -283,8 +281,6 @@ namespace TT.Data
                     constructionWalls.AddRange(pack.Construction.Walls);
                     CombineCategories(ref items, pack.Items);
                     CombineCategories(ref lightsources, pack.Lightsources);
-                    //items.AddRange(pack.Items);
-                    //lightsources.AddRange(pack.Lightsources);
                     nature.AddRange(pack.Nature);
                     rivers.AddRange(pack.RiversRoads.Rivers);
                     roads.AddRange(pack.RiversRoads.Roads);

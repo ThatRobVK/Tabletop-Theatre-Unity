@@ -1286,7 +1286,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: See a timelapse of your map to check it at all times of day. This slider
+      controls the speed of the timelapse.
+    IsSpacer: 0
 --- !u!1001 &44949539
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1804,7 +1809,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Type to filter the items in the search results.
+    IsSpacer: 0
 --- !u!1001 &49019962
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2186,7 +2195,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Start a timelapse to see the map at all times of day.
+    IsSpacer: 0
 --- !u!1001 &63409464
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2540,7 +2553,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Type to filter the items in the search results.
+    IsSpacer: 0
 --- !u!114 &84013464 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2588020914226829086, guid: 75b0ed5089cdca041a62fa59e248d1ec, type: 3}
@@ -4477,7 +4494,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: When ticked, all scatter areas will be shaded.
+    IsSpacer: 0
 --- !u!114 &172509073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7516,7 +7537,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: When on, each time you place an item, another one will spawn for you
+      to place. Press Esc to finish placing.
+    IsSpacer: 0
 --- !u!114 &283761203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9390,7 +9416,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Slide to control the wind speed.
+    IsSpacer: 0
 --- !u!1 &388944999
 GameObject:
   m_ObjectHideFlags: 0
@@ -11787,7 +11817,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Type to filter the items in the search results.
+    IsSpacer: 0
 --- !u!1 &496537224
 GameObject:
   m_ObjectHideFlags: 0
@@ -13981,7 +14015,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The diameter of the brush.
+    IsSpacer: 0
 --- !u!224 &577695945 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2588020914226829063, guid: 75b0ed5089cdca041a62fa59e248d1ec, type: 3}
@@ -14396,7 +14434,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The name that will show in the search menu.
+    IsSpacer: 0
 --- !u!114 &584116284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15231,6 +15273,43 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5012021040741034969, guid: 48d7db99c0a68bf4d80209fd9caa1c94, type: 3}
   m_PrefabInstance: {fileID: 862548926}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &636978282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 636978281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: 'The type of lighting used on this map:'
+    IsSpacer: 0
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: '<b>Ambient</b>: Day/night cycle'
+    IsSpacer: 0
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: '<b>Indoor</b>: No ambient light, the only light is from light sources
+      you place.'
+    IsSpacer: 0
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: '<b>Low light</b>: A low amount of ambient light that isn''t based on
+      the time of day. Good for caves and other areas that have some light shining
+      in.'
+    IsSpacer: 0
 --- !u!114 &636978283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15849,7 +15928,19 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Show or hide this help.
+    IsSpacer: 0
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: 
+    IsSpacer: 1
+  - LineStyle: 2
+    CustomLineStyle: 
+    Content: 'Key binding: F1'
+    IsSpacer: 0
 --- !u!1001 &657453879
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16898,7 +16989,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Create a new scatter area. Place consecutive points to create a polygon.
+      Press Esc to finish the scatter area. You can add and move points afterwards.
+    IsSpacer: 0
 --- !u!114 &713112425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17488,6 +17584,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectField: {fileID: 739511492}
+--- !u!114 &739511494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739511491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The texture to paint.
+    IsSpacer: 0
 --- !u!1 &739533705 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4589099567327570923, guid: aa4b48c79b346774fb87cea48a03a11b, type: 3}
@@ -17521,7 +17639,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The opacity at the centre of the brush, higher is more solid, lower
+      is more transparent.
+    IsSpacer: 0
 --- !u!224 &739533715 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4589099567327570924, guid: aa4b48c79b346774fb87cea48a03a11b, type: 3}
@@ -17731,7 +17854,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Start creating a new road. Place consecutive points the road will move
+      through and press Esc to finish.
+    IsSpacer: 0
 --- !u!1001 &749925431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18560,7 +18688,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: When on, each time you place an item, another one will spawn for you
+      to place. Press Esc to finish placing.
+    IsSpacer: 0
 --- !u!114 &778172564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19873,6 +20006,28 @@ MonoBehaviour:
   warnAtLength: 40
   warningPanel: {fileID: 1806350918}
   warningLabel: {fileID: 1197103088}
+--- !u!114 &812013965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812013963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The name shown in the load menu and when the map is shared.
+    IsSpacer: 0
 --- !u!224 &814890333 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1873640386326741569, guid: ead41ff1cfe267b458c3d851a699ccdf, type: 3}
@@ -20650,7 +20805,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The diameter of the brush.
+    IsSpacer: 0
 --- !u!224 &842155578 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4589099567327570924, guid: aa4b48c79b346774fb87cea48a03a11b, type: 3}
@@ -22984,6 +23143,28 @@ MonoBehaviour:
   warnAtLength: 750
   warningPanel: {fileID: 2134774576}
   warningLabel: {fileID: 1558172621}
+--- !u!114 &920423129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920423127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 795301283, guid: fab5758b168c7d3419e66da1abfabd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Position: 0
+  m_WidthMode: 0
+  m_OverrideOffset: 0
+  m_Offset: {x: 0, y: 0}
+  m_Delay: 1
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: A short description shown when the map is shared.
+    IsSpacer: 0
 --- !u!1001 &938984853
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23507,7 +23688,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5857465499000438756, guid: 4f45263cdb011b349b62c38546f16027, type: 3}
       propertyPath: m_ContentLines.Array.data[0].Content
-      value: Menu
+      value: Game Menu
       objectReference: {fileID: 0}
     - target: {fileID: 5857465499000438756, guid: 4f45263cdb011b349b62c38546f16027, type: 3}
       propertyPath: m_ContentLines.Array.data[1].Content
@@ -23515,7 +23696,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5857465499000438756, guid: 4f45263cdb011b349b62c38546f16027, type: 3}
       propertyPath: m_ContentLines.Array.data[2].Content
-      value: Save and load maps, or quit.
+      value: Open the in-game menu to load and save maps, quit to the menu, etc.
       objectReference: {fileID: 0}
     - target: {fileID: 5857465499000438756, guid: 4f45263cdb011b349b62c38546f16027, type: 3}
       propertyPath: m_ContentLines.Array.data[3].Content
@@ -23961,7 +24142,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The higher the softness, the more gradually the texture feathers in
+      with underlying textures towards the edges.
+    IsSpacer: 0
 --- !u!224 &964451034 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4589099567327570924, guid: aa4b48c79b346774fb87cea48a03a11b, type: 3}
@@ -27818,7 +28004,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: When on, each time you place an item, another one will spawn for you
+      to place. Press Esc to finish placing.
+    IsSpacer: 0
 --- !u!114 &1091312147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27970,7 +28161,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: When on, each time you place an item, another one will spawn for you
+      to place. Press Esc to finish placing.
+    IsSpacer: 0
 --- !u!1001 &1096827617
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28928,7 +29124,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Remove the road from the map.
+    IsSpacer: 0
 --- !u!224 &1119409806 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1384902223124653178, guid: 17f7e3faa0e0eb948952b4388b236e2b, type: 3}
@@ -30259,7 +30459,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Change the direction of the wind.
+    IsSpacer: 0
 --- !u!114 &1150793747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32161,9 +32365,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 110, y: 5}
+  m_AnchoredPosition: {x: 110, y: 0}
   m_SizeDelta: {x: 150, y: 16.1}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1197103088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32184,7 +32388,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: 45 of 50
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7d7e9be272135954c9aa731e4a3012d0, type: 2}
   m_sharedMaterial: {fileID: 6135715617262300210, guid: 7d7e9be272135954c9aa731e4a3012d0, type: 2}
@@ -34645,7 +34849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5857465499000438756, guid: 4f45263cdb011b349b62c38546f16027, type: 3}
       propertyPath: m_ContentLines.Array.data[2].Content
-      value: Edit the map name, description and other properties saved with the map.
+      value: Edit the map name and description.
       objectReference: {fileID: 0}
     - target: {fileID: 5857465499000438756, guid: 4f45263cdb011b349b62c38546f16027, type: 3}
       propertyPath: m_ContentLines.Array.data[3].Content
@@ -35180,7 +35384,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: When on, each time you place an item, another one will spawn for you
+      to place. Press Esc to finish placing.
+    IsSpacer: 0
 --- !u!114 &1367918375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37890,7 +38099,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The name that will show in the search menu.
+    IsSpacer: 0
 --- !u!1 &1437369910
 GameObject:
   m_ObjectHideFlags: 0
@@ -39390,7 +39603,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Start creating a new river. Place consecutive points the river will
+      flow through and press Esc to finish.
+    IsSpacer: 0
 --- !u!1001 &1497588416
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41954,9 +42172,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 110, y: 10}
+  m_AnchoredPosition: {x: 110, y: 25}
   m_SizeDelta: {x: 150, y: 16.1}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1558172621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41977,7 +42195,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: 950 of 1000
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7d7e9be272135954c9aa731e4a3012d0, type: 2}
   m_sharedMaterial: {fileID: 6135715617262300210, guid: 7d7e9be272135954c9aa731e4a3012d0, type: 2}
@@ -43904,7 +44122,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: When on, each time you place an item, another one will spawn for you
+      to place. Press Esc to finish placing.
+    IsSpacer: 0
 --- !u!114 &1660491909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46105,7 +46328,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Remove the river from the map.
+    IsSpacer: 0
 --- !u!114 &1739941466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47927,8 +48154,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210, y: -45}
-  m_SizeDelta: {x: 380, y: 0}
+  m_AnchoredPosition: {x: 210, y: -50}
+  m_SizeDelta: {x: 380, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1806350920
 MonoBehaviour:
@@ -47946,7 +48173,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 0
+  m_PreferredHeight: 10
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -49141,7 +49368,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Type to filter the items in the search results.
+    IsSpacer: 0
 --- !u!224 &1912789187 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6775628561407526078, guid: 2d5a635c0b6547f4cb0f3e4ca6df581f, type: 3}
@@ -50641,7 +50872,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The name that will show in the search menu.
+    IsSpacer: 0
 --- !u!224 &1995549408 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7743903677974304639, guid: 33f72665256003a4dafe80af5f14d766, type: 3}
@@ -50881,7 +51116,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The opacity at the centre of the brush, higher is more solid, lower
+      is more transparent.
+    IsSpacer: 0
 --- !u!224 &2010385966 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2588020914226829063, guid: 75b0ed5089cdca041a62fa59e248d1ec, type: 3}
@@ -51282,7 +51522,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The higher the softness, the more gradually the texture feathers in
+      with underlying textures towards the edges.
+    IsSpacer: 0
 --- !u!224 &2036334782 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2588020914226829063, guid: 75b0ed5089cdca041a62fa59e248d1ec, type: 3}
@@ -53183,7 +53428,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: Type to filter the items in the search results.
+    IsSpacer: 0
 --- !u!1001 &2074112607
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53845,7 +54094,11 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The base texture applied to the whole terrain.
+    IsSpacer: 0
 --- !u!114 &2085328120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59062,7 +59315,12 @@ MonoBehaviour:
   m_OverrideOffset: 0
   m_Offset: {x: 0, y: 0}
   m_Delay: 1
-  m_ContentLines: []
+  m_ContentLines:
+  - LineStyle: 0
+    CustomLineStyle: 
+    Content: The default time of day the map is played on. This can be changed when
+      a game session is set up with this map.
+    IsSpacer: 0
 --- !u!224 &6775628561413185219 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8687960538800828950, guid: 740ec0d7959b09841bcad15f762c3501, type: 3}

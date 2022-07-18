@@ -267,7 +267,7 @@ MonoBehaviour:
   m_ContentLines:
   - LineStyle: 0
     CustomLineStyle: 
-    Content: Click to choose the specific types of grass that are scattered.
+    Content: Toggle the subcategories.
     IsSpacer: 0
 --- !u!1 &2766515228487790500
 GameObject:
@@ -670,7 +670,8 @@ MonoBehaviour:
   m_ContentLines:
   - LineStyle: 0
     CustomLineStyle: 
-    Content: The density of the grass when scattered.
+    Content: The density of items from this category. A value of 1 is one item per
+      grid section.
     IsSpacer: 0
 --- !u!1001 &2766515229214004411
 PrefabInstance:
@@ -869,5 +870,5 @@ MonoBehaviour:
   m_ContentLines:
   - LineStyle: 0
     CustomLineStyle: 
-    Content: Tick to scatter grass in this area. Untick to not scatter grass.
+    Content: Tick to scatter items of this category.
     IsSpacer: 0
