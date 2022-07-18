@@ -18,14 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.InputMapping;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TT.InputMapping;
 
 namespace TT.UI
 {
+    /// <summary>
+    /// Extends the standard Unity InputField disabling keybindings while selected.
+    /// </summary>
     public class Textbox : InputField
     {
+
         #region Event handlers
 
         /// <summary>
@@ -37,7 +41,7 @@ namespace TT.UI
             IsSelected = true;
 
             // Disable game input
-            InputMapper.Current.SetActive(false);
+            InputMapper.Current.Active = false;
             base.OnSelect(eventData);
         }
 
@@ -50,7 +54,7 @@ namespace TT.UI
             IsSelected = false;
             
             // Enable game input
-            InputMapper.Current.SetActive(true);
+            InputMapper.Current.Active = true;
             base.OnDeselect(eventData);
         }
 

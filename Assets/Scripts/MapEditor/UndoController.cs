@@ -18,34 +18,59 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TT.Data;
 using TT.InputMapping;
+using TT.Shared.UserContent;
 using TT.World;
 using UnityEngine;
 
 namespace TT.MapEditor
 {
+    /// <summary>
+    /// Manages undo and redo actions.
+    /// </summary>
     public class UndoController : MonoBehaviour
     {
+        //TODO: Refactor this class to use the command pattern - this is getting unwieldy now. Issue #16
+        
         #region Private fields
 
+        private const int MAX_ACTION_NUM = 100;
         private static readonly List<UndoAction> UndoActions = new List<UndoAction>();
         private static readonly List<UndoAction> RedoActions = new List<UndoAction>();
-        private static readonly int MaxActionNum = 100;
 
+        #endregion
+        
+        #region Public properties
+        
+        /// <summary>
+        /// The number of changes that have been registered since the map was last saved.
+        /// </summary>
+        public static long NumChangesSinceLastSave { get; private set; }
+        
         #endregion
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
-        void Update()
+        private void Start()
         {
+            // Listen for map save events
+            Map.OnMapSaved += HandleMapSaved;
+        }
+
+        private void OnDestroy()
+        {
+            // Stop listening for map save events
+            Map.OnMapSaved -= HandleMapSaved;
+        }
+
+        private void Update()
+        {
+            // Handle undo and redo key bindings
             if (InputMapper.Current.WorldObjectInput.Undo)
             {
                 Undo();
@@ -56,7 +81,6 @@ namespace TT.MapEditor
             }
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 
@@ -73,17 +97,20 @@ namespace TT.MapEditor
             // Add object, remove any items over the limit from the start of the list
             Debug.LogFormat("UndoController :: RegisterAction :: Registering undo action {0} on object {1} with value {2}", action.ToString(), objectId, (value != null) ? value.ToString() : "null");
             UndoActions.Add(new UndoAction() { Action = action, ObjectId = objectId, Value = value });
-            while (UndoActions.Count > MaxActionNum)
+            while (UndoActions.Count > MAX_ACTION_NUM)
             {
-                Debug.LogFormat("UndoController :: RegisterAction :: List count {0} is over limit {1}, removing an item.", UndoActions.Count, MaxActionNum);
+                Debug.LogFormat("UndoController :: RegisterAction :: List count {0} is over limit {1}, removing an item.", UndoActions.Count, MAX_ACTION_NUM);
                 UndoActions.RemoveAt(0);
             }
 
             // Clear the redo queue now the user has taken a new action
             RedoActions.Clear();
+
+            // Add an action to the counter
+            NumChangesSinceLastSave++;
         }
 
-        public static void RegisterRedoAction(ActionType action, Guid objectId, object value)
+        private static void RegisterRedoAction(ActionType action, Guid objectId, object value)
         {
             Debug.LogFormat("UndoController :: RegisterRedoAction :: Registering redo action {0} on object {1} with value {2}", action.ToString(), objectId, (value != null) ? value.ToString() : "null");
             RedoActions.Add(new UndoAction() { Action = action, ObjectId = objectId, Value = value });
@@ -92,7 +119,7 @@ namespace TT.MapEditor
         /// <summary>
         /// Performs an undo the last performed action.
         /// </summary>
-        public static async void Undo()
+        private static async void Undo()
         {
             if (UndoActions.Count == 0) return;
 
@@ -116,7 +143,7 @@ namespace TT.MapEditor
                         switch (UndoActions[undoIndex].Action)
                         {
                             case ActionType.Create:
-                                RegisterRedoAction(ActionType.Create, Guid.Empty, worldObject.ToMapObject());
+                                RegisterRedoAction(ActionType.Create, Guid.Empty, worldObject.ToDataObject());
                                 worldObject.Destroy();
                                 break;
                             case ActionType.Name:
@@ -209,7 +236,7 @@ namespace TT.MapEditor
                     Debug.LogFormat("UndoController :: Undo :: Index {0} undoing delete on object {1}", undoIndex, UndoActions[undoIndex].ObjectId);
 
                     // Item was deleted, re-create it
-                    var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((MapObjectBase)UndoActions[undoIndex].Value);
+                    var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((BaseObjectData)UndoActions[undoIndex].Value);
                     rehydratedWorldObject.SwitchSelection();
 
                     RegisterRedoAction(ActionType.Delete, rehydratedWorldObject.ObjectId, null);
@@ -256,22 +283,28 @@ namespace TT.MapEditor
                     UndoActions.RemoveAt(undoIndex);
                     undoIndex--;
                 }
+                
+                // Remove an action from the counter
+                NumChangesSinceLastSave--;
             }
         }
 
-        public static async void Redo()
+        /// <summary>
+        /// Re-applies the last action that was undone.
+        /// </summary>
+        private static async void Redo()
         {
             if (RedoActions.Count == 0) return;
 
             var redoIndex = RedoActions.Count - 1;
-            var worldObject = WorldObjectBase.All.Where(x => x.ObjectId.Equals(RedoActions[redoIndex].ObjectId)).FirstOrDefault();
+            var worldObject = WorldObjectBase.All.FirstOrDefault(x => x.ObjectId.Equals(RedoActions[redoIndex].ObjectId));
 
             if (worldObject)
             {
                 switch (RedoActions[redoIndex].Action)
                 {
                     case ActionType.Delete:
-                        UndoActions.Add(new UndoAction() { Action = ActionType.Delete, ObjectId = worldObject.ObjectId, Value = worldObject.ToMapObject() });
+                        UndoActions.Add(new UndoAction() { Action = ActionType.Delete, ObjectId = worldObject.ObjectId, Value = worldObject.ToDataObject() });
                         worldObject.Destroy();
                         break;
                     case ActionType.Name:
@@ -337,7 +370,7 @@ namespace TT.MapEditor
             }
             else if (RedoActions[redoIndex].Action == ActionType.Create)
             {
-                var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((MapObjectBase)RedoActions[redoIndex].Value);
+                var rehydratedWorldObject = await WorldObjectFactory.CreateFromMapObject((BaseObjectData)RedoActions[redoIndex].Value);
                 rehydratedWorldObject.SwitchSelection();
                 UndoActions.Add(new UndoAction() { Action = ActionType.Create, ObjectId = rehydratedWorldObject.ObjectId, Value = null });
             }
@@ -370,11 +403,30 @@ namespace TT.MapEditor
             }
 
             RedoActions.RemoveAt(redoIndex);
+            
+            // Add an action to the counter
+            NumChangesSinceLastSave++;
         }
 
 
         #endregion
+        
+        
+        #region Event handlers
+        
+        /// <summary>
+        /// Called when the map is saved. If successful, reset the changes counter.
+        /// </summary>
+        /// <param name="success"></param>
+        private void HandleMapSaved(bool success)
+        {
+            if (success)
+                NumChangesSinceLastSave = 0;
+        }
 
+        #endregion
+
+        
         /// <summary>
         /// Internal representation of an undo action. Only used to stuff the action in a list.
         /// </summary>

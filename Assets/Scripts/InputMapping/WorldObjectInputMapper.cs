@@ -22,14 +22,101 @@ using UnityEngine;
 
 namespace TT.InputMapping
 {
+    /// <summary>
+    /// Exposes properties indicating whether key combinations are being pressed related to world object manipulation.
+    /// Access this through InputMapper.Current.
+    /// </summary>
     public class WorldObjectInputMapper : InputMapperBase
     {
+        
+        #region Constructors
+        
         public WorldObjectInputMapper(InputMapperBase parent) : base(parent)
         { }
+        
+        #endregion
+        
 
+        #region Public properties
+
+        /// <summary>
+        /// Left mouse button press
+        /// </summary>
+        public bool PlaceObject => GetMouseButtonDown(0);
+
+        /// <summary>
+        /// Esc press
+        /// </summary>
+        public bool Cancel => GetKeyDown(KeyCode.Escape);
+
+        /// <summary>
+        /// Del press
+        /// </summary>
+        public bool Delete => GetKeyDown(KeyCode.Delete);
+
+        /// <summary>
+        /// Ctrl + Z
+        /// </summary>
+        public bool Undo => IsControlDown() && GetKeyDown(KeyCode.Z) && !IsShiftDown();
+
+        /// <summary>
+        /// Ctrl + Shift + Z
+        /// </summary>
+        public bool Redo => IsControlDown() && GetKeyDown(KeyCode.Z) && IsShiftDown();
+
+        /// <summary>
+        /// True on the frame that a rotation key is pressed down (T or R)
+        /// </summary>
+        public bool StartRotate => GetKeyDown(KeyCode.T) || GetKeyDown(KeyCode.R);
+
+        /// <summary>
+        /// True on the frame that a rotation key is released (T or R)
+        /// </summary>
+        public bool StopRotate => GetKeyUp(KeyCode.T) || GetKeyUp(KeyCode.R);
+
+        /// <summary>
+        /// True on the frame that a elevation key is pressed down (B or V)
+        /// </summary>
+        public bool StartElevate => GetKeyDown(KeyCode.B) || GetKeyDown(KeyCode.V);
+
+        /// <summary>
+        /// True on the frame that a elevation key is released (B or V)
+        /// </summary>
+        public bool StopElevate => GetKeyUp(KeyCode.B) || GetKeyUp(KeyCode.V);
+
+        /// <summary>
+        /// True on the frame that a scale key is pressed down (G or F)
+        /// </summary>
+        public bool StartScale => GetKeyDown(KeyCode.G) || GetKeyDown(KeyCode.F);
+
+        /// <summary>
+        /// True on the frame that a scale key is released (G or F)
+        /// </summary>
+        public bool StopScale => GetKeyUp(KeyCode.G) || GetKeyUp(KeyCode.F);
+
+        /// <summary>
+        /// True on the frame that a move key is pressed (left, right, up or down)
+        /// </summary>
+        public bool StartMove => GetKeyDown(KeyCode.LeftArrow) || GetKeyDown(KeyCode.RightArrow) || GetKeyDown(KeyCode.UpArrow) || GetKeyDown(KeyCode.DownArrow);
+
+        /// <summary>
+        /// True on the frame that a move key is released (left, right, up or down)
+        /// </summary>
+        public bool StopMove => GetKeyUp(KeyCode.LeftArrow) || GetKeyUp(KeyCode.RightArrow) || GetKeyUp(KeyCode.UpArrow) || GetKeyUp(KeyCode.DownArrow);
+        
+        #endregion
+ 
+        
+        #region Public methods
+
+        /// <summary>
+        /// Calculates the appropriate amount of scaling for the selected object based on keyboard input.
+        /// </summary>
+        /// <returns>A float indicating the scaling required. This is positive for scaling up, and negative for
+        ///     scaling down.</returns>
         public float GetScaleAmount()
         {
-            if (!IsActive()) return 0;
+            if (!Active) return 0;
 
             var snap = IsControlDown();
             var fast = IsShiftDown();
@@ -48,10 +135,17 @@ namespace TT.InputMapping
             return amount;
         }
 
-
+        /// <summary>
+        /// Calculates the amount to rotate the selected object by, based on keyboard input and the specified snap
+        /// to grid value.
+        /// </summary>
+        /// <param name="snapToGrid">When true, rotation will snap to 90 degree rotations. When false, a smooth rotation
+        ///     will be returned.</param>
+        /// <returns>A float indicating the amount to rotate by, positive for clockwise, negative for counter-clockwise.
+        ///     </returns>
         public float GetRotationAmount(bool snapToGrid)
         {
-            if (!IsActive()) return 0f;
+            if (!Active) return 0f;
 
             var snap = snapToGrid || IsControlDown();
             var fast = IsShiftDown();
@@ -70,11 +164,16 @@ namespace TT.InputMapping
 
             return amount;
         }
-
-
+        
+        /// <summary>
+        /// Calculates the amount of elevation change for the selected object based on the keyboard input and specified
+        /// snap to grid setting.
+        /// </summary>
+        /// <param name="snapToGrid">When true, the elevation will snap to whole levels on the grid.</param>
+        /// <returns>A float indicating the amount to raise (positive) or lower (negative) the object by.</returns>
         public float GetElevateAmount(bool snapToGrid)
         {
-            if (!IsActive()) return 0f;
+            if (!Active) return 0f;
 
             // Snap on holding control
             var snap = snapToGrid || IsControlDown();
@@ -95,9 +194,15 @@ namespace TT.InputMapping
             return amount;
         }
 
+        /// <summary>
+        /// Calculates the amount to move the selected object by based on keyboard input.
+        /// </summary>
+        /// <param name="snapToGrid">When true, the movement will snap to whole grid sections.</param>
+        /// <returns>A Vector3 to apply to the object's position, with the X and Z values containing the amount to move
+        ///     the object in each direction, or zero for no movement. The Y value is always zero.</returns>
         public Vector3 GetMoveAmount(bool snapToGrid)
         {
-            if (!IsActive()) return Vector3.zero;
+            if (!Active) return Vector3.zero;
 
             // Snap on holding control
             var snap = snapToGrid || IsControlDown();
@@ -117,62 +222,7 @@ namespace TT.InputMapping
 
             return amount;
         }
-
-        // Left mouse button pressed
-        public bool PlaceObject { get => IsActive() && Input.GetMouseButtonDown(0); }
-
-        // Escape pressed
-        public bool Cancel { get => IsActive() && Input.GetKeyDown(KeyCode.Escape); }
-
-        // Delete key pressed
-        public bool Delete { get => IsActive() && Input.GetKeyDown(KeyCode.Delete); }
         
-        // Either control held down and Z pressed (AltGr in editor to avoid clashes with Unity keybindings)
-        public bool Undo { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.Z) && !IsShiftDown(); }
-
-        // Either control held down and Z pressed (AltGr in editor to avoid clashes with Unity keybindings)
-        public bool Redo { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.Z) && IsShiftDown(); }
-
-        /// <summary>
-        /// True on the frame that the rotation key is pressed down (T or R)
-        /// </summary>
-        public bool StartRotate { get => IsActive() && (Input.GetKeyDown(KeyCode.T) || Input.GetKeyDown(KeyCode.R)); }
-        
-        /// <summary>
-        /// True on the frame that the rotation key is released (T or R)
-        /// </summary>
-        public bool StopRotate { get => IsActive() && (Input.GetKeyUp(KeyCode.T) || Input.GetKeyUp(KeyCode.R)); }
-
-        /// <summary>
-        /// True on the frame that the rotation key is pressed down (T or R)
-        /// </summary>
-        public bool StartElevate { get => IsActive() && (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.V)); }
-        
-        /// <summary>
-        /// True on the frame that the rotation key is released (T or R)
-        /// </summary>
-        public bool StopElevate { get => IsActive() && (Input.GetKeyUp(KeyCode.B) || Input.GetKeyUp(KeyCode.V)); }
-
-        /// <summary>
-        /// True on the frame that the rotation key is pressed down (T or R)
-        /// </summary>
-        public bool StartScale { get => IsActive() && (Input.GetKeyDown(KeyCode.G) || Input.GetKeyDown(KeyCode.F)); }
-        
-        /// <summary>
-        /// True on the frame that the rotation key is released (T or R)
-        /// </summary>
-        public bool StopScale { get => IsActive() && (Input.GetKeyUp(KeyCode.G) || Input.GetKeyUp(KeyCode.F)); }
-
-        public bool StartMove { get => IsActive() && (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)); }
-        public bool StopMove { get => IsActive() && (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow)); }
-
-        /// <summary>
-        /// True on the frame that the up arrow is released
-        /// </summary>
-        public bool MoveRight { get => IsActive() && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.RightArrow); }
-        public bool MoveLeft { get => IsActive() && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.LeftArrow); }
-        public bool MoveUp { get => IsActive() && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.UpArrow); }
-        public bool MoveDown { get => IsActive() && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.DownArrow); }
-
+        #endregion
     }
 }

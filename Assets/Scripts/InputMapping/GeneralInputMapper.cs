@@ -22,19 +22,44 @@ using UnityEngine;
 
 namespace TT.InputMapping
 {
+    /// <summary>
+    /// Exposes properties indicating whether certain key combinations are being pressed relating to general app
+    /// control. Access this through InputMapper.Current.
+    /// </summary>
     public class GeneralInputMapper : InputMapperBase
     {
+        
+        #region Constructors
+        
         public GeneralInputMapper(InputMapperBase parent) : base(parent)
         { }
+        
+        #endregion
+        
+        
+        #region Public properties
 
-        // Either Control held down and S pressed, but Shift is not held down (that is Save As)
-        public bool Save { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.S) && !IsShiftDown(); }
+        /// <summary>
+        /// Ctrl + S
+        /// </summary>
+        public bool Save => Active && IsControlDown() && GetKeyDown(KeyCode.S) && !IsShiftDown();
 
-        // Either Control held down, either Shift held down, and S pressed
-        public bool SaveAs { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.S) && IsShiftDown(); }
+        /// <summary>
+        /// Ctrl + Shift + S
+        /// </summary>
+        public bool SaveAs => Active && IsControlDown() && GetKeyDown(KeyCode.S) && IsShiftDown();
 
-        // Either Control held down and O pressed
-        public bool Load { get => IsActive() && IsControlDown() && Input.GetKeyDown(KeyCode.O); }
+        /// <summary>
+        /// Ctrl + L
+        /// </summary>
+        public bool Load => Active && IsControlDown() && GetKeyDown(KeyCode.L);
+
+        /// <summary>
+        /// F1
+        /// </summary>
+        public bool Help => Active && GetKeyDown(KeyCode.F1);
+
+        #endregion
 
     }
 }

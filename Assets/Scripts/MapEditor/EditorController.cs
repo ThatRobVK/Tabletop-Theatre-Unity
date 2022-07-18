@@ -18,88 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
-using System.Collections.Generic;
-using TT.Data;
-using TT.Shared;
-using TT.State;
-using TT.World;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using TT.Data;
+using TT.State;
+using TT.World;
 
 namespace TT.MapEditor
 {
+    /// <summary>
+    /// Responsible for setting up the Map Editor and managing the StateController. The MapEditor scene must have one
+    /// and only one instance of this class running or unexpected behaviour will result.
+    /// </summary>
     public class EditorController : MonoBehaviour
     {
 
         #region Private fields
 
         private StateController _stateController;
-        private IUser _user;
-
-        #endregion
-
-
-        #region Public properties
-
-        public static readonly List<WorldObjectBase> WorldObjects = new List<WorldObjectBase>();
 
         #endregion
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Awake()
         {
             // Limit the application to the screen's refresh rate so we don't hammer the GPU for no reason
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
-            Debug.LogFormat("EditorController :: Awake :: Setting target framerate to {0}", Application.targetFrameRate.ToString());
+            Debug.LogFormat("EditorController :: Awake :: Setting target framerate to {0}", 
+                Application.targetFrameRate.ToString());
 
             // Instantiate state controller
             _stateController = new StateController();
 
             LoadContent();
         }
-
-        private void Login()
-        {
-            Debug.Log("Logging in");
-            var user = FindObjectOfType<CommsObject>().User;
-            user.OnLoginSuccess += () => Debug.Log("Login successful");
-            user.OnLoginFailed += (LoginFailureReason failure) => Debug.Log("Login failed because " + failure.ToString());
-            user.LoginAsync("testuser@whatever.com", "u$BMLfvtDTmaPBVEA7ts2&Af%AR&SH");
-        }
-
-        private async void LoadContent()
-        {
-            Debug.Log("EditorController :: Awake :: Loading content");
-            var json = await CommsLib.GameContent.GetContentJsonAsync();
-            Content.Load(json);
-
-            var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
-            AssetBundle.UnloadAllAssetBundles(false);
-            var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
-            loadContentCatalogAsync.Completed += OnContentCatalogLoaded;
-        }
-
-        private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
-        {
-            // Load the first game terrain as default
-            GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
-        }
-
+        
         void Start()
         {
             // Set state controller to initial idle state
             _stateController.ChangeState(StateType.EditorIdleState);
 
             TimeController.Current.CurrentTime = 12;
-            
-            Login();
         }
 
         void Update()
@@ -108,8 +71,39 @@ namespace TT.MapEditor
             _stateController.Update();
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
+        
+        #region Event handlers
+        
+        private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
+        {
+            Map.Current.Render().ConfigureAwait(false);
+            // TODO: Load terrain texture from map data
+            // Load the first game terrain as default
+            //GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
+        }
+
+        #endregion
+        
+        
+        #region Private methods
+        
+        private async void LoadContent()
+        {
+            // Load content definitions
+            Debug.Log("EditorController :: Awake :: Loading content");
+            if (!Content.ContentLoaded)
+                await Content.Load();
+
+            // Load content catalog
+            var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
+            AssetBundle.UnloadAllAssetBundles(false);
+            var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
+            loadContentCatalogAsync.Completed += OnContentCatalogLoaded;
+        }
+        
+        #endregion
+        
     }
 }

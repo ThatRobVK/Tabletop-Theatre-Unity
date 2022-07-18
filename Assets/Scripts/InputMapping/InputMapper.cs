@@ -20,51 +20,54 @@
 
 namespace TT.InputMapping
 {
+    /// <summary>
+    /// Utility class with boolean properties indicating whether specific keybindings are pressed in the current frame.
+    /// </summary>
     public class InputMapper : InputMapperBase
     {
+        
+        #region Private fields
+        
         private static InputMapper _current;
-        public static InputMapper Current
-        {
-            get
-            {
-                if (_current == null) _current = new InputMapper();
-                return _current;
-            }
-        }
-
+        private WorldObjectInputMapper _worldObjectInput;
+        private CameraInputMapper _cameraInput;
+        private GeneralInputMapper _generalInput;
+        
+        #endregion
+        
+        
+        #region Constructors
 
         private InputMapper() : base(null)
         {
         }
+        
+        #endregion
+        
+        
+        #region Public properties
 
-        private WorldObjectInputMapper _worldObjectInput;
-        public WorldObjectInputMapper WorldObjectInput
-        {
-            get
-            {
-                if (_worldObjectInput == null) _worldObjectInput = new WorldObjectInputMapper(this);
-                return _worldObjectInput;
-            }
-        }
+        /// <summary>
+        /// A singleton instance of the InputMapper class.
+        /// </summary>
+        public static InputMapper Current => _current ??= new InputMapper();
 
-        private CameraInputMapper _cameraInput;
-        public CameraInputMapper CameraInput
-        {
-            get
-            {
-                if (_cameraInput == null) _cameraInput = new CameraInputMapper(this);
-                return _cameraInput;
-            }
-        }
+        /// <summary>
+        /// Keybindings for interacting with world objects. 
+        /// </summary>
+        public WorldObjectInputMapper WorldObjectInput => _worldObjectInput ??= new WorldObjectInputMapper(this);
 
-        private GeneralInputMapper _generalInput;
-        public GeneralInputMapper GeneralInput
-        {
-            get
-            {
-                if (_generalInput == null) _generalInput = new GeneralInputMapper(this);
-                return _generalInput;
-            }
-        }
+        /// <summary>
+        /// Keybindings for controlling the camera.
+        /// </summary>
+        public CameraInputMapper CameraInput => _cameraInput ??= new CameraInputMapper(this);
+
+        /// <summary>
+        /// Keybindings for general application control.
+        /// </summary>
+        public GeneralInputMapper GeneralInput => _generalInput ??= new GeneralInputMapper(this);
+        
+        #endregion
+        
     }
 }

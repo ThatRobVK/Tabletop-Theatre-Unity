@@ -21,13 +21,16 @@
 using System.Collections.Generic;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.UserContent;
 using UnityEngine;
 
 namespace TT.World
 {
+    /// <summary>
+    /// Attached to general world objects.
+    /// </summary>
     public class WorldObject : WorldObjectBase
     {
-
         #region Private fields
 
         private string _openAnimation;
@@ -68,7 +71,9 @@ namespace TT.World
         /// <param name="arg2"></param>
         private void HandleDrag(DraggableObject arg2)
         {
-            var newPosition = AutomaticElevation ? Helpers.GetWorldPointFromMouse(Helpers.StackableMask) : Helpers.GetWorldPointFromMouse(transform.position.y);
+            var newPosition = AutomaticElevation
+                ? Helpers.GetWorldPointFromMouse(Helpers.StackableMask)
+                : Helpers.GetWorldPointFromMouse(transform.position.y);
             newPosition -= _dragPositionOffset;
 
             MoveTo(newPosition);
@@ -96,7 +101,7 @@ namespace TT.World
         public override void Initialise(ContentItem contentItem, int itemIndex)
         {
             base.Initialise(contentItem, itemIndex);
-            
+
             gameObject.name = name;
             var thisTransform = transform;
             thisTransform.position = Vector3.zero + Vector3.up * GameTerrain.Current.OffsetAltitude(0);
@@ -126,10 +131,10 @@ namespace TT.World
             PickUp();
         }
 
-        public void Initialise(MapWorldObject mapObject)
+        public void Initialise(WorldObjectData mapObject)
         {
             FromMapObject(mapObject);
-            
+
             // If this object is draggable, attach to the drag event
             var draggable = GetComponent<DraggableObject>();
             if (draggable)
@@ -146,14 +151,18 @@ namespace TT.World
             InitialiseAnimations();
             InitialiseLods();
             UpdateLights();
-            if (OptionValues.ContainsKey(WorldObjectOption.OpenClose)) PlayAnimation((bool)OptionValues[WorldObjectOption.OpenClose] ? OpenCloseState.Open : OpenCloseState.Close);
+            if (OptionValues.ContainsKey(WorldObjectOption.OpenClose))
+                PlayAnimation((bool) OptionValues[WorldObjectOption.OpenClose]
+                    ? OpenCloseState.Open
+                    : OpenCloseState.Close);
         }
 
 
         /// <summary>
-        /// Creates a clone of another object
+        /// Creates a clone of another object.
         /// </summary>
-        public override void CloneFrom(WorldObjectBase fromObject, string prefabAddress = null, bool generateNewObjectId = true, ContentItem contentItem = null)
+        public override void CloneFrom(WorldObjectBase fromObject, string prefabAddress = null,
+            bool generateNewObjectId = true, ContentItem contentItem = null)
         {
             base.CloneFrom(fromObject, prefabAddress, generateNewObjectId, contentItem);
 
@@ -171,7 +180,6 @@ namespace TT.World
                 thisDraggable.OnDrag += HandleDrag;
                 thisDraggable.OnStopDrag += HandleStopDrag;
             }
-
         }
 
         /// <summary>
@@ -184,9 +192,7 @@ namespace TT.World
             base.SetOption(option, value);
 
             if (option == WorldObjectOption.OpenClose)
-            {
-                PlayAnimation((bool)value ? OpenCloseState.Open : OpenCloseState.Close);
-            }
+                PlayAnimation((bool) value ? OpenCloseState.Open : OpenCloseState.Close);
 
             UpdateLights();
         }
@@ -206,13 +212,13 @@ namespace TT.World
         /// Create a MapWorldObject representing this WorldObject.
         /// </summary>
         /// <returns>A MapWorldObject with all values set based on the current state of this WorldObject.</returns>
-        public override MapObjectBase ToMapObject()
+        public override BaseObjectData ToDataObject()
         {
-            var mapObject = ToMapObject<MapWorldObject>();
-            mapObject.openCloseState = _openCloseState == OpenCloseState.Open;
-            mapObject.automaticElevation = AutomaticElevation;
+            var worldObjectData = ToMapObject<WorldObjectData>();
+            worldObjectData.openCloseState = _openCloseState == OpenCloseState.Open;
+            worldObjectData.automaticElevation = AutomaticElevation;
 
-            return mapObject;
+            return worldObjectData;
         }
 
         /// <summary>
@@ -224,7 +230,8 @@ namespace TT.World
             var thisAnimation = GetComponentInChildren<Animation>();
             if (thisAnimation != null)
             {
-                var targetState = openClose == OpenCloseState.Open || (openClose == OpenCloseState.Toggle && _openCloseState == OpenCloseState.Close);
+                var targetState = openClose == OpenCloseState.Open ||
+                                  (openClose == OpenCloseState.Toggle && _openCloseState == OpenCloseState.Close);
 
                 if (targetState && _openCloseState != OpenCloseState.Open && !string.IsNullOrEmpty(_openAnimation))
                 {
@@ -266,37 +273,35 @@ namespace TT.World
             var lightsEnabled = true;
 
             if (OptionValues.ContainsKey(WorldObjectOption.LightsMode))
-            {
                 // Enable lights when:
                 // Object light mode is auto and the moon is out
                 // OR Light is always on
                 // OR Map lighting mode isn't ambient (i.e. low light or indoor)
-                lightsEnabled = ((LightsMode)OptionValues[WorldObjectOption.LightsMode] == LightsMode.Auto && TimeController.Current.MoonOut)
-                                || (LightsMode)OptionValues[WorldObjectOption.LightsMode] == LightsMode.On
+                lightsEnabled = ((LightsMode) OptionValues[WorldObjectOption.LightsMode] == LightsMode.Auto &&
+                                 TimeController.Current.MoonOut)
+                                || (LightsMode) OptionValues[WorldObjectOption.LightsMode] == LightsMode.On
                                 || TimeController.Current.LightingMode != LightingMode.Ambient;
-            }
 
             var thisLights = GetComponentsInChildren<Light>();
             if (thisLights != null)
-            {
                 foreach (var currentLight in thisLights)
                 {
                     // Set every light based on options
                     currentLight.enabled = lightsEnabled;
-                    currentLight.intensity = OptionValues.ContainsKey(WorldObjectOption.LightsIntensity) ?
-                                      (float)OptionValues[WorldObjectOption.LightsIntensity] : currentLight.intensity;
-                    currentLight.range = OptionValues.ContainsKey(WorldObjectOption.LightsRange) ?
-                                      (float)OptionValues[WorldObjectOption.LightsRange] : currentLight.range;
-                    currentLight.color = OptionValues.ContainsKey(WorldObjectOption.LightsColor) ?
-                                      (Color)OptionValues[WorldObjectOption.LightsColor] : currentLight.color;
+                    currentLight.intensity = OptionValues.ContainsKey(WorldObjectOption.LightsIntensity)
+                        ? (float) OptionValues[WorldObjectOption.LightsIntensity]
+                        : currentLight.intensity;
+                    currentLight.range = OptionValues.ContainsKey(WorldObjectOption.LightsRange)
+                        ? (float) OptionValues[WorldObjectOption.LightsRange]
+                        : currentLight.range;
+                    currentLight.color = OptionValues.ContainsKey(WorldObjectOption.LightsColor)
+                        ? (Color) OptionValues[WorldObjectOption.LightsColor]
+                        : currentLight.color;
                 }
-            }
 
             var thisParticleSystems = GetComponentsInChildren<ParticleSystem>();
             if (thisParticleSystems != null)
-            {
                 foreach (var currentParticleSystem in thisParticleSystems)
-                {
                     // Enable / disable particle systems
                     if (lightsEnabled)
                     {
@@ -306,18 +311,12 @@ namespace TT.World
                     {
                         if (currentParticleSystem.isPlaying) currentParticleSystem.Stop(true);
                     }
-                }
-            }
 
             var thisLensFlares = GetComponentsInChildren<LensFlare>();
             if (thisLensFlares != null)
-            {
                 foreach (var currentLensFlare in thisLensFlares)
-                {
                     // Enable / disable lens flares
                     currentLensFlare.enabled = lightsEnabled;
-                }
-            }
         }
 
         /// <summary>
@@ -352,9 +351,7 @@ namespace TT.World
 
             // Init open close options if the object has open and close animations
             if (!string.IsNullOrEmpty(_openAnimation) && !string.IsNullOrEmpty(_closeAnimation))
-            {
                 OptionValues.Add(WorldObjectOption.OpenClose, _openCloseState == OpenCloseState.Open);
-            }
         }
 
         /// <summary>
@@ -387,29 +384,22 @@ namespace TT.World
             {
                 // Find and store the open and close animation names
                 foreach (AnimationState state in thisAnimation)
-                {
                     if (state.name.Contains("open"))
-                    {
                         _openAnimation = state.name;
-                    }
-                    else if (state.name.Contains("close"))
-                    {
-                        _closeAnimation = state.name;
-                    }
-                }
+                    else if (state.name.Contains("close")) _closeAnimation = state.name;
 
                 // Set current state based on default animation
-                _openCloseState = (thisAnimation.clip.name == _closeAnimation) ? OpenCloseState.Open : OpenCloseState.Close;
+                _openCloseState = thisAnimation.clip.name == _closeAnimation
+                    ? OpenCloseState.Open
+                    : OpenCloseState.Close;
 
                 // Do not auto play animation
                 thisAnimation.playAutomatically = false;
                 thisAnimation.Stop();
             }
-         }
+        }
+
         #endregion
-
-
-
     }
 
     public enum LightsMode

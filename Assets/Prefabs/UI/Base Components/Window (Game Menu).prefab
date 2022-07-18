@@ -539,7 +539,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_WindowId: 3
   m_CustomWindowId: 6
-  m_StartingState: 1
+  m_StartingState: 0
   m_EscapeKeyAction: 1
   m_UseBlackOverlay: 1
   m_FocusAllowReparent: 1
@@ -590,9 +590,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2787734244063476243}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
-  m_BlocksRaycasts: 0
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!114 &6324124917152742703
 MonoBehaviour:

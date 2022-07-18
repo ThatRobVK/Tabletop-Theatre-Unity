@@ -21,150 +21,329 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TT.World;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Serialization;
+using TT.World;
+using TT.Shared.UserContent;
 
 namespace TT.Data
 {
-    [Serializable]
+    /// <summary>
+    /// Properties describing the current map and static and instance methods for dealing with maps, such as loading,
+    /// saving and rendering the loaded map.
+    /// </summary>
     public class Map
     {
-        public static Action OnMapLoaded;
+        #region Events
 
-        [NonSerialized] public string Json;
+        /// <summary>
+        /// Invoked when a map load has completed. The boolean parameter indicates whether loading was successful.
+        /// </summary>
+        public static Action<bool> OnMapLoaded;
 
-        [FormerlySerializedAs("Name")] public string name;
-        [FormerlySerializedAs("Author")] public string author;
-        [FormerlySerializedAs("DateCreated")] public long dateCreated;
-        [FormerlySerializedAs("DateSaved")] public long dateSaved;
-        [FormerlySerializedAs("TerrainTextureAddress")] public string terrainTextureAddress;
-        [FormerlySerializedAs("Time")] public float time = 12;
-        [FormerlySerializedAs("Wind")] public float wind = 0.1f;
-        [FormerlySerializedAs("WindDirection")] public float windDirection;
-        [FormerlySerializedAs("LightingMode")] public LightingMode lightingMode;
-        [FormerlySerializedAs("Terrain")] public MapTerrain terrain;
-        [FormerlySerializedAs("WorldObjects")] public List<MapWorldObject> worldObjects;
-        [FormerlySerializedAs("RamObjects")] public List<MapRamObject> ramObjects;
-        [FormerlySerializedAs("ScalableObjects")] public List<MapScalableObject> scalableObjects;
-        [FormerlySerializedAs("ScatterObjects")] public List<MapScatterObject> scatterObjects;
+        /// <summary>
+        /// Invoked when a map save has completed. The boolean parameter indicates whether loading was successful.
+        /// </summary>
+        public static Action<bool> OnMapSaved;
 
+        /// <summary>
+        /// Invoked when a map rendering has completed.
+        /// </summary>
+        public static Action OnMapRendered;
+
+        #endregion
+
+
+        #region Public properties
+
+        /// <summary>
+        /// The unique identifier of this map.
+        /// </summary>
+        public Guid Id => Guid.Parse(_mapData.metadata.id ?? string.Empty);
+
+        /// <summary>
+        /// A user-defined name for the map.
+        /// </summary>
+        public string Name
+        {
+            get => _mapData.metadata.name;
+            set => _mapData.metadata.name = value;
+        }
+
+        /// <summary>
+        /// A user-defined description for the map.
+        /// </summary>
+        public string Description
+        {
+            get => _mapData.metadata.description;
+            set => _mapData.metadata.description = value;
+        }
+
+        /// <summary>
+        /// The user who originally created the map.
+        /// </summary>
+        public string Author => _mapData.metadata.authorName;
+
+        /// <summary>
+        /// The last person who has modified the map.
+        /// </summary>
+        public string ModifiedBy => _mapData.metadata.modifiedByName;
+
+        /// <summary>
+        /// The date and time on which this map was originally created.
+        /// </summary>
+        public DateTime DateCreated => DateTime.FromFileTimeUtc(_mapData.metadata.dateCreated);
+
+        /// <summary>
+        /// The date and time on which this map was last saved.
+        /// </summary>
+        public DateTime DateSaved => DateTime.FromFileTimeUtc(_mapData.metadata.dateSaved);
+
+        /// <summary>
+        /// The date and time when the map was last loaded.
+        /// </summary>
+        public DateTime DateLoaded { get; private set; }
+
+        /// <summary>
+        /// The currently loaded map. This may be null until a map is loaded or the New method is called.
+        /// </summary>
         public static Map Current { get; private set; }
 
-        // Create a new map object
-        public static void Create(string name, string author, string terrainTextureAddress)
+        #endregion
+
+
+        #region Private fields
+
+        private readonly MapData _mapData;
+
+        #endregion
+
+
+        #region Constructors / destructors
+
+        /// <summary>
+        /// Creates a new map
+        /// </summary>
+        /// <param name="mapData"></param>
+        private Map(MapData mapData)
         {
-            Current = new Map();
-            Current.name = name;
-            Current.author = author;
-            Current.dateCreated = DateTime.Now.ToFileTimeUtc();
-            Current.dateSaved = 0;
-            Current.terrainTextureAddress = terrainTextureAddress;
-            Current.time = 12;
-            Current.wind = 0.1f;
-            Current.worldObjects = new List<MapWorldObject>();
-            Current.ramObjects = new List<MapRamObject>();
-            Current.scalableObjects = new List<MapScalableObject>();
-            Current.scatterObjects = new List<MapScatterObject>();
-            Current.lightingMode = LightingMode.Ambient;
+            _mapData = mapData;
         }
 
-        // Load a map from json
-        public static async void Load(string json)
+        #endregion
+
+
+        #region Public methods
+
+        /// <summary>
+        /// Creates a new map and sets it to the current map.
+        /// </summary>
+        /// <param name="name">A user defined name for the map. This can be null and set later through the Name
+        ///     property.</param>
+        /// <param name="description">A user defined description for the map. This can be null and set later through
+        ///     the Description property.</param>
+        /// <param name="terrainId">The addressable ID of the texture to load as the base terrain layer.</param>
+        /// <remarks>This method requires that the user is logged in.</remarks>
+        public static void New(string name, string description, string terrainId)
         {
-            Current = JsonUtility.FromJson<Map>(json);
-            Current.Json = json;
-
-            await GameTerrain.Current.LoadTerrainTextures(Current.terrain.terrainLayers.ToArray());
-
-            TimeController.Current.LightingMode = Current.lightingMode;
-            TimeController.Current.CurrentTime = Current.time;
-            WindController.Current.CurrentWind = Current.wind;
-            WindController.Current.Rotation = Current.windDirection;
-
-            // Load all objects synchronously
-            foreach (var x in Current.scalableObjects)
+            if (!Helpers.Comms.User.IsLoggedIn)
             {
-                await WorldObjectFactory.CreateFromMapObject(x);
-            }
-            foreach (var x in Current.worldObjects)
-            {
-                await WorldObjectFactory.CreateFromMapObject(x);
-            }
-            foreach (var x in Current.ramObjects.Where(x => x.type == WorldObjectType.River))
-            {
-                // Load rivers before roads as they create more terrain height variations
-                await WorldObjectFactory.CreateFromMapObject(x);
-            }
-            foreach (var x in Current.ramObjects.Where(x => x.type == WorldObjectType.Road))
-            {
-                // Load roads after rivers so they correctly adapt to the carved terrain
-                await WorldObjectFactory.CreateFromMapObject(x);
-            }
-            foreach (var x in Current.scatterObjects)
-            {
-                await WorldObjectFactory.CreateFromMapObject(x);
+                Debug.LogError("Map :: New :: User not logged in. Unable to create new map.");
+                Current = null;
+                return;
             }
 
-            GameTerrain.Current.LoadSplatMaps(Current.terrain.splatWidth, Current.terrain.splatHeight, Current.terrain.splatMaps);
+            var id = Helpers.Comms.User.Id;
+            var user = Helpers.Comms.User.Username;
+            var mapData = new MapData
+            {
+                metadata = new MapMetadata
+                {
+                    id = Guid.NewGuid().ToString(),
+                    name = name,
+                    description = description,
+                    authorId = id,
+                    authorName = user,
+                    modifiedById = id,
+                    modifiedByName = user,
+                    dateCreated = DateTime.Now.ToFileTimeUtc()
+                }
+            };
 
-            OnMapLoaded?.Invoke();
+            if (!string.IsNullOrEmpty(terrainId))
+            {
+                mapData.terrainTextureAddress = terrainId;
+                mapData.terrain = new Shared.UserContent.TerrainData
+                {
+                    splatMaps = new List<VectorData>(),
+                    splatHeight = 1,
+                    splatWidth = 1,
+                    terrainLayers = new List<string> {terrainId}
+                };
+            }
+
+            Current = new Map(mapData);
+
+            // Set the load date time
+            Current.DateLoaded = DateTime.Now;
         }
 
-        // Serialise the map and all World Objects to json
-        public string Save()
+        /// <summary>
+        /// Loads the map represented by the specified MapData and instantiates all of its objects. This method is
+        /// asynchronous and will raise the OnMapLoaded event when completed.
+        /// </summary>
+        /// <param name="mapId">The ID of the map to load. This can be found in the list returned by the GetMapIndex
+        ///     method.</param>
+        /// <returns>A boolean value indicating whether the load was successful.</returns>
+        /// <remarks>The loaded map is set as the static Current property from where it can be accessed.</remarks>
+        public static async Task Load(string mapId)
         {
-            terrain = GameTerrain.Current.ToMapObject();
+            if (!Helpers.Comms.User.IsLoggedIn)
+            {
+                Debug.LogError("Map :: New :: User not logged in. Unable to create new map.");
+                Current = null;
+                return;
+            }
+
+            try
+            {
+                var mapData = await Helpers.Comms.UserContent.LoadMap(mapId);
+
+                if (Current != null)
+                    Current.Unload();
+
+                Current = new Map(mapData);
+
+                // Set the load date time
+                Current.DateLoaded = DateTime.Now;
+
+                OnMapLoaded?.Invoke(true);
+                return;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarningFormat("Map :: Load :: Failed to load map. {0} : {1}", e.GetType().FullName, e.Message);
+                OnMapLoaded?.Invoke(false);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Renders the currently loaded map onto the game terrain.
+        /// </summary>
+        public async Task Render()
+        {
+            if (_mapData == null)
+            {
+                Debug.LogError("Map :: Render :: Unable to render map as no map data has been set. " +
+                               "Call New or Load first.");
+                return;
+            }
+
+            try
+            {
+                GameTerrain.Current.LoadDefaultTexture(_mapData.terrainTextureAddress);
+                await GameTerrain.Current.LoadTerrainTextures(_mapData.terrain.terrainLayers.ToArray());
+
+                TimeController.Current.LightingMode = (LightingMode) _mapData.lightingMode;
+                TimeController.Current.CurrentTime = _mapData.time;
+                WindController.Current.CurrentWind = _mapData.wind;
+                WindController.Current.Rotation = _mapData.windDirection;
+
+                foreach (var x in _mapData.worldObjects) await WorldObjectFactory.CreateFromMapObject(x);
+
+                foreach (var x in _mapData.splineObjects.Where(x =>
+                             (WorldObjectType) x.objectType == WorldObjectType.River))
+                    // Load rivers before roads as they create more terrain height variations
+                    await WorldObjectFactory.CreateFromMapObject(x);
+
+                foreach (var x in _mapData.splineObjects.Where(x =>
+                             (WorldObjectType) x.objectType == WorldObjectType.Road))
+                    // Load roads after rivers so they correctly adapt to the carved terrain
+                    await WorldObjectFactory.CreateFromMapObject(x);
+
+                foreach (var x in _mapData.scatterAreas) await WorldObjectFactory.CreateFromMapObject(x);
+
+                if (_mapData.terrain.splatMaps.Count > 0)
+                    // Load splat maps if any are present (only present when terrain has been painted)
+                    GameTerrain.Current.LoadSplatMaps(_mapData.terrain.splatWidth, _mapData.terrain.splatHeight,
+                        _mapData.terrain.splatMaps);
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("Map :: Render :: Error rendering: {0}: {1}", e.GetType().FullName, e);
+            }
+
+            OnMapRendered?.Invoke();
+        }
+
+        /// <summary>
+        /// Serializes this map into data objects and saves it.
+        /// </summary>
+        /// <returns>A boolean value indicating whether saving was successful.</returns>
+        public async Task<bool> Save()
+        {
+            // Update the basic properties in the map data
+            _mapData.metadata.dateSaved = DateTime.Now.ToFileTimeUtc();
+            _mapData.terrainTextureAddress = GameTerrain.Current.TerrainTextureAddress;
+            _mapData.time = TimeController.Current.CurrentTime;
+            _mapData.wind = WindController.Current.CurrentWind;
+            _mapData.windDirection = WindController.Current.Rotation;
+            _mapData.lightingMode = (int) TimeController.Current.LightingMode;
+            _mapData.terrain = GameTerrain.Current.ToDataObject();
 
             // Serialize World Objects
+            _mapData.worldObjects.Clear();
             var worldObjects = UnityEngine.Object.FindObjectsOfType<WorldObject>();
-            this.worldObjects.Clear();
-            foreach (var worldObject in worldObjects)
-            {
-                this.worldObjects.Add(worldObject.ToMapObject() as MapWorldObject);
-            }
+            Array.ForEach(worldObjects, x => _mapData.worldObjects.Add(x.ToDataObject() as WorldObjectData));
 
             // Serialize Ram Objects
+            _mapData.splineObjects.Clear();
             var ramObjects = UnityEngine.Object.FindObjectsOfType<RamObject>();
-            this.ramObjects.Clear();
-            foreach (var ramObject in ramObjects)
-            {
-                this.ramObjects.Add(ramObject.ToMapObject() as MapRamObject);
-            }
+            Array.ForEach(ramObjects, x => _mapData.splineObjects.Add(x.ToDataObject() as SplineObjectData));
 
             // Serialize Scalable Objects
-            var scalableObjects = UnityEngine.Object.FindObjectsOfType<ScalableObject>();
-            this.scalableObjects.Clear();
-            foreach (var scalableObject in scalableObjects)
-            {
-                this.scalableObjects.Add(scalableObject.ToMapObject() as MapScalableObject);
-            }
-
-            // Serialize Scalable Objects
+            _mapData.scatterAreas.Clear();
             var scatterObjects = UnityEngine.Object.FindObjectsOfType<PolygonObject>();
-            this.scatterObjects.Clear();
-            foreach (var scatterObject in scatterObjects)
-            {
-                this.scatterObjects.Add(scatterObject.ToMapObject() as MapScatterObject);
-            }
+            Array.ForEach(scatterObjects, x => _mapData.scatterAreas.Add(x.ToDataObject() as ScatterAreaData));
 
-            dateSaved = DateTime.Now.ToFileTimeUtc();
-            lightingMode = TimeController.Current.LightingMode;
-            time = TimeController.Current.CurrentTime;
-            wind = WindController.Current.CurrentWind;
-            windDirection = WindController.Current.Rotation;
+            // Save the map data
+            var result = await Helpers.Comms.UserContent.SaveMap(_mapData);
 
-            return JsonUtility.ToJson(Current);
+            OnMapSaved?.Invoke(result);
+            return result;
         }
 
-        // Destroys all World Objects on the current map
-        public static void Unload()
+        /// <summary>
+        /// Saves this map as a copy of the original.
+        /// </summary>
+        /// <param name="newName">A name for the new map.</param>
+        /// <returns>A boolean value indicating whether the save was successful.</returns>
+        public async Task SaveCopy(string newName)
+        {
+            // Generate new ID so this is treated as a new map
+            _mapData.metadata.id = Guid.NewGuid().ToString();
+
+            // Set the new name
+            _mapData.metadata.name = newName;
+
+            // Set other map properties
+            _mapData.metadata.dateCreated = DateTime.Now.ToFileTimeUtc();
+            _mapData.metadata.modifiedById = Helpers.Comms.User.Id;
+            _mapData.metadata.modifiedByName = Helpers.Comms.User.Username;
+
+            await Save();
+        }
+
+        /// <summary>
+        /// Destroys all world objects on the current map.
+        /// </summary>
+        public void Unload()
         {
             var worldObjects = UnityEngine.Object.FindObjectsOfType<WorldObjectBase>();
-            foreach (var worldObject in worldObjects)
-            {
-                worldObject.Destroy();
-            }
+            foreach (var worldObject in worldObjects) worldObject.Destroy();
         }
+
+        #endregion
     }
 }

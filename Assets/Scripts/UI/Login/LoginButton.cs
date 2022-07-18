@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -42,62 +41,59 @@ namespace TT.UI.Login
         #region Private fields
 
         private Button _button;
-        private LoginWindow _loginWindow;
         
         #endregion
         
         
         #region Lifecycle events
 
-        void OnEnable()
+        void Start()
         {
             _button = GetComponent<Button>();
-            _loginWindow = GetComponentInParent<LoginWindow>();
 
             // Handle button click events
             _button.onClick.AddListener(OnButtonClick);
+
+            // Listen for auth events
+            Helpers.Comms.User.OnLogout += HandleLogout;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             // Remove event handlers
             if (_button)
                 _button.onClick.RemoveListener(OnButtonClick);
+            
+            // Stop listening for auth events
+            if (Helpers.Comms != null && Helpers.Comms.User != null)
+                Helpers.Comms.User.OnLogout -= HandleLogout;
         }
-        
+
         #endregion
-        
-        
+
+
         #region Event handlers
-        
+
         /// <summary>
         /// Called when the login button is clicked. Start the login process.
         /// </summary>
         private void OnButtonClick()
         {
-            _loginWindow.ToggleWaitPanel(true);
-            StartCoroutine(DoLogin());
-        }
-        
-        #endregion
-        
-        
-        #region Private methods
-
-        /// <summary>
-        /// Coroutine to handle login. Forces one frame wait to let the wait panel show before firing off the login.
-        /// </summary>
-        /// <returns>An IEnumerator for coroutine purposes.</returns>
-        private IEnumerator DoLogin()
-        {
-            // Let one frame go by to update the UI to avoid race conditions on a very fast fail of the login
-            yield return null;
-
             // Request the sign in
             Helpers.Comms.User.LoginAsync(username.text, password.text).ConfigureAwait(false);
         }
-        
+
+        /// <summary>
+        /// Called when the user is logged out. Clear the form.
+        /// </summary>
+        private void HandleLogout()
+        {
+            // On logout clear the boxes to stop others logging in later
+            username.text = string.Empty;
+            password.text = string.Empty;
+        }
+
         #endregion
-        
+
     }
 }

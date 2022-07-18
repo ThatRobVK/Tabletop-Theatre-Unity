@@ -23,10 +23,18 @@ using System.Threading.Tasks;
 
 namespace TT.Shared
 {
+    /// <summary>
+    /// Interface exposing user authentication actions and properties.
+    /// </summary>
     public interface IUser
     {
         
         #region Events
+
+        /// <summary>
+        /// Invoked when authentication begins.
+        /// </summary>
+        event Action OnLoginStart;
         
         /// <summary>
         /// Invoked when the user is successfully authenticated.
@@ -54,6 +62,11 @@ namespace TT.Shared
         bool IsLoggedIn { get; }
 
         /// <summary>
+        /// The unique ID of the currently logged in user.
+        /// </summary>
+        string Id { get; }
+        
+        /// <summary>
         /// The username of the currently logged in user.
         /// </summary>
         string Username { get; }
@@ -74,14 +87,16 @@ namespace TT.Shared
         #region Methods
         
         /// <summary>
-        /// Attempts to log the user in to the server using the specified credentials. This call is asynchronous and invokes either the OnLoginSuccess or OnLoginFailed event on completion.
+        /// Attempts to log the user in to the server using the specified credentials. This call is asynchronous and
+        /// invokes either the OnLoginSuccess or OnLoginFailed event on completion.
         /// </summary>
         /// <param name="email">The e-mail address to sign the user in with.</param>
         /// <param name="password">The password to sign the user in with.</param>
         Task<bool> LoginAsync(string email, string password);
 
         /// <summary>
-        /// Attempts to log the user in to the server using the specified refresh token. This call is asynchronous and invokes either the OnLoginSuccess or OnLoginFailed event on completion.
+        /// Attempts to log the user in to the server using the specified refresh token. This call is asynchronous and
+        /// invokes either the OnLoginSuccess or OnLoginFailed event on completion.
         /// </summary>
         /// <param name="email">The e-mail address to sign the user in with.</param>
         /// <param name="refreshToken">A refresh token from this user's previous session.</param>

@@ -18,14 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using HighlightPlus;
 using TT.Data;
 using TT.MapEditor;
 using TT.Shared;
+using TT.Shared.UserContent;
 using TT.UI;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -49,6 +48,9 @@ using Random = UnityEngine.Random;
 
 namespace TT.World
 {
+    /// <summary>
+    /// Attached to any object that is a polygon, e.g. a scatter area.
+    /// </summary>
     public class PolygonObject : WorldObjectBase
     {
 
@@ -81,6 +83,7 @@ namespace TT.World
         // state, causing it to tell the WorldObjectBase to place the handle. This var is set to true
         // for one frame when adding a handle to skip over that click.
         private bool _fixRaceConditionWhenAddingHandles;
+        private bool _showControlsOnComplete = true;
         private int _targetItems;
         private int _placedItems;
         private bool _initialised;
@@ -151,6 +154,16 @@ namespace TT.World
             else if (!_initialised)
             {
                 _initialised = true;
+
+                // Once initialised, show or hide the controls
+                if (_showControlsOnComplete)
+                {
+                    ShowControls();
+                }
+                else
+                {
+                    HideControls();
+                }
             }
         }
 
@@ -188,6 +201,10 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Called when a handle is released after dragging. Register the handle move as an undo action.
+        /// </summary>
+        /// <param name="handle"></param>
         private void HandleStopDrag(DraggableObject handle)
         {
             if (handle.transform.parent.position != _undoHandlePosition.Value)
@@ -196,6 +213,10 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Called when a handle is clicked and dragging starts. Remember its current position for undo.
+        /// </summary>
+        /// <param name="handle"></param>
         private void HandleStartDrag(DraggableObject handle)
         {
             if (!InPlacementMode)
@@ -276,25 +297,32 @@ namespace TT.World
             ShowControls();
         }
 
-        public void Initialise(MapScatterObject mapObject)
+        /// <summary>
+        /// Loads the polygon from the specified ScatterAreaData.
+        /// </summary>
+        /// <param name="scatterAreaData">The data to load.</param>
+        public void Initialise(ScatterAreaData scatterAreaData)
         {
+            //TODO: Refactor to remove scatter area specific code from polygons (either create an inheriting class or keep the two classes separate completely
             Start();
-            FromMapObject(mapObject);
+            FromMapObject(scatterAreaData);
 
             ContentItem = new ContentItem()
             {
                 Type = WorldObjectType.ScatterArea
             };
 
-            foreach (var point in mapObject.points)
+            foreach (var point in scatterAreaData.points)
             {
-                _handles.Add(CreateHandle(point));
-                AddPointToMesh(point);
+                Vector3 vector = point.ToVector3();
+                _handles.Add(CreateHandle(vector));
+                AddPointToMesh(vector);
             }
 
-            _targetItems = mapObject.scatterInstances.Count;
+            _showControlsOnComplete = false;
+            _targetItems = scatterAreaData.scatterInstances.Count;
 
-            foreach (var scatterInstance in mapObject.scatterInstances)
+            foreach (var scatterInstance in scatterAreaData.scatterInstances)
             {
                 var contentItem = Content.GetContentItemById(WorldObjectType.NatureObject, scatterInstance.prefabAddress);
                 if (contentItem != null)
@@ -308,13 +336,12 @@ namespace TT.World
                             break;
                         }
                     }
-                    PlacePrefab(contentItem, itemIndex, scatterInstance.position, scatterInstance.rotation, transform);
+                    PlacePrefab(contentItem, itemIndex, scatterInstance.position.ToVector3(), scatterInstance.rotation, transform);
                 }
             }
 
             UpdateMesh();
             PositionAddHandleButton();
-            HideControls();
         }
 
         /// <summary>
@@ -507,16 +534,27 @@ namespace TT.World
             _generatedObjectAddresses.Clear();
         }
 
+        /// <summary>
+        /// Places random objects from within the list of content categories, with the specified density.
+        /// </summary>
+        /// <param name="categories">A list of content categories to pick items from at random.</param>
+        /// <param name="density">The number of items to place per game unit in the polygon's surface area.</param>
         public void PlaceRandom(List<ContentItemCategory> categories, float density)
         {
             List<Vector3> positions = GeneratePositions(density);
             
             // Store the number of items being created so we know when to clear the wait cursor
             _targetItems += positions.Count;
+            _showControlsOnComplete = false;
 
             PlacePrefabs(positions, categories, transform);
         }
 
+        /// <summary>
+        /// Called when the mouse hovers over the collider. Show the appropriate cursor based on where the hover is. 
+        /// </summary>
+        /// <param name="hoveredObject">The specific object that was hovered over.</param>
+        /// <param name="position">The position where the hover happened.</param>
         public override void MouseOver(GameObject hoveredObject, Vector3 position)
         {
             if (hoveredObject.GetComponent<DraggableObject>())
@@ -531,6 +569,11 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Called when the user clicks on the collider. Handle clicks on the handlers and polygon itself.
+        /// </summary>
+        /// <param name="clickedObject">The object that was clicked.</param>
+        /// <param name="position">The position of the mouse when the click happened.</param>
         public override void Click(GameObject clickedObject, Vector3 position)
         {
             if (clickedObject.GetComponent<DraggableObject>() is { } clickedDraggable)
@@ -547,23 +590,27 @@ namespace TT.World
             }
         }
 
-        public override MapObjectBase ToMapObject()
+        /// <summary>
+        /// Converts the polygon to a data object.
+        /// </summary>
+        /// <returns>A data object representing this polygon.</returns>
+        public override BaseObjectData ToDataObject()
         {
-            var mapObject = ToMapObject<MapScatterObject>();
-            mapObject.points.AddRange(_vertices);
+            var mapObject = ToMapObject<ScatterAreaData>();
+            mapObject.points.AddRange(VectorData.FromVector3List(_vertices));
 
             if (_generatedGameObjects.Count != _generatedObjectAddresses.Count)
             {
-                Debug.LogErrorFormat("PolygonObject[{0}] :: ToMapObject :: Item count mismatch. GameObjects ({1}) vs addresses ({2}).", name, _generatedGameObjects.Count, _generatedObjectAddresses.Count);
+                Debug.LogErrorFormat("PolygonObject[{0}] :: ToDataObject :: Item count mismatch. GameObjects ({1}) vs addresses ({2}).", name, _generatedGameObjects.Count, _generatedObjectAddresses.Count);
             }
 
             for (int i = 0; i < _generatedGameObjects.Count; i++)
             {
                 mapObject.scatterInstances.Add(
-                    new MapScatterInstance()
+                    new ScatterObjectData()
                     {
                         prefabAddress = _generatedObjectAddresses[i],
-                        position = _generatedGameObjects[i].transform.position,
+                        position = new VectorData(_generatedGameObjects[i].transform.position),
                         rotation = _generatedGameObjects[i].transform.rotation
                     }
                 );
@@ -652,6 +699,11 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Generates random positions inside the polygon based on the given density.
+        /// </summary>
+        /// <param name="density">The number of items to place per game unit in the polygon's surface area.</param>
+        /// <returns>A list of positions.</returns>
         private List<Vector3> GeneratePositions(float density)
         {
             var positions = new List<Vector3>();
@@ -679,6 +731,13 @@ namespace TT.World
             return positions;
         }
 
+        /// <summary>
+        /// Places random objects from the list of categories on the list of positions and parents them under the given
+        /// transform.
+        /// </summary>
+        /// <param name="positions">The list of positions to place objects at.</param>
+        /// <param name="categories">The list of categories to randomly pick objects from.</param>
+        /// <param name="parent">The transform to parent all spawns under.</param>
         private void PlacePrefabs(List<Vector3> positions, List<ContentItemCategory> categories, Transform parent)
         {
             // If no positions found, return
@@ -696,7 +755,14 @@ namespace TT.World
             }
         }
 
-
+        /// <summary>
+        /// Places a prefab at the specified location.
+        /// </summary>
+        /// <param name="contentItem">The ContentItem representing the prefab to be spawned.</param>
+        /// <param name="itemNumber">The index of the prefab within the ContentItem.</param>
+        /// <param name="position">The position to spawn the object at.</param>
+        /// <param name="rotation">The rotation to give the prefab.</param>
+        /// <param name="parent">The transform to parent the spawn under.</param>
         private async void PlacePrefab(ContentItem contentItem, int itemNumber, Vector3 position, Quaternion rotation, Transform parent)
         {
             var address = contentItem.IDs[itemNumber];
@@ -719,8 +785,6 @@ namespace TT.World
         }
 
         #endregion
-
-
 
     }
 }

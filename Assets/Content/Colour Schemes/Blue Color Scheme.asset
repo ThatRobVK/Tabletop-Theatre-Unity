@@ -27,5 +27,6 @@ MonoBehaviour:
   m_Animation: {r: 0.13725491, g: 0.21960784, b: 0.27058825, a: 1}
   m_ItemBackground: {r: 0.07450981, g: 0.08627451, b: 0.101960786, a: 1}
   m_ButtonCancel: {r: 0.6117647, g: 0.21568628, b: 0.21568628, a: 1}
+  m_ButtonCancelHighlight: {r: 1, g: 0.16666657, b: 0.16666657, a: 1}
   m_SliderBackground: {r: 0.105882354, g: 0.17254902, b: 0.22352941, a: 1}
   m_SliderHandle: {r: 0.18039216, g: 0.3372549, b: 0.42352942, a: 1}

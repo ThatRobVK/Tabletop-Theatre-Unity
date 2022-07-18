@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TT.Data;
 using TT.MapEditor;
 using TT.Shared;
+using TT.Shared.UserContent;
 using TT.State;
 using TT.UI;
 using UnityEngine;
@@ -32,6 +32,9 @@ using UnityEngine.AddressableAssets;
 
 namespace TT.World
 {
+    /// <summary>
+    /// Base class for all objects in the world.
+    /// </summary>
     public abstract class WorldObjectBase : MonoBehaviour
     {
         #region Static members
@@ -122,7 +125,6 @@ namespace TT.World
         }
 
 
-        private ContentItem _contentItem;
         /// <summary>
         /// Gets the ContentItem representing this world object.
         /// </summary>
@@ -147,14 +149,19 @@ namespace TT.World
         /// </summary>
         public bool IsDraggable => Draggable != null;
 
+        /// <summary>
+        /// True when the object is being placed. False once it has been placed.
+        /// </summary>
+        public bool InPlacementMode { get; protected set; }
+
         #endregion
 
 
         #region Private fields
 
+        private ContentItem _contentItem;
         private bool _automaticElevation = true;
         protected bool Selected => Current == this;
-        public bool InPlacementMode { get; protected set; }
         protected bool ControlsVisible { get; set; }
         protected DraggableObject Draggable;
         protected bool Spawned;
@@ -192,7 +199,11 @@ namespace TT.World
 
         #region Public methods
 
-        // Initialises the World Object from a Content Item
+        /// <summary>
+        /// Initialises the World Object from a Content Item.
+        /// </summary>
+        /// <param name="contentItem">The content item to initialise from.</param>
+        /// <param name="itemIndex">The specific prefab index within the content item.</param>
         public virtual void Initialise(ContentItem contentItem, int itemIndex)
         {
             ContentItem = contentItem;
@@ -204,7 +215,11 @@ namespace TT.World
             AutomaticElevation = true;
         }
 
-        // Applies an option to the World Object
+        /// <summary>
+        /// Applies an option to the World Object.
+        /// </summary>
+        /// <param name="option">The option to apply.</param>
+        /// <param name="value">The value to apply to the option.</param>
         public virtual void SetOption(WorldObjectOption option, object value)
         {
             if (OptionValues != null && OptionValues.ContainsKey(option))
@@ -217,12 +232,9 @@ namespace TT.World
             }
         }
 
-        public void UndoOption(WorldObjectOption option, object value)
-        {
-            OptionValues[option] = value;
-        }
-
-        // Selects this map object
+        /// <summary>
+        /// Selects this map object.
+        /// </summary>
         public virtual void Select()
         {
             // Do nothing if this isn't interactable (e.g. in a networked game but not the host)
@@ -241,7 +253,9 @@ namespace TT.World
             }
         }
 
-        // Deselects this map object
+        /// <summary>
+        /// Deselects this map object.
+        /// </summary>
         public virtual void Deselect()
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: Deselect", name);
@@ -258,6 +272,10 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Switches the selection from whichever object is currently selected, to the specified object.
+        /// </summary>
+        /// <param name="to"></param>
         public virtual void SwitchSelection(WorldObjectBase to = null)
         {
             if (!Interactable) return;
@@ -276,6 +294,9 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Shows any controls that are part of the world object (e.g. drag handles)
+        /// </summary>
         public virtual void ShowControls()
         {
             ControlsVisible = true;
@@ -284,6 +305,9 @@ namespace TT.World
             if (controlsToggles) controlsToggles.Show();
         }
 
+        /// <summary>
+        /// Hides any controls that are part of the world object (e.g. drag handles)
+        /// </summary>
         public virtual void HideControls()
         {
             ControlsVisible = false;
@@ -292,7 +316,9 @@ namespace TT.World
             if (controlsToggles) controlsToggles.Hide();
         }
 
-        // Places the object on the map and deselects it
+        /// <summary>
+        /// Places the object on the map and deselects it.
+        /// </summary>
         public virtual void Place()
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: Place", name);
@@ -302,7 +328,9 @@ namespace TT.World
             Release();
         }
 
-        // Cancels the placement of a new object
+        /// <summary>
+        /// Cancels the placement of a new object.
+        /// </summary>
         public virtual void CancelPlacement()
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: CancelPlacement", name);
@@ -311,7 +339,10 @@ namespace TT.World
             Destroy();
         }
 
-        // Rotates the object around its Y axis
+        /// <summary>
+        /// Rotates the object around its Y axis.
+        /// </summary>
+        /// <param name="amount">The amount of rotation to apply in degrees.</param>
         public virtual void Rotate(float amount)
         {
             // Rotate from the current position by the specified amount
@@ -336,7 +367,10 @@ namespace TT.World
             transform.localRotation = Quaternion.Euler(LocalRotation);
         }
 
-        // Raises or lowers the object
+        /// <summary>
+        /// Raises or lowers the object.
+        /// </summary>
+        /// <param name="amount">The amount to elevate by in game units.</param>
         public virtual void Elevate(float amount)
         {
             if (!Spawned) return;
@@ -377,7 +411,10 @@ namespace TT.World
             }
         }
 
-        // Move the object to the specified position
+        /// <summary>
+        /// Move the object to the specified position.
+        /// </summary>
+        /// <param name="targetPosition">The position to move the object to.</param>
         public virtual void MoveTo(Vector3 targetPosition)
         {
             if (!Spawned) return;
@@ -398,7 +435,10 @@ namespace TT.World
             gameObject.transform.position = targetPosition;
         }
 
-        // Scale the object by the specified amount
+        /// <summary>
+        /// Scale the object by the specified amount.
+        /// </summary>
+        /// <param name="amount">The amount to scale by. 1 is original size.</param>
         public virtual void Scale(float amount)
         {
             if (!Spawned) return;
@@ -416,7 +456,9 @@ namespace TT.World
             gameObject.transform.localScale = targetScale * ScaleMultiplier * Vector3.one;
         }
 
-        // Pick the item up, becoming transparent to rays
+        /// <summary>
+        /// Pick the item up, becoming transparent to rays.
+        /// </summary>
         public virtual void PickUp()
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: PickUp", name);
@@ -425,7 +467,9 @@ namespace TT.World
             InPlacementMode = true;
         }
 
-        // Set item down, optionally snapping back to its previous position
+        /// <summary>
+        /// Set item down, optionally snapping back to its previous position.
+        /// </summary>
         public virtual void Release()
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: Release", name);
@@ -440,7 +484,9 @@ namespace TT.World
             }
         }
 
-        // Releases the gameObject this is attached to
+        /// <summary>
+        /// Releases the gameObject this is attached to.
+        /// </summary>
         public virtual void Destroy()
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: Destroy", name);
@@ -453,7 +499,17 @@ namespace TT.World
             Addressables.ReleaseInstance(gameObject);
         }
 
-        // Create a new object from another
+        /// <summary>
+        /// Create a new object from another.
+        /// </summary>
+        /// <param name="fromObject">The object to base this object on.</param>
+        /// <param name="prefabAddress">The Addressables address of the prefab to set as this object's address. If empty
+        ///     then the PrefabAddress of the fromObject will be used.</param>
+        /// <param name="generateNewObjectId">If true a new object ID will be used, otherwise it will be taken from the
+        ///     fromObject. Note: no two objects should have the same ID so only pass false to this parameter if the
+        ///     fromObject doesn't exist on this map.</param>
+        /// <param name="contentItem">The ContentItem to set for this object. If empty the ContentItem of the fromObject
+        ///     will be used.</param>
         public virtual void CloneFrom(WorldObjectBase fromObject, string prefabAddress = null, bool generateNewObjectId = true, ContentItem contentItem = null)
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: CloneFrom({1})", name, fromObject.name);
@@ -475,6 +531,10 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Clones the transform properties from another object, i.e. the position, rotation and scale.
+        /// </summary>
+        /// <param name="fromObject">The object to clone the transform from.</param>
         public virtual void CloneTransformFrom(WorldObjectBase fromObject)
         {
             Debug.LogFormat("WorldObjectBase[{0}] :: CloneTransformFrom({1})", name, fromObject == null ? "null" : fromObject.name);
@@ -485,6 +545,11 @@ namespace TT.World
             gameObject.transform.localScale = fromObject.gameObject.transform.localScale;
         }
 
+        /// <summary>
+        /// Highlight the object as selectable and change the cursor.
+        /// </summary>
+        /// <param name="hoveredObject">The object that was hovered over.</param>
+        /// <param name="position">The mouse position.</param>
         public virtual void MouseOver(GameObject hoveredObject, Vector3 position)
         {
             WorldObjectHighlighter.Highlight(this);
@@ -501,6 +566,11 @@ namespace TT.World
             }
         }
 
+        /// <summary>
+        /// Select or drag the object.
+        /// </summary>
+        /// <param name="clickedObject">The object that was clicked on.</param>
+        /// <param name="position">The mouse position.</param>
         public virtual void Click(GameObject clickedObject, Vector3 position)
         {
             if (Selected && Draggable)
@@ -518,14 +588,18 @@ namespace TT.World
         /// Converts the object to a MapObject.
         /// </summary>
         /// <returns>The base class of a MapObject.</returns>
-        public abstract MapObjectBase ToMapObject();
+        public abstract BaseObjectData ToDataObject();
 
         #endregion
 
 
         #region Private methods
 
-        // Sets the layer on the given object and all its child objects
+        /// <summary>
+        /// Sets the layer on the given object and all its child objects.
+        /// </summary>
+        /// <param name="obj">The object to set the layer on.</param>
+        /// <param name="targetLayer">The layer to set on the object.</param>
         protected void SetLayerRecursive(GameObject obj, int targetLayer)
         {
             if (!obj.CompareTag("DoNotChangeLayer")) obj.layer = targetLayer;
@@ -557,51 +631,79 @@ namespace TT.World
         }
 
         /// <summary>
-        /// Returns an object that derives from MapObjectBase, populated with the general object properties.
+        /// Stores the current state of this object in a data class and returns it.
         /// </summary>
-        /// <typeparam name="T">A type that derives from MapObjectBase and implements a parameterless constructor.</typeparam>
+        /// <typeparam name="T">A type that derives from BaseObjectData and implements a parameterless constructor.</typeparam>
         /// <returns>An instance of T with the general object properties populated.</returns>
-        protected T ToMapObject<T>() where T : MapObjectBase, new()
+        protected T ToMapObject<T>() where T : BaseObjectData, new()
         {
+            //TODO: Rename to ToDataObject
             var thisTransform = transform;
             
             return new T()
             {
-                ObjectId = ObjectId,
+                objectId = ObjectId.ToString(),
                 name = gameObject.name,
-                position = thisTransform.position,
-                rotation = LocalRotation,
-                scale = thisTransform.localScale,
+                position = new VectorData(thisTransform.position),
+                rotation = new VectorData(LocalRotation),
+                scale = new VectorData(thisTransform.localScale),
                 prefabAddress = PrefabAddress,
                 gameLayer = LayerMask.LayerToName(GameLayer),
-                options = MapObjectOption.FromDictionary(OptionValues),
+                options = ConvertOptionsDictionaryToList(OptionValues),
                 starred = Starred,
                 scaleMultiplier = ScaleMultiplier,
-                type = Type,
+                objectType = (int)Type,
             };
         }
 
         /// <summary>
-        /// Loads the basic object properties from the passed in MapObjectBase.
+        /// Loads the basic object properties from the passed in data class.
         /// </summary>
-        /// <param name="mapObject">The MapObject to load from.</param>
-        protected void FromMapObject(MapObjectBase mapObject)
+        /// <param name="objectData">The object data to load.</param>
+        protected void FromMapObject(BaseObjectData objectData)
         {
-            ObjectId = mapObject.ObjectId;
-            gameObject.name = mapObject.name;
-            transform.position = mapObject.position;
-            LocalRotation = mapObject.rotation;
+            //TODO: Rename to FromDataObject
+            ObjectId = Guid.Parse(objectData.objectId);
+            gameObject.name = objectData.name;
+            transform.position = objectData.position.ToVector3();
+            LocalRotation = objectData.rotation.ToVector3();
             gameObject.transform.localRotation = Quaternion.Euler(LocalRotation);
-            transform.localScale = mapObject.scale;
-            PrefabAddress = mapObject.prefabAddress;
-            GameLayer = LayerMask.NameToLayer(mapObject.gameLayer);
-            OptionValues = MapObjectOption.ToDictionary(mapObject.options);
-            Starred = mapObject.starred;
-            ScaleMultiplier = mapObject.scaleMultiplier;
-            Type = mapObject.type;
+            transform.localScale = objectData.scale.ToVector3();
+            PrefabAddress = objectData.prefabAddress;
+            GameLayer = LayerMask.NameToLayer(objectData.gameLayer);
+            OptionValues = ConvertOptionsListToDictionary(objectData.options);
+            Starred = objectData.starred;
+            ScaleMultiplier = objectData.scaleMultiplier;
+            Type = (WorldObjectType)objectData.objectType;
 
             SetLayerRecursive(gameObject, GameLayer);
         }
+        
+        /// <summary>
+        /// Converts an internal Dictionary to List for serialization.
+        /// </summary>
+        /// <param name="dictionary">A dictionary of WordObjectOptions with their values.</param>
+        /// <returns>A serializable list of ObjectOptionData.</returns>
+        private static List<ObjectOptionData> ConvertOptionsDictionaryToList(Dictionary<WorldObjectOption, object> dictionary)
+        {
+            //TODO: Refactor map object options to no longer need this
+            if (dictionary == null) return null;
+
+            return dictionary.Select(x => new ObjectOptionData() { option = (int)x.Key, value = x.Value.ToString(), valueType = x.Value.GetType().FullName }).ToList();
+        }
+
+        /// <summary>
+        /// Converts a List from serialization to an internal Dictionary.
+        /// </summary>
+        /// <param name="options">A list of ObjectOptionData objects.</param>
+        /// <returns>A dictionary of WorldObjectOptions and their values.</returns>
+        private static Dictionary<WorldObjectOption, object> ConvertOptionsListToDictionary(List<ObjectOptionData> options)
+        {
+            if (options == null) return null;
+
+            return options.ToDictionary(x => (WorldObjectOption)x.option, x => x.ParsedValue);
+        }
+
 
         #endregion
     }

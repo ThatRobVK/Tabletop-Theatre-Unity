@@ -18,23 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.CommsLib;
 using UnityEngine;
+using TT.CommsLib;
 using TT.Shared;
+using TT.Shared.UserContent;
 
 namespace TT.Data
 {
+    /// <summary>
+    /// Object used to access classes in the external CommsLib. Exposed through the SettingsObject.
+    /// </summary>
     public class CommsObject : MonoBehaviour
     {
+        
+        #region Private fields
+        
         private IUser _user;
+        private IUserContent _userContent;
+        
+        #endregion
 
-        public IUser User
+        
+        #region Lifecycle events
+
+        private void OnApplicationQuit()
         {
-            get
-            {
-                if (_user == null) _user = new User(Application.version);
-                return _user;
-            }
+            // Log out before quitting
+            _user?.Logout();
         }
+        
+        #endregion
+
+
+        #region Public properties
+
+        /// <summary>
+        /// Authentication 
+        /// </summary>
+        public IUser User => _user ??= new User(Application.version);
+
+        /// <summary>
+        /// User generated content
+        /// </summary>
+        public IUserContent UserContent => _userContent ??= new UserContent(Application.version);
+
+        #endregion
+        
     }
 }
