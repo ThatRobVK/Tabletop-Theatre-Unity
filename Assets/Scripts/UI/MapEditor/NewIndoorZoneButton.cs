@@ -21,6 +21,8 @@
 #pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
 
 using TT.Data;
+using TT.Shared.GameContent;
+using TT.Shared.World;
 using TT.State;
 using TT.World;
 using UnityEngine;
@@ -57,7 +59,7 @@ namespace TT.UI.MapEditor
         {
             ContentItem item = new ContentItem()
             {
-                Type = WorldObjectType.ScalableObject,
+                Type = (int)WorldObjectType.ScalableObject,
             };
 
             // If an object is selected, deselect it before spawning a new one

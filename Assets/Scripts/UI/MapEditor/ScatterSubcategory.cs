@@ -20,6 +20,7 @@
 
 using TMPro;
 using TT.Data;
+using TT.Shared.GameContent;
 using UnityEngine;
 using UnityEngine.UI;
 

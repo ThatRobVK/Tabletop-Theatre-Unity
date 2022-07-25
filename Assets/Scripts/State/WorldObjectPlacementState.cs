@@ -20,6 +20,7 @@
 
 using TT.Data;
 using TT.InputMapping;
+using TT.Shared.GameContent;
 using TT.World;
 using UnityEngine;
 

@@ -21,10 +21,11 @@
 using System;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using DuloGames.UI;
 using TT.Data;
+using TT.UI.GameContent;
+using UnityEngine.SceneManagement;
 
 namespace TT.UI.MainMenu
 {
@@ -40,6 +41,7 @@ namespace TT.UI.MainMenu
         [SerializeField] private Textbox nameTextbox;
         [SerializeField] private Textbox descriptionTextbox;
         [SerializeField] private UISelectField terrainDropdown;
+        [SerializeField] private LoadingScreen loadingPanel;
         
         #endregion
         
@@ -104,7 +106,7 @@ namespace TT.UI.MainMenu
             
             Map.New(nameTextbox.text, descriptionTextbox.text, terrainId);
 
-            SceneManager.LoadScene("MapEditor", LoadSceneMode.Single);
+            loadingPanel.LoadAndRender(null, Helpers.MapEditorSceneName, true);
         }
         
         #endregion

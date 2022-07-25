@@ -25,6 +25,7 @@ using System.Linq;
 using DuloGames.UI;
 using TMPro;
 using TT.Data;
+using TT.Shared.GameContent;
 using UnityEngine;
 using UnityEngine.UI;
 

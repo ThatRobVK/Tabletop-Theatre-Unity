@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using TT.Data;
+using TT.Shared.World;
 using UnityEngine;
 
 namespace TT.State

@@ -19,6 +19,7 @@
  */
 
 using TT.Data;
+using TT.UI.GameContent;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -33,17 +34,10 @@ namespace TT.UI.Load
     public class LoadMapButton : MonoBehaviour
     {
         
-        #region Constants
-        
-        private const string MAIN_MENU_SCENE = "MainMenu";
-        private const string EDITOR_SCENE = "MapEditor";
-        
-        #endregion
-        
-        
         #region Editor fields
         
         [SerializeField][Tooltip("The list exposing the selected map.")] private MapList mapList;
+        [SerializeField][Tooltip("The loading screen to show.")] private LoadingScreen loadingScreen;
         
         #endregion
         
@@ -84,25 +78,14 @@ namespace TT.UI.Load
         /// <summary>
         /// Called when the attached button is clicked. Load the selected map.
         /// </summary>
-        private async void HandleButtonClick()
+        private void HandleButtonClick()
         {
             // Don't act if the button is toggled off
             if (!_toggledButton.Enabled)
                 return;
             
             // Load the selected map
-            await Map.Load(mapList.SelectedMap.id);
-
-            if (SceneManager.GetActiveScene().name == MAIN_MENU_SCENE)
-            {
-                // If in main menu, switch to editor, which will render the map for us
-                SceneManager.LoadScene(EDITOR_SCENE, LoadSceneMode.Single);
-            }
-            else
-            {
-                // If not in the main menu, render the map once loaded
-                await Map.Current.Render();
-            }
+            loadingScreen.LoadAndRender(mapList.SelectedMap.id, Helpers.MapEditorSceneName, true);
         }
         
         #endregion

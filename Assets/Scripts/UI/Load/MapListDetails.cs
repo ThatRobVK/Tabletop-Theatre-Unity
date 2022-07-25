@@ -24,6 +24,8 @@ using TMPro;
 using TT.Data;
 using TT.Shared.UserContent;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
 namespace TT.UI.Load
@@ -48,8 +50,9 @@ namespace TT.UI.Load
         [SerializeField] private TMP_Text descriptionLabel;
         [SerializeField] private TMP_Text createDateLabel;
         [SerializeField] private TMP_Text saveDateLabel;
+        [SerializeField] private TMP_Text downloadStatusLabel;
         [SerializeField] private Button deleteButton;
-        
+
         #endregion
         
         
@@ -57,7 +60,8 @@ namespace TT.UI.Load
 
         private string _id;
         private UIModalBox _deleteModal;
-        
+        private AsyncOperationHandle<long> _downloadSizeHandle;
+
         #endregion
         
         
@@ -132,6 +136,14 @@ namespace TT.UI.Load
                 createDateLabel.text = $"Created {Helpers.FormatShortDateString(mapMetadata.dateCreated)}";
                 saveDateLabel.text = $"Last saved {Helpers.FormatShortDateString(mapMetadata.dateSaved)}";
                 deleteButton.gameObject.SetActive(true);
+
+                Addressables.GetDownloadSizeAsync(mapMetadata.contentPacks).Completed += handle =>
+                {
+                    downloadStatusLabel.text = handle.Result > 0
+                        ? $"{Helpers.FormatFileSizeString(handle.Result)} to download"
+                        : "All content downloaded";
+                    Addressables.Release(handle);
+                };
             }
             else
             {
@@ -144,7 +156,7 @@ namespace TT.UI.Load
                 deleteButton.gameObject.SetActive(false);
             }
         }
-        
+
         #endregion
         
     }

@@ -18,34 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TT.Data
+namespace TT.Shared.GameContent
 {
     public class ContentConstruction
     {
         /// <summary>
         /// ID's of floor materials.
         /// </summary>
-        public string[] Floors = new string[] { };
+        public string[] Floors = { };
 
         /// <summary>
         /// IDs of ceiling materials.
         /// </summary>
-        public string[] Ceilings = new string[] { };
+        public string[] Ceilings = { };
 
         /// <summary>
         /// IDs of wall materials.
         /// </summary>
-        public string[] Walls = new string[] { };
+        public string[] Walls = { };
 
         /// <summary>
         /// Categories with full buildings.
         /// </summary>
-        public ContentItemCategory[] Buildings = new ContentItemCategory[] { };
+        public ContentItemCategory[] Buildings = { };
 
         /// <summary>
         /// Categories with building props.
         /// </summary>
-        public ContentItemCategory[] Props = new ContentItemCategory[] { };
+        public ContentItemCategory[] Props = { };
     }
 
 }

@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using TT.Shared;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,6 +48,7 @@ namespace TT.UI.MainMenu
             // Listen for auth events
             Helpers.Comms.User.OnLoginStart += HandleLoginStart;
             Helpers.Comms.User.OnLoginSuccess += HandleLoginSuccess;
+            Helpers.Comms.User.OnLoginFailed += HandleLoginFailed;
             Helpers.Comms.User.OnLogout += HandleLogout;
             
             // Initialise UI
@@ -68,6 +70,7 @@ namespace TT.UI.MainMenu
                 // Stop listening for auth events
                 Helpers.Comms.User.OnLoginStart -= HandleLoginStart;
                 Helpers.Comms.User.OnLoginSuccess -= HandleLoginSuccess;
+                Helpers.Comms.User.OnLoginFailed -= HandleLoginFailed;
                 Helpers.Comms.User.OnLogout -= HandleLogout;
             }
         }
@@ -114,6 +117,15 @@ namespace TT.UI.MainMenu
             ToggleObjects(false, false);
         }
         
+        /// <summary>
+        /// Called when authentication has failed. Show the login UI.
+        /// </summary>
+        /// <param name="obj"></param>
+        private void HandleLoginFailed(LoginFailureReason obj)
+        {
+            ToggleObjects(false, false);
+        }
+
         #endregion
         
         

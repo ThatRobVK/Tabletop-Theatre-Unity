@@ -22,7 +22,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.GameContent;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 using TT.UI;
 using UnityEngine;
 
@@ -197,7 +199,7 @@ namespace TT.World
 
             ContentItem = new ContentItem()
             {
-                Type = WorldObjectType.ScalableObject,
+                Type = (int)WorldObjectType.ScalableObject,
             };
 
             SetMaterial(PrefabAddress).ConfigureAwait(false);

@@ -25,7 +25,9 @@ using UnityEngine;
 using HighlightPlus;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.GameContent;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 using TT.State;
 using TT.UI;
 
@@ -324,7 +326,7 @@ namespace TT.World
         /// Initialises the object on the given data.
         /// </summary>
         /// <param name="splineObjectData">The data to initialise on.</param>
-        public async Task Initialise(SplineObjectData splineObjectData)
+        public async void Initialise(SplineObjectData splineObjectData, Action<WorldObjectBase> callback = null)
         {
             FromMapObject(splineObjectData);
             // Initialise at 0,0,0 as some calculations are local and some global - with this root coord they're the same
@@ -367,6 +369,7 @@ namespace TT.World
             UpdateSpline();
 
             _isDirty = false;
+            callback?.Invoke(this);
         }
 
         /// <summary>

@@ -54,7 +54,7 @@ namespace TT.MapEditor
             // Instantiate state controller
             _stateController = new StateController();
 
-            LoadContent();
+            //LoadContent();
         }
         
         void Start()
@@ -97,7 +97,7 @@ namespace TT.MapEditor
                 await Content.Load();
 
             // Load content catalog
-            var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
+            var location = await Helpers.Comms.GameContent.GetContentCatalogLocationAsync();
             AssetBundle.UnloadAllAssetBundles(false);
             var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
             loadContentCatalogAsync.Completed += OnContentCatalogLoaded;

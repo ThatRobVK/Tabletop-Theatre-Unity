@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using DuloGames.UI;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.GameContent;
 using TT.State;
 using TT.World;
 using UnityEngine;

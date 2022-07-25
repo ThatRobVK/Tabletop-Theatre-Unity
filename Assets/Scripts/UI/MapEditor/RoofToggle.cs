@@ -19,6 +19,7 @@
  */
 
 using TT.Data;
+using TT.Shared.World;
 using TT.UI.MapEditor.ObjectProperties;
 using UnityEngine;
 

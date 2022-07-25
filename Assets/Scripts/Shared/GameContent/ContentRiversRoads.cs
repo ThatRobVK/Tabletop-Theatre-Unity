@@ -18,24 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TT.Data
+namespace TT.Shared.GameContent
 {
     public class ContentRiversRoads
     {
         /// <summary>
         /// IDs of RamProfiles for rivers.
         /// </summary>
-        public string[] Rivers = new string[] { };
+        public string[] Rivers = { };
 
         /// <summary>
         /// IDs of RamProfiles for roads.
         /// </summary>
-        public string[] Roads = new string[] { };
+        public string[] Roads = { };
 
         /// <summary>
         /// IDs of items that are bridges.
         /// </summary>
-        public string[] Bridges = new string[] { };
+        public string[] Bridges = { };
     }
 
 }

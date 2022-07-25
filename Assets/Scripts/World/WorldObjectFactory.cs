@@ -18,9 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Threading.Tasks;
 using TT.Data;
+using TT.Shared.GameContent;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 using UnityEngine;
 
 namespace TT.World
@@ -53,7 +56,7 @@ namespace TT.World
             
             WorldObjectBase worldObject;
 
-            if (contentItem.Type == WorldObjectType.ScalableObject)
+            if (contentItem.Type == (int)WorldObjectType.ScalableObject)
             {
                 var gameObject = await Helpers.InstantiateAddressable("/General/Prefabs/FloorZone");
                 worldObject = gameObject.GetComponent<ScalableObject>();
@@ -117,13 +120,14 @@ namespace TT.World
         /// </summary>
         /// <param name="mapObject">The map object representation of the object to create.</param>
         /// <returns>An instance of the object represented by the input map object.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(WorldObjectData mapObject)
+        public static async Task<WorldObjectBase> CreateFromMapObject(WorldObjectData mapObject, Action<WorldObjectBase> callback = null)
         {
             var gameObject = await Helpers.InstantiateAddressable(mapObject.prefabAddress);
             var worldObject = gameObject.AddComponent<WorldObject>();
             AddStandardComponents(gameObject);
             AddDraggableComponent(gameObject);
             worldObject.Initialise(mapObject);
+            callback?.Invoke(worldObject);
             return worldObject;
         }
 
@@ -132,13 +136,13 @@ namespace TT.World
         /// </summary>
         /// <param name="mapObject">The map object representation of the object to create.</param>
         /// <returns>An instance of the object represented by the input map object.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(SplineObjectData mapObject)
+        public static async Task<WorldObjectBase> CreateFromMapObject(SplineObjectData mapObject, Action<WorldObjectBase> callback = null)
         {
             var gameObject = await Helpers.InstantiateAddressable(RAM_OBJECT_PREFAB);
             gameObject.transform.position = Vector3.zero;
             var worldObject = gameObject.GetComponent<RamObject>();
             AddStandardComponents(gameObject);
-            await worldObject.Initialise(mapObject);
+            worldObject.Initialise(mapObject, callback);
             return worldObject;
         }
 
@@ -147,13 +151,13 @@ namespace TT.World
         /// </summary>
         /// <param name="mapObject">The map object representation of the object to create.</param>
         /// <returns>An instance of the object represented by the input map object.</returns>
-        public static async Task<WorldObjectBase> CreateFromMapObject(ScatterAreaData mapObject)
+        public static async Task<WorldObjectBase> CreateFromMapObject(ScatterAreaData mapObject, Action<WorldObjectBase> callback = null)
         {
             var gameObject = await Helpers.InstantiateAddressable(SCATTER_AREA_PREFAB);
             gameObject.transform.position = Vector3.zero;
             AddStandardComponents(gameObject);
             var worldObject = gameObject.GetComponent<PolygonObject>();
-            worldObject.Initialise(mapObject);
+            worldObject.Initialise(mapObject, callback);
             return worldObject;
         }
 

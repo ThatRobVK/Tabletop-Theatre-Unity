@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DuloGames.UI;
 using TT.Data;
+using TT.Shared.GameContent;
 using TT.World;
 using UnityEngine;
 using UnityEngine.UI;

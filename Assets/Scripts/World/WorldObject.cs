@@ -21,7 +21,9 @@
 using System.Collections.Generic;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.GameContent;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 using UnityEngine;
 
 namespace TT.World

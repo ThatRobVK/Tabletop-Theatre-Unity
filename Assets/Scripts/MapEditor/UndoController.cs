@@ -23,7 +23,9 @@ using System.Collections.Generic;
 using System.Linq;
 using TT.Data;
 using TT.InputMapping;
+using TT.Shared.GameContent;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 using TT.World;
 using UnityEngine;
 

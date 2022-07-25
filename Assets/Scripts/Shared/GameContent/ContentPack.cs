@@ -18,17 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
-namespace TT.Data
+namespace TT.Shared.GameContent
 {
-    
+
     public class ContentPack
     {
         /// <summary>
         /// A display name for this content pack.
         /// </summary>
         public string Name = string.Empty;
+
+        /// <summary>
+        /// A user-friendly description of this content pack.
+        /// </summary>
+        public string Description = string.Empty;
+
+        /// <summary>
+        /// A default sort order for content packs in ascending order.
+        /// </summary>
+        public int SortOrder = 0;
+        
+        /// <summary>
+        /// An item to preload in order to download this pack's asset bundle.
+        /// </summary>
+        public string PreloadItem = string.Empty;
 
         /// <summary>
         /// True if the user has selected to include this pack in the map, false otherwise.
@@ -38,7 +51,7 @@ namespace TT.Data
         /// <summary>
         /// Lightsources in this pack.
         /// </summary>
-        public ContentItemCategory[] Lightsources = new ContentItemCategory[] { };
+        public ContentItemCategory[] Lightsources = { };
 
         /// <summary>
         /// Construction items in this pack.
@@ -48,7 +61,7 @@ namespace TT.Data
         /// <summary>
         /// Terrain layers in this pack.
         /// </summary>
-        public ContentTerrainLayer[] TerrainLayers = new ContentTerrainLayer[] { };
+        public ContentTerrainLayer[] TerrainLayers = { };
 
         /// <summary>
         /// Rivers, roads and bridges in this pack.
@@ -58,12 +71,12 @@ namespace TT.Data
         /// <summary>
         /// Items in this pack.
         /// </summary>
-        public ContentItemCategory[] Items = new ContentItemCategory[] { };
+        public ContentItemCategory[] Items = { };
 
         /// <summary>
         /// Nature items in this pack.
         /// </summary>
-        public ContentItemCategory[] Nature = new ContentItemCategory[] { };
+        public ContentItemCategory[] Nature = { };
     }
 
 }

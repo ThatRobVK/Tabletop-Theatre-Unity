@@ -20,6 +20,7 @@
 
 using TMPro;
 using TT.Data;
+using TT.Shared.World;
 using UnityEngine;
 using UnityEngine.Serialization;
 

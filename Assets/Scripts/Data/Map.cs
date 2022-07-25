@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using TT.World;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 
 namespace TT.Data
 {
@@ -37,19 +38,9 @@ namespace TT.Data
         #region Events
 
         /// <summary>
-        /// Invoked when a map load has completed. The boolean parameter indicates whether loading was successful.
-        /// </summary>
-        public static Action<bool> OnMapLoaded;
-
-        /// <summary>
         /// Invoked when a map save has completed. The boolean parameter indicates whether loading was successful.
         /// </summary>
         public static Action<bool> OnMapSaved;
-
-        /// <summary>
-        /// Invoked when a map rendering has completed.
-        /// </summary>
-        public static Action OnMapRendered;
 
         #endregion
 
@@ -109,12 +100,19 @@ namespace TT.Data
         /// </summary>
         public static Map Current { get; private set; }
 
+        /// <summary>
+        /// The completion percentage of the render operation.
+        /// </summary>
+        public float RenderStatusPercentage => _itemsRendered / _totalItemsToRender;
+
         #endregion
 
 
         #region Private fields
 
         private readonly MapData _mapData;
+        private float _totalItemsToRender = 0;
+        private float _itemsRendered = 0;
 
         #endregion
 
@@ -170,6 +168,9 @@ namespace TT.Data
                 }
             };
 
+            // Add all selected content packs
+            mapData.metadata.contentPacks.AddRange(Content.Current.Packs.Where(x => x.Selected).Select(x => x.Name));
+
             if (!string.IsNullOrEmpty(terrainId))
             {
                 mapData.terrainTextureAddress = terrainId;
@@ -212,19 +213,20 @@ namespace TT.Data
                 if (Current != null)
                     Current.Unload();
 
-                Current = new Map(mapData);
+                Current = new Map(mapData)
+                {
+                    // Set the load date time
+                    DateLoaded = DateTime.Now
+                };
 
-                // Set the load date time
-                Current.DateLoaded = DateTime.Now;
-
-                OnMapLoaded?.Invoke(true);
-                return;
+                // Select the content packs stored in the map, if no pack data stored, just load everything
+                var mapContainsPacks = mapData.metadata.contentPacks != null && mapData.metadata.contentPacks.Count > 0;
+                foreach (var pack in Content.Current.Packs)
+                    pack.Selected = !mapContainsPacks || mapData.metadata.contentPacks.Contains(pack.Name);
             }
             catch (Exception e)
             {
                 Debug.LogWarningFormat("Map :: Load :: Failed to load map. {0} : {1}", e.GetType().FullName, e.Message);
-                OnMapLoaded?.Invoke(false);
-                return;
             }
         }
 
@@ -240,29 +242,41 @@ namespace TT.Data
                 return;
             }
 
+            // Count the number of items to render
+            _totalItemsToRender = 1 + _mapData.terrain.terrainLayers.Count + _mapData.worldObjects.Count +
+                                  _mapData.splineObjects.Count;
+            foreach (var scatterArea in _mapData.scatterAreas)
+                _totalItemsToRender += scatterArea.scatterInstances.Count;
+            _itemsRendered = 0;
             try
             {
                 GameTerrain.Current.LoadDefaultTexture(_mapData.terrainTextureAddress);
+                _itemsRendered++;
                 await GameTerrain.Current.LoadTerrainTextures(_mapData.terrain.terrainLayers.ToArray());
+                _itemsRendered += _mapData.terrain.terrainLayers.Count;
 
                 TimeController.Current.LightingMode = (LightingMode) _mapData.lightingMode;
                 TimeController.Current.CurrentTime = _mapData.time;
                 WindController.Current.CurrentWind = _mapData.wind;
                 WindController.Current.Rotation = _mapData.windDirection;
 
-                foreach (var x in _mapData.worldObjects) await WorldObjectFactory.CreateFromMapObject(x);
+                Task handle;
+                foreach (var x in _mapData.worldObjects)
+                    handle = WorldObjectFactory.CreateFromMapObject(x, worldObjectBase => { _itemsRendered++; });
 
                 foreach (var x in _mapData.splineObjects.Where(x =>
                              (WorldObjectType) x.objectType == WorldObjectType.River))
                     // Load rivers before roads as they create more terrain height variations
-                    await WorldObjectFactory.CreateFromMapObject(x);
+                    handle = WorldObjectFactory.CreateFromMapObject(x, worldObjectBase => { _itemsRendered++; });
 
                 foreach (var x in _mapData.splineObjects.Where(x =>
                              (WorldObjectType) x.objectType == WorldObjectType.Road))
                     // Load roads after rivers so they correctly adapt to the carved terrain
-                    await WorldObjectFactory.CreateFromMapObject(x);
+                    handle = WorldObjectFactory.CreateFromMapObject(x, worldObjectBase => { _itemsRendered++; });
 
-                foreach (var x in _mapData.scatterAreas) await WorldObjectFactory.CreateFromMapObject(x);
+                foreach (var x in _mapData.scatterAreas)
+                    handle = WorldObjectFactory.CreateFromMapObject(x,
+                            worldObjectBase => { _itemsRendered += ((PolygonObject) worldObjectBase).ObjectCount; });
 
                 if (_mapData.terrain.splatMaps.Count > 0)
                     // Load splat maps if any are present (only present when terrain has been painted)
@@ -273,8 +287,6 @@ namespace TT.Data
             {
                 Debug.LogErrorFormat("Map :: Render :: Error rendering: {0}: {1}", e.GetType().FullName, e);
             }
-
-            OnMapRendered?.Invoke();
         }
 
         /// <summary>
@@ -291,6 +303,11 @@ namespace TT.Data
             _mapData.windDirection = WindController.Current.Rotation;
             _mapData.lightingMode = (int) TimeController.Current.LightingMode;
             _mapData.terrain = GameTerrain.Current.ToDataObject();
+
+            // Save the selected content packs
+            _mapData.metadata.contentPacks.Clear();
+            _mapData.metadata.contentPacks.AddRange(
+                Content.Current.Packs.Where(x => x.Selected).Select(x => x.Name));
 
             // Serialize World Objects
             _mapData.worldObjects.Clear();

@@ -35,7 +35,8 @@ namespace TT.Data
         
         private IUser _user;
         private IUserContent _userContent;
-        
+        private IGameContent _gameContent;
+
         #endregion
 
         
@@ -62,7 +63,12 @@ namespace TT.Data
         /// </summary>
         public IUserContent UserContent => _userContent ??= new UserContent(Application.version);
 
+        /// <summary>
+        /// Content items provided by TT
+        /// </summary>
+        public IGameContent GameContent => _gameContent ??= new GameContent(Application.version);
+
         #endregion
-        
+
     }
 }

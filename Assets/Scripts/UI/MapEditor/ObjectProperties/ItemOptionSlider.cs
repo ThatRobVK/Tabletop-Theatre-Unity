@@ -23,6 +23,7 @@ using DuloGames.UI;
 using TMPro;
 using TT.Data;
 using TT.MapEditor;
+using TT.Shared.World;
 using TT.World;
 using UnityEngine;
 using UnityEngine.Serialization;

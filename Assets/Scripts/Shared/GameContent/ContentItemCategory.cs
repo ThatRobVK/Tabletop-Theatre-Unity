@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TT.Data
+using System.Collections.Generic;
+
+namespace TT.Shared.GameContent
 {
     
     public class ContentItemCategory
@@ -40,5 +42,39 @@ namespace TT.Data
         /// Sub-categories under this category.
         /// </summary>
         public ContentItemCategory[] Categories = new ContentItemCategory[] { };
+
+        /// <summary>
+        /// Creates another instance of content item category with the same values as this instance. All subcategories
+        /// and items will be cloned as well.
+        /// </summary>
+        /// <returns>A clone of this content item category.</returns>
+        public ContentItemCategory Clone()
+        {
+            // Init a clone object
+            var clone = new ContentItemCategory
+            {
+                Name = Name,
+                MaxDensity = MaxDensity,
+                MinDensity = MinDensity
+            };
+
+            // Add clones of all the sub-categories
+            List<ContentItemCategory> cloneCategories = new List<ContentItemCategory>();
+            foreach (var category in Categories)
+            {
+                cloneCategories.Add(category.Clone());
+            }
+            clone.Categories = cloneCategories.ToArray();
+
+            // Add clones of all the items
+            List<ContentItem> cloneItems = new List<ContentItem>();
+            foreach (var item in Items)
+            {
+                cloneItems.Add(item.Clone(clone));
+            }
+            clone.Items = cloneItems.ToArray();
+
+            return clone;
+        }
     }
 }

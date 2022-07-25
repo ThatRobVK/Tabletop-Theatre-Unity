@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using DuloGames.UI;
 using TT.Data;
+using TT.Shared.World;
 using TT.World;
 using UnityEngine;
 

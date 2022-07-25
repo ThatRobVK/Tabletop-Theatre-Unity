@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using TT.Data;
+using TT.Shared.World;
 
 namespace TT.State
 {

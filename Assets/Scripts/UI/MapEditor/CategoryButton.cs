@@ -20,6 +20,7 @@
 
 using System;
 using TT.Data;
+using TT.Shared.GameContent;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -28,6 +28,7 @@ using DuloGames.UI;
 using TT.Data;
 using TT.InputMapping;
 using TT.MapEditor;
+using TT.Shared.World;
 using TT.UI;
 using TT.World;
 using UnityEngine;
