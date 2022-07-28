@@ -85,7 +85,7 @@ namespace TT.UI.Load
                 return;
             
             // Load the selected map
-            loadingScreen.LoadAndRender(mapList.SelectedMap.id, Helpers.MapEditorSceneName, true);
+            loadingScreen.LoadAndRender(true, mapList.SelectedMap.id, Helpers.MapEditorSceneName, true);
         }
         
         #endregion

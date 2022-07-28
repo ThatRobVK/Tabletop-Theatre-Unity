@@ -34,11 +34,13 @@ namespace TT.UI.MapEditor
         
         #region Editor fields
         
-        [SerializeField][Tooltip("The textbox used for the map name.")] private Textbox mapNameTextbox;
-        [SerializeField][Tooltip("The textbox used for the description.")] private Textbox descriptionTextbox;
-        [SerializeField][Tooltip("The textbox used for the map author.")] private TMP_Text authorLabel;
-        [SerializeField][Tooltip("The textbox used for the date created.")] private TMP_Text dateCreatedLabel;
-        [SerializeField][Tooltip("The textbox used for the date saved.")] private TMP_Text dateSavedLabel;
+        [SerializeField][Tooltip("The input field used for the map name.")] private Textbox mapNameTextbox;
+        [SerializeField][Tooltip("The input field used for the description.")] private Textbox descriptionTextbox;
+        [SerializeField][Tooltip("The label used for the map author.")] private TMP_Text authorLabel;
+        [SerializeField][Tooltip("The label used for the date created.")] private TMP_Text dateCreatedLabel;
+        [SerializeField][Tooltip("The label used for the date saved.")] private TMP_Text dateSavedLabel;
+        [SerializeField][Tooltip("The button used to apply the changes to the map.")] private ToggledButton applyButton;
+        [SerializeField][Tooltip("The button used to revert the changes.")] private ToggledButton undoButton;
         
         #endregion
         
@@ -59,8 +61,11 @@ namespace TT.UI.MapEditor
             
             mapNameTextbox.onValueChanged.AddListener(HandleMapNameChanged);
             descriptionTextbox.onValueChanged.AddListener(HandleDescriptionChanged);
+            
+            if (applyButton) applyButton.OnClick += HandleApplyButtonClick;
+            if (undoButton) undoButton.OnClick += HandleUndoButtonClick;
         }
-
+        
         private void OnDestroy()
         {
             if (_window != null)
@@ -71,6 +76,9 @@ namespace TT.UI.MapEditor
             
             if (descriptionTextbox)
                 descriptionTextbox.onValueChanged.RemoveListener(HandleDescriptionChanged);
+
+            if (applyButton) applyButton.OnClick -= HandleApplyButtonClick;
+            if (undoButton) undoButton.OnClick -= HandleUndoButtonClick;
         }
         
         #endregion
@@ -95,6 +103,10 @@ namespace TT.UI.MapEditor
                 dateSavedLabel.text = Map.Current.DateSaved > Map.Current.DateCreated
                     ? Map.Current.DateSaved.ToLocalTime().ToString("g")
                     : "never";
+                
+                // No changes yet so ensure the buttons are disabled
+                if (applyButton) applyButton.Enabled = false;
+                if (undoButton) undoButton.Enabled = false;
             }
         }
 
@@ -104,7 +116,12 @@ namespace TT.UI.MapEditor
         /// <param name="newValue"></param>
         private void HandleMapNameChanged(string newValue)
         {
-            Map.Current.Name = newValue;
+            // If there is no apply button, auto apply the change
+            if (applyButton == null) Map.Current.Name = newValue;
+            
+            // Changes have been made, so buttons are enabled
+            if (applyButton) applyButton.Enabled = true;
+            if (undoButton) undoButton.Enabled = true;
         }
 
         /// <summary>
@@ -113,9 +130,40 @@ namespace TT.UI.MapEditor
         /// <param name="newValue"></param>
         private void HandleDescriptionChanged(string newValue)
         {
-            Map.Current.Description = newValue;
+            // If there is no apply button, auto apply the change
+            if (applyButton == null) Map.Current.Description = newValue;
+            
+            // Changes have been made, so buttons are enabled
+            if (applyButton) applyButton.Enabled = true;
+            if (undoButton) undoButton.Enabled = true;
         }
-        
+
+        /// <summary>
+        /// Called when the apply button is clicked. Apply the changes to the map.
+        /// </summary>
+        private void HandleApplyButtonClick()
+        {
+            Map.Current.Name = mapNameTextbox.text;
+            Map.Current.Description = descriptionTextbox.text;
+            
+            // Changes have been applied, so buttons are disabled
+            if (applyButton) applyButton.Enabled = false;
+            if (undoButton) undoButton.Enabled = false;
+        }
+
+        /// <summary>
+        /// Called when the undo button is clicked. Revert the changes.
+        /// </summary>
+        private void HandleUndoButtonClick()
+        {
+            mapNameTextbox.text = Map.Current.Name;
+            descriptionTextbox.text = Map.Current.Description;
+            
+            // Changes have been undone, so buttons are disabled
+            if (applyButton) applyButton.Enabled = false;
+            if (undoButton) undoButton.Enabled = false;
+        }
+
         #endregion
         
     }

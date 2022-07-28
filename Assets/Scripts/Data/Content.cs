@@ -26,6 +26,8 @@ using UnityEngine;
 using TT.Shared.GameContent;
 using TT.Shared.World;
 using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace TT.Data
 {
@@ -45,6 +47,8 @@ namespace TT.Data
 
         #endregion
 
+
+        private static IResourceLocator _contentCatalog;
 
         #region Public properties
 
@@ -88,20 +92,19 @@ namespace TT.Data
 
             try
             {
+                // Load the content catalog
+                var catalog = await Helpers.Comms.GameContent.GetContentCatalogLocationAsync();
+                // Unload asset bundles to avoid errors on duplicate bundles being loaded
+                AssetBundle.UnloadAllAssetBundles(false);
+                _contentCatalog = await Addressables.LoadContentCatalogAsync(catalog).Task;
+
                 // Load content definitions
                 var packs = await Helpers.Comms.GameContent.GetContentAsync();
                 Current = new Content { Packs = packs };
                 SetDerivedValues();
                 CombinePacks();
 
-                // Load the content catalog
-                var catalog = await Helpers.Comms.GameContent.GetContentCatalogLocationAsync();
-                // Unload asset bundles to avoid errors on duplicate bundles being loaded
-                AssetBundle.UnloadAllAssetBundles(false);
-                await Addressables.LoadContentCatalogAsync(catalog).Task;
-
                 ContentLoaded = true;
-                OnContentChanged?.Invoke();
             }
             catch (Exception ex)
             {
@@ -179,7 +182,7 @@ namespace TT.Data
             {
                 var contentItemTemplate = TypeToContentItemMap[type];
                 foreach (var item in items)
-                    contentItems.Add(new ContentItem()
+                    contentItems.Add(new ContentItem
                     {
                         Name = contentItemTemplate.Name,
                         Traversable = contentItemTemplate.Traversable,
@@ -240,8 +243,50 @@ namespace TT.Data
             Current.Combined.RiversRoads.Roads = roads.ToArray();
             Current.Combined.RiversRoads.Bridges = bridges.ToArray();
             Current.Combined.TerrainLayers = terrainLayers.ToArray();
+
+            OnContentChanged?.Invoke();
         }
-                
+
+        /// <summary>
+        /// Returns any passed in addresses that are not currently loaded into memory. If all addresses are in memory,
+        /// an empty list is returned.
+        /// </summary>
+        /// <param name="addresses">A list of content addresses to check for.</param>
+        /// <returns>A list of addresses not in memory, or an empty list if all addresses are in memory.</returns>
+        /// <remarks>
+        /// This does not check for dependencies, but lazily assumes that if the address was loaded, all its
+        /// dependencies were loaded as well and are thus still in memory. This will do until proven incorrect.
+        /// </remarks>
+        public static List<string> GetContentNotInMemory(IEnumerable<string> addresses)
+        {
+            if (_contentCatalog == null)
+            {
+                Debug.LogError("Content :: ContentLoadedIntoMemory :: Catalog not instantiated.");
+                return new List<string>();
+            }
+
+            // Create a list of all asset locations that are currently loaded
+            var loadedAssetBundles = AssetBundle.GetAllLoadedAssetBundles();
+            var loadedInternalIds = new List<string>();
+            foreach (var assetBundle in loadedAssetBundles)
+                loadedInternalIds.AddRange(assetBundle.GetAllAssetNames());
+
+            List<string> addressesToLoad = new List<string>();
+            foreach (string address in addresses)
+            {
+                // Get a resource location for each supplied address and if found, check if its InternalId (its
+                // asset location) is in the list of loaded locations.
+                _contentCatalog.Locate(address, typeof(GameObject), out var locators);
+                if (locators != null && locators.Count >= 1)
+                {
+                    if (!loadedInternalIds.Contains(locators[0].InternalId))
+                        addressesToLoad.Add(address);
+                }
+            }
+
+            return addressesToLoad;
+        }
+
         #endregion
 
 
@@ -254,11 +299,11 @@ namespace TT.Data
         {
             foreach (var pack in Current.Packs)
             {
-                SetDerivedValues(pack.Construction.Buildings, WorldObjectType.Building);
-                SetDerivedValues(pack.Construction.Props, WorldObjectType.ConstructionProp);
-                SetDerivedValues(pack.Items, WorldObjectType.Item);
-                SetDerivedValues(pack.Lightsources, WorldObjectType.Lightsource);
-                SetDerivedValues(pack.Nature, WorldObjectType.NatureObject);
+                SetDerivedValues(pack.Construction.Buildings, WorldObjectType.Building, pack);
+                SetDerivedValues(pack.Construction.Props, WorldObjectType.ConstructionProp, pack);
+                SetDerivedValues(pack.Items, WorldObjectType.Item, pack);
+                SetDerivedValues(pack.Lightsources, WorldObjectType.Lightsource, pack);
+                SetDerivedValues(pack.Nature, WorldObjectType.NatureObject, pack);
             }
         }
 
@@ -267,7 +312,7 @@ namespace TT.Data
         /// </summary>
         /// <param name="categories">An array of categories to recursively loop over.</param>
         /// <param name="type">The type to set all items inside this category to.</param>
-        private static void SetDerivedValues(ContentItemCategory[] categories, WorldObjectType type)
+        private static void SetDerivedValues(ContentItemCategory[] categories, WorldObjectType type, ContentPack pack)
         {
             foreach (var category in categories)
             {
@@ -277,11 +322,12 @@ namespace TT.Data
                     item.Type = type;
                     item.Name = category.Name;
                     item.Category = category;
+                    item.ContentPack = pack;
                 }
 
                 if (category.Categories.Length > 0)
                     // Recurse over subcategories
-                    SetDerivedValues(category.Categories, type);
+                    SetDerivedValues(category.Categories, type, pack);
             }
         }
 

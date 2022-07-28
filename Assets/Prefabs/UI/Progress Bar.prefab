@@ -436,6 +436,7 @@ MonoBehaviour:
   progressArea: {fileID: 6467760045197716201}
   progressBar: {fileID: 5513877089075036418}
   percentageLabel: {fileID: 8396912793672970956}
+  movementTime: 8
 --- !u!114 &4610042776993090876
 MonoBehaviour:
   m_ObjectHideFlags: 0

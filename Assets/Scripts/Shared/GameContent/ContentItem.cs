@@ -63,6 +63,11 @@ namespace TT.Shared.GameContent
         public ContentItemCategory Category;
 
         /// <summary>
+        /// The content pack this item belongs to.
+        /// </summary>
+        public ContentPack ContentPack;
+
+        /// <summary>
         /// Creates another instance of content item with the same values as this instance, except for the specified
         /// parent category.
         /// </summary>
@@ -78,7 +83,8 @@ namespace TT.Shared.GameContent
                 Scale = Scale,
                 Lights = Lights,
                 Type = Type,
-                Category = parentCategory
+                Category = parentCategory,
+                ContentPack = ContentPack
             };
         }
     }

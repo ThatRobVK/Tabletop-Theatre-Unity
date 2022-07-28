@@ -21,12 +21,11 @@
 using System;
 using DuloGames.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TT.UI
 {
-    [RequireComponent(typeof(UIHighlightTransition))]
-    [RequireComponent(typeof(UIPressTransition))]
-    [RequireComponent(typeof(UnityEngine.UI.Button))]
+    [RequireComponent(typeof(Button))]
     public class ToggledButton : MonoBehaviour
     {
         #region Events
@@ -40,17 +39,19 @@ namespace TT.UI
 
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
+        [SerializeField][Tooltip("The overlay to show when the button is disabled.")] private GameObject disableOverlay;
         [SerializeField][Tooltip("The highlight transition to control based on the Enabled state.")] private UIHighlightTransition highlightTransition;
-        [SerializeField][Tooltip("The press transition to control based on the Enabled state.")] private UIPressTransition pressTransition;
-        [SerializeField][Tooltip("The highlight image to control based on the Enabled state.")] private UnityEngine.UI.Image highlightImage;
-        [SerializeField][Tooltip("The underlying button to capture and bubble up the clicks for.")] private UnityEngine.UI.Button button;
+        [SerializeField][Tooltip("The highlight image to control based on the Enabled state.")] private Image highlightImage;
         [SerializeField][Tooltip("Enabled buttons show a hover overlay and trigger the OnClick event. If not Enabled, the button will be darker, no hover overlay and clicking won't trigger OnClick.")] private bool buttonEnabled;
 
-#pragma warning restore IDE0044
         #endregion
 
+        #region Private fields
+
+        private Button _button;
+        
+        #endregion
 
         #region Public properties
 
@@ -73,15 +74,19 @@ namespace TT.UI
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
-        void Start()
+        void OnEnable()
         {
-            button.onClick.AddListener(HandleButtonClicked);
+            _button = GetComponent<Button>();
+            _button.onClick.AddListener(HandleButtonClicked);
             ToggleState();
         }
 
-#pragma warning restore IDE0051 // Unused members
+        private void OnDisable()
+        {
+            _button.onClick.RemoveListener(HandleButtonClicked);
+        }
+
         #endregion
 
 
@@ -101,8 +106,8 @@ namespace TT.UI
         private void ToggleState()
         {
             highlightTransition.enabled = buttonEnabled && !Highlight;
-            pressTransition.enabled = buttonEnabled;
-            highlightImage.enabled = buttonEnabled;
+            _button.interactable = buttonEnabled;
+            disableOverlay.SetActive(!buttonEnabled);
         }
 
         #endregion

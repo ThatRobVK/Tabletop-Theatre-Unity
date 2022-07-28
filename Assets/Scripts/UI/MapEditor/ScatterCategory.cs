@@ -18,19 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System.Collections.Generic;
 using System.Linq;
-using DuloGames.UI;
-using TMPro;
-using TT.Data;
-using TT.Shared.GameContent;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using DuloGames.UI;
+using TT.Shared.GameContent;
 
 namespace TT.UI.MapEditor
 {
+    /// <summary>
+    /// Attached to a category item in the scatter area list.
+    /// </summary>
     public class ScatterCategory : MonoBehaviour
     {
 
@@ -47,6 +47,7 @@ namespace TT.UI.MapEditor
         [SerializeField][Tooltip("The label that will show how many items are selected.")] private Text selectedLabel;
         [SerializeField][Tooltip("The slider that defines the scatter density for this category.")] private UISliderExtended densitySlider;
         [SerializeField][Tooltip("A prefab for the sub categories")] private ScatterSubcategory subCategoryPrefab;
+        [SerializeField][Tooltip("The transform that parents all inactive UI elements.")] private Transform inactiveUIElements;
 
 #pragma warning restore IDE0044
         #endregion
@@ -56,6 +57,7 @@ namespace TT.UI.MapEditor
 
         private const string LABEL_TEXT = "{0} of {1} selected";
         private readonly List<Toggle> _toggles = new List<Toggle>();
+        private readonly List<ScatterSubcategory> _subcategories = new List<ScatterSubcategory>();
 
         #endregion
 
@@ -111,11 +113,24 @@ namespace TT.UI.MapEditor
             densitySlider.maxValue = category.MaxDensity;
             densitySlider.value = (category.MinDensity + category.MaxDensity) / 2;
 
+            // Clear the list first
+            while (detailPanel.transform.childCount > 0)
+            {
+                var child = detailPanel.transform.GetChild(0);
+                child.gameObject.SetActive(false);
+                child.SetParent(inactiveUIElements);
+            }
+
+            // Then re-populate
             foreach (var subcategory in category.Categories)
             {
-                var subcategoryPanel = Instantiate(subCategoryPrefab, detailPanel.transform);
+                var subcategoryPanel =
+                    Helpers.GetAvailableButton(subCategoryPrefab, _subcategories, inactiveUIElements);
                 subcategoryPanel.Initialise(subcategory);
+                subcategoryPanel.gameObject.SetActive(true);
+                subcategoryPanel.transform.SetParent(detailPanel.transform);
                 _toggles.Add(subcategoryPanel.GetComponentInChildren<Toggle>());
+                _subcategories.Add(subcategoryPanel);
             }
         }
 

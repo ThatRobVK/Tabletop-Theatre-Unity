@@ -425,6 +425,8 @@ MonoBehaviour:
   nothingToDownloadText: nothing
   waitPanel: {fileID: 0}
   inactiveUIElements: {fileID: 0}
+  applyButton: {fileID: 0}
+  undoButton: {fileID: 0}
 --- !u!114 &542263645
 MonoBehaviour:
   m_ObjectHideFlags: 0

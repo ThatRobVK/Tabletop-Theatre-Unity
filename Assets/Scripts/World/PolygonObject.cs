@@ -20,7 +20,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using HighlightPlus;
 using TT.Data;
 using TT.MapEditor;
@@ -116,6 +116,8 @@ namespace TT.World
         public override Vector3 Position => _handles.Count >= 1 ? _handles[0].transform.position : addHandleButton.transform.position;
         
         public int ObjectCount { get; private set; }
+        
+        public List<string> ContentPacksUsed { get; private set; }
 
         #endregion
 
@@ -138,6 +140,8 @@ namespace TT.World
             _mesh = new Mesh();
             _mesh.MarkDynamic();
 
+            ContentPacksUsed = new List<string>();
+            
             addHandleButton.GetComponentInChildren<MouseTrigger>().OnChildClick += HandleAddHandleButtonClicked;
 
             // Add this object to the list
@@ -785,6 +789,10 @@ namespace TT.World
             // Store the object so we can destroy it later
             _generatedGameObjects.Add(placedObject);
             _generatedObjectAddresses.Add(address);
+
+            // Record the name of the content pack
+            if (!ContentPacksUsed.Contains(contentItem.ContentPack.Name))
+                ContentPacksUsed.Add(contentItem.ContentPack.Name);
 
             // Set the object's scale based on its content item
             Helpers.SetLayerRecursive(placedObject, contentItem.Traversable ? Helpers.TraversableLayer : Helpers.ImpassableLayer);

@@ -20,6 +20,7 @@
 
 #pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
 
+using System.Linq;
 using TT.State;
 using TT.World;
 using UnityEngine;
@@ -75,7 +76,7 @@ namespace TT.UI.MapEditor
 
                 polygon.DestroyChildren();
 
-                foreach (var scatterCategory in scatterGrid.scatterCategories)
+                foreach (var scatterCategory in scatterGrid.ScatterCategories)
                 {
                     // For each category, scatter its goodness
                     var categories = scatterCategory.GetCategories();

@@ -19,6 +19,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 using DuloGames.UI;
 using TMPro;
 using TT.Shared.GameContent;
@@ -35,29 +36,45 @@ namespace TT.UI.GameContent
     {
         
         #region Events
-        
-        public event Action<ContentPack, long> OnTick;
-        public event Action<ContentPack, long> OnUntick;
+
+        /// <summary>
+        /// Called when the item is clicked.
+        /// </summary>
+        public event Action<ContentPackListItem> OnClick;
 
         #endregion
         
         
         #region Editor fields
 
-        [SerializeField] private Toggle toggle;
+        [SerializeField] private Button button;
         [SerializeField] private TMP_Text packNameText;
         [SerializeField] private TMP_Text downloadSizeText;
         [SerializeField] private CanvasGroup activeOverlay;
+        [SerializeField] private Toggle toggle;
         [SerializeField] private UITooltipShow tooltip;
         
         #endregion
         
         
-        #region Private fields
-
-        private ContentPack _contentPack;
-        private long _downloadSize;
+        #region Public properties
         
+        /// <summary>
+        /// The download size of this item.
+        /// </summary>
+        public long DownloadSize { get; private set; }
+
+        /// <summary>
+        /// Whether the toggle on this item is on.
+        /// </summary>
+        public bool IsOn
+        {
+            get => toggle.isOn;
+            set => toggle.isOn = value;
+        }
+
+        public ContentPack ContentPack { get; private set; }
+
         #endregion
         
         
@@ -65,14 +82,14 @@ namespace TT.UI.GameContent
 
         private void Start()
         {
-            toggle.onValueChanged.AddListener(OnToggleChanged);
+            button.onClick.AddListener(HandleButtonClick);
             activeOverlay.alpha = 0;
         }
 
         private void OnDestroy()
         {
-            if (toggle != null)
-                toggle.onValueChanged.AddListener(OnToggleChanged);
+            if (button != null)
+                button.onClick.RemoveListener(HandleButtonClick);
         }
         
         #endregion
@@ -84,12 +101,9 @@ namespace TT.UI.GameContent
         /// Shows the specified map metadata in this list item.
         /// </summary>
         /// <param name="contentPack">The map to show.</param>
-        public void Initialise(ContentPack contentPack, bool interactable = true)
+        public async Task Initialise(ContentPack contentPack)
         {
-            _contentPack = contentPack;
-
-            toggle.interactable = interactable;
-            toggle.isOn = _contentPack.Selected;
+            ContentPack = contentPack;
 
             // Add tooltip
             tooltip.contentLines = new[]
@@ -103,46 +117,26 @@ namespace TT.UI.GameContent
             };
             
             packNameText.text = contentPack.Name;
-            SetDownloadSizeText(contentPack);
+            toggle.isOn = contentPack.Selected;
+
+            DownloadSize = await Addressables.GetDownloadSizeAsync(contentPack.PreloadItem).Task;
+            downloadSizeText.text = Helpers.FormatFileSizeString(DownloadSize) ?? "downloaded";
         }
 
         #endregion
         
 
         #region Event handlers
-        
+
         /// <summary>
-        /// Called when the toggle is changed. Update the content pack and notify listeners of the toggle .
+        /// Called when this item is clicked. Notify listeners of the click.
         /// </summary>
-        /// <param name="isOn"></param>
-        private void OnToggleChanged(bool isOn)
+        private void HandleButtonClick()
         {
-            _contentPack.Selected = isOn;
-            
-            if (isOn)
-                OnTick?.Invoke(_contentPack, _downloadSize);
-            else
-                OnUntick?.Invoke(_contentPack, _downloadSize);
+            OnClick?.Invoke(this);
         }
 
         #endregion
-        
-
-        #region Private methoads
-
-        /// <summary>
-        /// Gets the download size for the selected pack from addressables and sets the download size text.
-        /// </summary>
-        /// <param name="contentPack">The content pack to check the size for.</param>
-        private async void SetDownloadSizeText(ContentPack contentPack)
-        {
-            var downloadSize = await Addressables.GetDownloadSizeAsync(contentPack.PreloadItem).Task;
-            downloadSizeText.text = Helpers.FormatFileSizeString(downloadSize) ?? "downloaded";
-            
-            OnToggleChanged(contentPack.Selected);
-        }
-        
-        #endregion
-        
+                
     }
 }

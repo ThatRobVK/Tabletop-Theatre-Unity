@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +8,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using TT.Data;
+using UnityEngine.UI;
 
 namespace TT.UI.GameContent
 {
@@ -16,18 +16,46 @@ namespace TT.UI.GameContent
     /// Attached to the loading UI. Orchestrates downloading, scene switching and map rendering. This must be on an
     /// object flagged with DontDestroyOnLoad as this switches scenes part-way through the process.
     /// </summary>
+    [RequireComponent(typeof(CanvasGroup))]
     public class LoadingScreen : MonoBehaviour
     {
-        [SerializeField] private ProgressBar progressBar;
-        [SerializeField] private TMP_Text headlineLabel;
-        [SerializeField] private TMP_Text detailLabel;
+        [SerializeField] private ProgressBar progressBarFullscreen;
+        [SerializeField] private ProgressBar progressBarOverlay;
+        [SerializeField] private TMP_Text headlineLabelFullscreen;
+        [SerializeField] private TMP_Text headlineLabelOverlay;
+        [SerializeField] private TMP_Text detailLabelFullscreen;
+        [SerializeField] private TMP_Text detailLabelOverlay;
+        [SerializeField] private GameObject fullscreenPanel;
+        [SerializeField] private GameObject overlayPanel;
+        [SerializeField] private Image waitSpinner;
 
+        private CanvasGroup _canvasGroup;
+        private ProgressBar _currentProgressBar;
+        private TMP_Text _currentHeadlineLabel;
+        private TMP_Text _currentDetailLabel;
+        private bool _visible;
+       
+        #region Public properties
+
+        public static LoadingScreen Current { get; private set; } 
+        
+        #endregion
+        
         #region Lifecycle events
 
+        private void Awake()
+        {
+            Current = this;
+            _canvasGroup = GetComponent<CanvasGroup>();
+        }
+        
         private void Update()
         {
-            // While this screen is visible, keep setting the wait cursor
-            CursorController.Current.Wait = true;
+            if (_visible)
+            {
+                // While this screen is visible, keep setting the wait cursor
+                CursorController.Current.Wait = true;
+            }
         }
 
         #endregion
@@ -37,14 +65,15 @@ namespace TT.UI.GameContent
         /// <summary>
         /// Loads the required assets, switches to the scene index set in SceneIndex and renders the map. 
         /// </summary>
+        /// <param name="fullscreen">If true a full screen loading screen is shown, otherwise a semi transparent
+        ///     overlay with a centered loading bar is shown.</param>
         /// <param name="loadMapId">The unique ID of the map to load. If null, no map will be loaded.</param>
         /// <param name="sceneName">The name of the scene to switch to. If this value is null, the scene switch will be
         ///     skipped.</param>
         /// <param name="renderMap">If true the map will be re-rendered. If false this step will be skipped.</param>
-        public void LoadAndRender(string loadMapId, string sceneName, bool renderMap)
+        public void LoadAndRender(bool fullscreen, string loadMapId, string sceneName, bool renderMap)
         {
-            gameObject.SetActive(true);
-            StartCoroutine(LoadAndRenderCoroutine(loadMapId, sceneName, renderMap));
+            StartCoroutine(LoadAndRenderCoroutine(fullscreen, loadMapId, sceneName, renderMap));
         }
 
         #endregion
@@ -55,18 +84,22 @@ namespace TT.UI.GameContent
         /// <summary>
         /// Loads the required assets, switches to the scene index set in SceneIndex and renders the map.
         /// </summary>
+        /// <param name="fullscreen">If true a full screen loading screen is shown, otherwise a semi transparent
+        ///     overlay with a centered loading bar is shown.</param>
         /// <param name="loadMapId">The unique ID of the map to load. If null, no map will be loaded.</param>
         /// <param name="sceneName">The name of the scene to switch to. If this value is null, the scene switch will be
         ///     skipped.</param>
         /// <param name="renderMap">If true the map will be re-rendered. If false this step will be skipped.</param>
         /// <returns>A coroutine handle.</returns>
-        private IEnumerator LoadAndRenderCoroutine(string loadMapId, string sceneName, bool renderMap)
+        private IEnumerator LoadAndRenderCoroutine(bool fullscreen, string loadMapId, string sceneName, bool renderMap)
         {
+            SetProgress(0, "Loading");
             yield return null;
 
             if (!string.IsNullOrEmpty(loadMapId))
             {
-                SetProgress(0, "Loading map");
+                Show(fullscreen);
+                SetProgress(0, "Preparing map");
                 
                 if (Map.Current != null) Map.Current.Unload();
                 var handle = Map.Load(loadMapId);
@@ -85,6 +118,8 @@ namespace TT.UI.GameContent
 
             if (downloadSize > 0)
             {
+                Show(fullscreen);
+                
                 // Download required, set it off and then start the UI update coroutine
                 var downloadHandle = Addressables.DownloadDependenciesAsync(preloadKeys);
                 while (downloadHandle.Status == AsyncOperationStatus.None)
@@ -98,16 +133,24 @@ namespace TT.UI.GameContent
             }
 
             // Load the asset bundles
-            float objectsToLoad = preloadKeys.Count;
-            float objectsLoaded = 0;
-            var preloadHandle = Addressables.LoadAssetsAsync<GameObject>(preloadKeys, 
-                loadedObject => { objectsLoaded++; }, Addressables.MergeMode.Union);
-            while (!preloadHandle.IsDone)
+            var preloadKeysNotInMemory = Content.GetContentNotInMemory(preloadKeys);
+            if (preloadKeysNotInMemory.Count > 0)
             {
-                SetProgress(objectsLoaded / objectsToLoad, "Loading content packs");
-                yield return null;
+                Show(fullscreen);
+                
+                float objectsToLoad = preloadKeysNotInMemory.Count;
+                float objectsLoaded = 0;
+                SetProgress(0, "Loading content packs");
+                var preloadHandle = Addressables.LoadAssetsAsync<GameObject>(preloadKeysNotInMemory,
+                    loadedObject => { objectsLoaded++; }, Addressables.MergeMode.Union);
+                while (!preloadHandle.IsDone)
+                {
+                    SetProgress(objectsLoaded / objectsToLoad, "Loading content packs");
+                    yield return null;
+                }
+
+                SetProgress(1, "Loading content packs");
             }
-            SetProgress(1, "Loading content packs");
 
             // Reset the combined content packs based on what the user has selected
             Content.CombinePacks();
@@ -115,24 +158,59 @@ namespace TT.UI.GameContent
             // Load the specified scene
             if (!string.IsNullOrEmpty(sceneName))
             {
+                Show(fullscreen);
+                
                 var sceneLoadHandle = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
                 while (!sceneLoadHandle.isDone) yield return null;
             }
 
-            if (renderMap)
+            if (renderMap && Map.Current != null)
             {
+                Show(fullscreen);
+                
                 // Start the map render asynchronously
                 Map.Current.Render().ConfigureAwait(false);
 
                 // Wait for the map to fully render
                 while (Map.Current.RenderStatusPercentage < 1)
                 {
-                    SetProgress(Map.Current.RenderStatusPercentage, "Rendering map");
+                    SetProgress(-1, "Finishing up");
                     yield return null;
                 }
             }
 
-            gameObject.SetActive(false);
+            Hide();
+        }
+
+        /// <summary>
+        /// Shows the loading screen.
+        /// </summary>
+        /// <param name="fullscreen">If true a full screen loading screen is shown, otherwise a semi transparent
+        ///     overlay with a centered loading bar is shown.</param>
+        private void Show(bool fullscreen)
+        {
+            _canvasGroup.alpha = 1;
+            _canvasGroup.blocksRaycasts = true;
+            
+            fullscreenPanel.SetActive(fullscreen);
+            overlayPanel.SetActive(!fullscreen);
+            _currentProgressBar = fullscreen ? progressBarFullscreen : progressBarOverlay;
+            _currentHeadlineLabel = fullscreen ? headlineLabelFullscreen : headlineLabelOverlay;
+            _currentDetailLabel = fullscreen ? detailLabelFullscreen : detailLabelOverlay;
+
+            _visible = true;
+        }
+
+        /// <summary>
+        /// Hides the loading screen.
+        /// </summary>
+        private void Hide()
+        {
+            _canvasGroup.alpha = 0;
+            _canvasGroup.blocksRaycasts = false;
+            waitSpinner.gameObject.SetActive(false);
+
+            _visible = false;
         }
 
         /// <summary>
@@ -143,9 +221,22 @@ namespace TT.UI.GameContent
         /// <param name="detail">Detail text to show.</param>
         private void SetProgress(float percentage, string headline, string detail = null)
         {
-            progressBar.SetProgress(percentage);
-            if (!string.IsNullOrEmpty(headline)) headlineLabel.text = headline;
-            detailLabel.text = detail;
+            if (!_visible) return;
+            
+            if (percentage >= 0)
+            {
+                waitSpinner.gameObject.SetActive(false);
+                _currentProgressBar.gameObject.SetActive(true);
+                _currentProgressBar.SetProgress(percentage);
+            }
+            else
+            {
+                _currentProgressBar.gameObject.SetActive(false);
+                waitSpinner.gameObject.SetActive(true);
+            }
+
+            if (!string.IsNullOrEmpty(headline)) _currentHeadlineLabel.text = headline;
+            _currentDetailLabel.text = detail;
         }
 
         #endregion

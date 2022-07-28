@@ -106,7 +106,7 @@ namespace TT.UI.MainMenu
             
             Map.New(nameTextbox.text, descriptionTextbox.text, terrainId);
 
-            loadingPanel.LoadAndRender(null, Helpers.MapEditorSceneName, true);
+            loadingPanel.LoadAndRender(true, null, Helpers.MapEditorSceneName, true);
         }
         
         #endregion
