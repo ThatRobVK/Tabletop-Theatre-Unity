@@ -186,18 +186,27 @@ namespace TT.UI.GameContent
             }
 
             // Show loading screen and tell it to load new content
+            LoadingScreen.Current.LoadAndRenderComplete += HandleLoadAndRenderComplete;
             LoadingScreen.Current.LoadAndRender(false, null, null, false);
+        }
 
+        /// <summary>
+        /// Called when the loading screen completes all its operations. Update the view.
+        /// </summary>
+        private void HandleLoadAndRenderComplete()
+        {
             // Re-populate the list to force a full refresh of all data
             ClearList();
             PopulateList();
             
             // Update the download size
             ShowTotalDownloadSize();
-            
+
             // Changes applied so buttons are disabled
             if (applyButton) applyButton.Enabled = false;
             if (undoButton) undoButton.Enabled = false;
+
+            LoadingScreen.Current.LoadAndRenderComplete -= HandleLoadAndRenderComplete;
         }
 
         #endregion

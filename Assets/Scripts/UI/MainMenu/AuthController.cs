@@ -96,6 +96,8 @@ namespace TT.UI.MainMenu
         /// </summary>
         private void HandleLoginSuccess()
         {
+            Debug.Log("AuthController :: HandleLoginSuccess :: Successfully logged in");
+
             ToggleObjects(true, false);
 
             if (rememberMeToggle.isOn)
@@ -114,6 +116,8 @@ namespace TT.UI.MainMenu
         /// </summary>
         private void HandleLogout()
         {
+            Debug.Log("AuthController :: HandleLogout :: User logged out");
+
             ToggleObjects(false, false);
         }
         
@@ -123,6 +127,8 @@ namespace TT.UI.MainMenu
         /// <param name="obj"></param>
         private void HandleLoginFailed(LoginFailureReason obj)
         {
+            Debug.Log($"AuthController :: HandleLoginFailed :: Login failed: {obj.ToString()}");
+
             ToggleObjects(false, false);
         }
 
@@ -154,6 +160,8 @@ namespace TT.UI.MainMenu
         /// </summary>
         private async void RefreshLogin()
         {
+            Debug.Log("AuthController :: RefreshLogin :: Logging in from stored refresh token");
+            
             // Ensure the remember me toggle is on as we're refreshing so want to store the new refresh tokens
             if (rememberMeToggle) rememberMeToggle.isOn = true;
             

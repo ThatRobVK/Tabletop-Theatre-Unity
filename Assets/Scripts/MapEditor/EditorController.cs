@@ -53,8 +53,6 @@ namespace TT.MapEditor
 
             // Instantiate state controller
             _stateController = new StateController();
-
-            //LoadContent();
         }
         
         void Start()
@@ -73,37 +71,5 @@ namespace TT.MapEditor
 
         #endregion
 
-        
-        #region Event handlers
-        
-        private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
-        {
-            Map.Current.Render().ConfigureAwait(false);
-            // TODO: Load terrain texture from map data
-            // Load the first game terrain as default
-            //GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
-        }
-
-        #endregion
-        
-        
-        #region Private methods
-        
-        private async void LoadContent()
-        {
-            // Load content definitions
-            Debug.Log("EditorController :: Awake :: Loading content");
-            if (!Content.ContentLoaded)
-                await Content.Load();
-
-            // Load content catalog
-            var location = await Helpers.Comms.GameContent.GetContentCatalogLocationAsync();
-            AssetBundle.UnloadAllAssetBundles(false);
-            var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
-            loadContentCatalogAsync.Completed += OnContentCatalogLoaded;
-        }
-        
-        #endregion
-        
     }
 }

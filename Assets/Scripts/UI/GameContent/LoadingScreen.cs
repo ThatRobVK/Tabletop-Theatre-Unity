@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace TT.UI.GameContent
     [RequireComponent(typeof(CanvasGroup))]
     public class LoadingScreen : MonoBehaviour
     {
+        public event Action LoadAndRenderComplete;
+        
         [SerializeField] private ProgressBar progressBarFullscreen;
         [SerializeField] private ProgressBar progressBarOverlay;
         [SerializeField] private TMP_Text headlineLabelFullscreen;
@@ -121,11 +124,13 @@ namespace TT.UI.GameContent
                 Show(fullscreen);
                 
                 // Download required, set it off and then start the UI update coroutine
-                var downloadHandle = Addressables.DownloadDependenciesAsync(preloadKeys);
+                var downloadHandle = Addressables.DownloadDependenciesAsync(preloadKeys, Addressables.MergeMode.Union, false);
                 while (downloadHandle.Status == AsyncOperationStatus.None)
                 {
                     var downloadStatus = downloadHandle.GetDownloadStatus();
-                    SetProgress(downloadStatus.Percent, "Downloading content", $"Downloaded {downloadStatus.DownloadedBytes} / {downloadStatus.TotalBytes} bytes");
+                    var downloadedBytes = downloadStatus.DownloadedBytes / 1000000f;
+                    var totalBytes = downloadStatus.TotalBytes / 1000000f;
+                    SetProgress(downloadStatus.Percent, "Downloading content", $"Downloaded {downloadedBytes:N1} / {totalBytes:N1} MB");
                     yield return null;
                 }
 
@@ -180,6 +185,8 @@ namespace TT.UI.GameContent
             }
 
             Hide();
+            
+            LoadAndRenderComplete?.Invoke();
         }
 
         /// <summary>

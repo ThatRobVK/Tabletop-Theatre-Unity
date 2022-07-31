@@ -23,11 +23,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using TT.Shared.GameContent;
-using TT.Shared.World;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
-using UnityEngine.ResourceManagement.ResourceLocations;
+using TT.Shared.GameContent;
+using TT.Shared.World;
 
 namespace TT.Data
 {
@@ -86,17 +85,26 @@ namespace TT.Data
         {
             if (!Helpers.Comms.User.IsLoggedIn)
             {
+                Debug.LogWarning("Content :: Load :: User not logged in. Clearing content.");
                 Current = null;
                 ContentLoaded = false;
+                return;
             }
 
             try
             {
+                Debug.Log("Content :: Load :: Loading content");
+                
+                // Initialise access to the game content
+                await Helpers.Comms.GameContent.InitialiseAddressables();
+                
                 // Load the content catalog
                 var catalog = await Helpers.Comms.GameContent.GetContentCatalogLocationAsync();
                 // Unload asset bundles to avoid errors on duplicate bundles being loaded
                 AssetBundle.UnloadAllAssetBundles(false);
-                _contentCatalog = await Addressables.LoadContentCatalogAsync(catalog).Task;
+                var handle = Addressables.LoadContentCatalogAsync(catalog);
+                _contentCatalog = await handle.Task;
+                Addressables.Release(handle);
 
                 // Load content definitions
                 var packs = await Helpers.Comms.GameContent.GetContentAsync();
@@ -104,6 +112,7 @@ namespace TT.Data
                 SetDerivedValues();
                 CombinePacks();
 
+                Debug.Log("Content :: Load :: Content loaded successfully");
                 ContentLoaded = true;
             }
             catch (Exception ex)
