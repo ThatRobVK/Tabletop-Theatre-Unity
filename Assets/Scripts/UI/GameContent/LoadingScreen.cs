@@ -101,6 +101,8 @@ namespace TT.UI.GameContent
 
             if (!string.IsNullOrEmpty(loadMapId))
             {
+                Debug.Log($"LoadingScreen :: LoadAndRenderCoroutine :: Loading map {loadMapId}");
+                
                 Show(fullscreen);
                 SetProgress(0, "Preparing map");
                 
@@ -121,6 +123,8 @@ namespace TT.UI.GameContent
 
             if (downloadSize > 0)
             {
+                Debug.Log($"LoadingScreen :: LoadAndRenderCoroutine :: Downloading content: {downloadSize} bytes");
+
                 Show(fullscreen);
                 
                 // Download required, set it off and then start the UI update coroutine
@@ -134,6 +138,11 @@ namespace TT.UI.GameContent
                     yield return null;
                 }
 
+                if (downloadHandle.Status == AsyncOperationStatus.Failed || downloadHandle.OperationException != null)
+                {
+                    Debug.LogWarning($"LoadingScreen :: LoadAndRenderCoroutine :: Failed to download: {downloadHandle.OperationException}");
+                }
+
                 Addressables.Release(downloadHandle);
             }
 
@@ -141,6 +150,8 @@ namespace TT.UI.GameContent
             var preloadKeysNotInMemory = Content.GetContentNotInMemory(preloadKeys);
             if (preloadKeysNotInMemory.Count > 0)
             {
+                Debug.Log($"LoadingScreen :: LoadAndRenderCoroutine :: Loading content packs");
+
                 Show(fullscreen);
                 
                 float objectsToLoad = preloadKeysNotInMemory.Count;
@@ -163,6 +174,8 @@ namespace TT.UI.GameContent
             // Load the specified scene
             if (!string.IsNullOrEmpty(sceneName))
             {
+                Debug.Log($"LoadingScreen :: LoadAndRenderCoroutine :: Switching scene to {sceneName}");
+
                 Show(fullscreen);
                 
                 var sceneLoadHandle = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
@@ -171,6 +184,8 @@ namespace TT.UI.GameContent
 
             if (renderMap && Map.Current != null)
             {
+                Debug.Log($"LoadingScreen :: LoadAndRenderCoroutine :: Rendering map");
+
                 Show(fullscreen);
                 
                 // Start the map render asynchronously

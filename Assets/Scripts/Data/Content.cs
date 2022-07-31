@@ -47,7 +47,12 @@ namespace TT.Data
         #endregion
 
 
+        #region Private fields
+        
         private static IResourceLocator _contentCatalog;
+        
+        #endregion
+        
 
         #region Public properties
 
