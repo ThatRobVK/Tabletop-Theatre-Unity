@@ -104,7 +104,8 @@ namespace TT.UI.GameContent
                 Debug.Log($"LoadingScreen :: LoadAndRenderCoroutine :: Loading map {loadMapId}");
                 
                 Show(fullscreen);
-                SetProgress(0, "Preparing map");
+                SetProgress(-1, "Preparing map");
+                yield return null;
                 
                 if (Map.Current != null) Map.Current.Unload();
                 var handle = Map.Load(loadMapId);

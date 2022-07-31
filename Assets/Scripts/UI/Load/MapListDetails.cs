@@ -19,6 +19,7 @@
  */
 
 using System;
+using System.Linq;
 using DuloGames.UI;
 using TMPro;
 using TT.Data;
@@ -137,7 +138,10 @@ namespace TT.UI.Load
                 saveDateLabel.text = $"Last saved {Helpers.FormatShortDateString(mapMetadata.dateSaved)}";
                 deleteButton.gameObject.SetActive(true);
 
-                Addressables.GetDownloadSizeAsync(mapMetadata.contentPacks).Completed += handle =>
+                var keys = Content.Current.Packs
+                    .Where(x => mapMetadata.contentPacks.Contains(x.Name))
+                    .Select(x => x.PreloadItem);
+                Addressables.GetDownloadSizeAsync(keys).Completed += handle =>
                 {
                     downloadStatusLabel.text = handle.Result > 0
                         ? $"{Helpers.FormatFileSizeString(handle.Result)} to download"

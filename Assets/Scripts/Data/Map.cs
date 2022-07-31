@@ -103,7 +103,7 @@ namespace TT.Data
         /// <summary>
         /// The completion percentage of the render operation.
         /// </summary>
-        public float RenderStatusPercentage => _itemsRendered / _totalItemsToRender;
+        public float RenderStatusPercentage { get; private set; }
 
         #endregion
 
@@ -113,6 +113,8 @@ namespace TT.Data
         private readonly MapData _mapData;
         private float _totalItemsToRender = 0;
         private float _itemsRendered = 0;
+        List<Task> _renderTasks = new List<Task>();
+
 
         #endregion
 
@@ -244,9 +246,7 @@ namespace TT.Data
 
             // Count the number of items to render
             _totalItemsToRender = 1 + _mapData.terrain.terrainLayers.Count + _mapData.worldObjects.Count +
-                                  _mapData.splineObjects.Count;
-            foreach (var scatterArea in _mapData.scatterAreas)
-                _totalItemsToRender += scatterArea.scatterInstances.Count;
+                                  _mapData.splineObjects.Count + _mapData.scatterAreas.Count;
             _itemsRendered = 0;
             try
             {
@@ -260,24 +260,25 @@ namespace TT.Data
                 WindController.Current.CurrentWind = _mapData.wind;
                 WindController.Current.Rotation = _mapData.windDirection;
 
-                Task handle;
                 foreach (var x in _mapData.worldObjects)
-                    handle = WorldObjectFactory.CreateFromMapObject(x, worldObjectBase => { _itemsRendered++; });
+                    _renderTasks.Add(WorldObjectFactory.CreateFromMapObject(x, ObjectCreated));
 
                 foreach (var x in _mapData.splineObjects.Where(x =>
                              (WorldObjectType) x.objectType == WorldObjectType.River))
                     // Load rivers before roads as they create more terrain height variations
-                    handle = WorldObjectFactory.CreateFromMapObject(x, worldObjectBase => { _itemsRendered++; });
+                    _renderTasks.Add(WorldObjectFactory.CreateFromMapObject(x, ObjectCreated));
 
                 foreach (var x in _mapData.splineObjects.Where(x =>
                              (WorldObjectType) x.objectType == WorldObjectType.Road))
                     // Load roads after rivers so they correctly adapt to the carved terrain
-                    handle = WorldObjectFactory.CreateFromMapObject(x, worldObjectBase => { _itemsRendered++; });
+                    _renderTasks.Add(WorldObjectFactory.CreateFromMapObject(x, ObjectCreated));
 
                 foreach (var x in _mapData.scatterAreas)
-                    handle = WorldObjectFactory.CreateFromMapObject(x,
-                            worldObjectBase => { _itemsRendered += ((PolygonObject) worldObjectBase).ObjectCount; });
+                    _renderTasks.Add(WorldObjectFactory.CreateFromMapObject(x, ObjectCreated));
 
+                // Init status 
+                ObjectCreated(null);
+                
                 if (_mapData.terrain.splatMaps.Count > 0)
                     // Load splat maps if any are present (only present when terrain has been painted)
                     GameTerrain.Current.LoadSplatMaps(_mapData.terrain.splatWidth, _mapData.terrain.splatHeight,
@@ -288,6 +289,24 @@ namespace TT.Data
                 Debug.LogErrorFormat("Map :: Render :: Error rendering: {0}: {1}", e.GetType().FullName, e);
             }
         }
+
+        private void ObjectCreated(WorldObjectBase obj)
+        {
+            var tasksCompleted = _renderTasks.Count(x => x.IsCompleted);
+            var taskCount = _renderTasks.Count;
+
+            if (tasksCompleted == taskCount)
+            {
+                WorldObjectBase.All.ForEach(x => x.HideControls());
+                RenderStatusPercentage = 1;
+            }
+            else
+            {
+                RenderStatusPercentage = (float) tasksCompleted / taskCount;
+            }
+            
+        }
+
 
         /// <summary>
         /// Serializes this map into data objects and saves it.
