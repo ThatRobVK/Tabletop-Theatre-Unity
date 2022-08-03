@@ -19,10 +19,6 @@
  */
 
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using TT.Data;
 using TT.State;
 using TT.World;
 
@@ -47,21 +43,22 @@ namespace TT.MapEditor
         void Awake()
         {
             // Limit the application to the screen's refresh rate so we don't hammer the GPU for no reason
+            // TODO: Move this into the main menu and make configurable
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
             Debug.LogFormat("EditorController :: Awake :: Setting target framerate to {0}", 
                 Application.targetFrameRate.ToString());
 
             // Instantiate state controller
             _stateController = new StateController();
-
-            LoadContent();
         }
         
         void Start()
         {
+            // TODO: Can the state controller live on its own?
             // Set state controller to initial idle state
             _stateController.ChangeState(StateType.EditorIdleState);
 
+            // TODO: Set via the map being loaded or initialised
             TimeController.Current.CurrentTime = 12;
         }
 
@@ -73,37 +70,5 @@ namespace TT.MapEditor
 
         #endregion
 
-        
-        #region Event handlers
-        
-        private void OnContentCatalogLoaded(AsyncOperationHandle<IResourceLocator> obj)
-        {
-            Map.Current.Render().ConfigureAwait(false);
-            // TODO: Load terrain texture from map data
-            // Load the first game terrain as default
-            //GameTerrain.Current.LoadDefaultTexture(Content.Current.Combined.TerrainLayers[0].ID);
-        }
-
-        #endregion
-        
-        
-        #region Private methods
-        
-        private async void LoadContent()
-        {
-            // Load content definitions
-            Debug.Log("EditorController :: Awake :: Loading content");
-            if (!Content.ContentLoaded)
-                await Content.Load();
-
-            // Load content catalog
-            var location = await CommsLib.GameContent.GetContentCatalogLocationAsync();
-            AssetBundle.UnloadAllAssetBundles(false);
-            var loadContentCatalogAsync = Addressables.LoadContentCatalogAsync(location);
-            loadContentCatalogAsync.Completed += OnContentCatalogLoaded;
-        }
-        
-        #endregion
-        
     }
 }

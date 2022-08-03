@@ -18,10 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TMPro;
-using TT.Data;
 using UnityEngine;
 using UnityEngine.Serialization;
+using TMPro;
+using TT.Shared.World;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
@@ -29,12 +29,10 @@ namespace TT.UI.MapEditor.ObjectProperties
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [FormerlySerializedAs("HeaderText")] [SerializeField][Tooltip("The Text field to display the heading text.")] private TMP_Text headerText;
         [FormerlySerializedAs("Option")] [SerializeField] protected WorldObjectOption option;
 
-#pragma warning restore IDE0044
         #endregion
 
 

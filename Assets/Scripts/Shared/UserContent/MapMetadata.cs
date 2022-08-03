@@ -19,6 +19,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace TT.Shared.UserContent
 {
@@ -72,5 +73,11 @@ namespace TT.Shared.UserContent
         /// The date and time on which this map was last saved.
         /// </summary>
         public long dateSaved;
+        
+        /// <summary>
+        /// A list of content pack names that were loaded for this map.
+        /// </summary>
+        public List<string> contentPacks = new List<string>();
+        
     }
 }

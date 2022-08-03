@@ -64,7 +64,7 @@ namespace TT.Shared.UserContent
         /// Information about the game terrain.
         /// </summary>
         public TerrainData terrain;
-        
+
         /// <summary>
         /// A list of general world objects populating the map.
         /// </summary>

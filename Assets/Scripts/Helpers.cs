@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using TT.Data;
+using TT.Shared.World;
 using TT.World;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -45,8 +46,7 @@ namespace TT
         private static SettingsObject _settings;
         private static CommsObject _comms;
         private static readonly List<AsyncOperationHandle> AsyncOperationHandles = new List<AsyncOperationHandle>();
-
-
+        
         #endregion
 
 
@@ -148,7 +148,13 @@ namespace TT
         /// The PlayerPrefs key used to store whether the user wanted their auth to be remembered.
         /// </summary>
         public const string PrefsRememberMeKey = "RememberMe";
-
+        
+        /// <summary>
+        /// The name of the Map Editor scene object.
+        /// </summary>
+        public const string MapEditorSceneName = "MapEditor";
+        
+        
         #endregion
 
 
@@ -414,6 +420,31 @@ namespace TT
             var formatInfo = CultureInfo.CurrentUICulture.DateTimeFormat;
             var shorterDateString = formatInfo.ShortDatePattern.Replace("yyyy", "yy");
             return string.Concat(dateTime.ToLocalTime().ToString("t"), " ", dateTime.ToString(shorterDateString));
+        }
+
+        /// <summary>
+        /// Formats a file size in bytes to be displayed to the user.
+        /// </summary>
+        /// <param name="sizeInBytes">The size in bytes.</param>
+        /// <returns>The size in GB, MB, KB or bytes. When sizeInBytes is 0, null is returned.</returns>
+        public static string FormatFileSizeString(long sizeInBytes)
+        {
+            if (sizeInBytes == 0)
+                return null;
+
+            if (sizeInBytes > 1000000000)
+                return (Mathf.Round((float) sizeInBytes / 100000000) / 10).ToString("#.# GB",
+                        CultureInfo.CurrentUICulture);
+            
+            if (sizeInBytes > 1000000)
+                return (Mathf.Round((float) sizeInBytes / 100000) / 10).ToString("#.# MB", 
+                    CultureInfo.CurrentUICulture);
+
+            if (sizeInBytes > 1000)
+                return (Mathf.Round((float) sizeInBytes / 100) / 10).ToString("#.# KB", 
+                    CultureInfo.CurrentUICulture);
+
+            return sizeInBytes.ToString("# bytes", CultureInfo.CurrentUICulture);
         }
 
         #endregion

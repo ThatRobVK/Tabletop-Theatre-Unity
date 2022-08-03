@@ -18,24 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TT.Data
+namespace TT.Shared.GameContent
 {
-    public class ContentRiversRoads
+    /// <summary>
+    /// A terrain layer as stored in a content pack.
+    /// </summary>
+    public class ContentTerrainLayer
     {
         /// <summary>
-        /// IDs of RamProfiles for rivers.
+        /// The display name for this terrain layer.
         /// </summary>
-        public string[] Rivers = new string[] { };
+        public string Name = string.Empty;
 
         /// <summary>
-        /// IDs of RamProfiles for roads.
+        /// The ID of the TerrainLayer object.
         /// </summary>
-        public string[] Roads = new string[] { };
-
-        /// <summary>
-        /// IDs of items that are bridges.
-        /// </summary>
-        public string[] Bridges = new string[] { };
+        public string ID = string.Empty;
     }
 
 }

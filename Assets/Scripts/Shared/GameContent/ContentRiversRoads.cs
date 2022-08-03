@@ -18,34 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TT.Data
+namespace TT.Shared.GameContent
 {
-    public class ContentConstruction
+    /// <summary>
+    /// A container for rivers, roads and bridges as part of a content pack.
+    /// </summary>
+    public class ContentRiversRoads
     {
         /// <summary>
-        /// ID's of floor materials.
+        /// IDs of RamProfiles for rivers.
         /// </summary>
-        public string[] Floors = new string[] { };
+        public string[] Rivers = { };
 
         /// <summary>
-        /// IDs of ceiling materials.
+        /// IDs of RamProfiles for roads.
         /// </summary>
-        public string[] Ceilings = new string[] { };
+        public string[] Roads = { };
 
         /// <summary>
-        /// IDs of wall materials.
+        /// IDs of items that are bridges.
         /// </summary>
-        public string[] Walls = new string[] { };
-
-        /// <summary>
-        /// Categories with full buildings.
-        /// </summary>
-        public ContentItemCategory[] Buildings = new ContentItemCategory[] { };
-
-        /// <summary>
-        /// Categories with building props.
-        /// </summary>
-        public ContentItemCategory[] Props = new ContentItemCategory[] { };
+        public string[] Bridges = { };
     }
 
 }

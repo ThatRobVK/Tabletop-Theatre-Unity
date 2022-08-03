@@ -19,8 +19,9 @@
  */
 
 using System.Diagnostics.CodeAnalysis;
+using TT.Shared.World;
 
-namespace TT.Data
+namespace TT.Shared.GameContent
 {
     
     public class ContentItem
@@ -59,5 +60,31 @@ namespace TT.Data
         /// The category this item belongs to.
         /// </summary>
         public ContentItemCategory Category;
+
+        /// <summary>
+        /// The content pack this item belongs to.
+        /// </summary>
+        public ContentPack ContentPack;
+
+        /// <summary>
+        /// Creates another instance of content item with the same values as this instance, except for the specified
+        /// parent category.
+        /// </summary>
+        /// <param name="parentCategory">The category object to parent this under.</param>
+        /// <returns>A clone of this content item</returns>
+        public ContentItem Clone(ContentItemCategory parentCategory)
+        {
+            return new ContentItem
+            {
+                IDs = IDs,
+                Name = Name,
+                Traversable = Traversable,
+                Scale = Scale,
+                Lights = Lights,
+                Type = Type,
+                Category = parentCategory,
+                ContentPack = ContentPack
+            };
+        }
     }
 }

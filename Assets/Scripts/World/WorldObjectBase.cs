@@ -24,7 +24,9 @@ using System.Linq;
 using TT.Data;
 using TT.MapEditor;
 using TT.Shared;
+using TT.Shared.GameContent;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 using TT.State;
 using TT.UI;
 using UnityEngine;
@@ -207,7 +209,7 @@ namespace TT.World
         public virtual void Initialise(ContentItem contentItem, int itemIndex)
         {
             ContentItem = contentItem;
-            Type = contentItem.Type;
+            Type = (WorldObjectType)contentItem.Type;
             ObjectId = Guid.NewGuid();
             GameLayer = contentItem.Traversable ? Helpers.TraversableLayer : Helpers.ImpassableLayer;
             PrefabAddress = contentItem.IDs[itemIndex];
@@ -515,7 +517,7 @@ namespace TT.World
             Debug.LogFormat("WorldObjectBase[{0}] :: CloneFrom({1})", name, fromObject.name);
 
             ContentItem = contentItem ?? fromObject.ContentItem;
-            Type = ContentItem.Type;
+            Type = (WorldObjectType)ContentItem.Type;
             ObjectId = generateNewObjectId ? Guid.NewGuid() : fromObject.ObjectId;
             GameLayer = fromObject.GameLayer;
             PrefabAddress = prefabAddress ?? fromObject.PrefabAddress;

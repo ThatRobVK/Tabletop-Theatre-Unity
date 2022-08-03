@@ -400,6 +400,10 @@ namespace TT.World
 
             for (int i = 0; i < addresses.Length; i++)
             {
+                // Skip loading of the base texture
+                if (addresses[i].Equals(TerrainTextureAddress))
+                    continue;
+                
                 var handle = Addressables.LoadAssetAsync<TerrainLayer>(addresses[i]);
                 await handle.Task;
 

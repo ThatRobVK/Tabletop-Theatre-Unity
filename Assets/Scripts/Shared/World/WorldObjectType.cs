@@ -18,19 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TT.Data
+namespace TT.Shared.World
 {
-    public enum WorldObjectOption
+    /// <summary>
+    /// An enum with the different types of world object that are supported by the game.
+    /// </summary>
+    public enum WorldObjectType
     {
-        Terrain = 0,
-        Detailing = 1,
-        Roof = 2,
-        LightsMode = 3,
-        LightsColor = 4,
-        LightsRange = 5,
-        LightsIntensity = 6,
-        SplineWidth = 7,
-        RiverFlowSpeed = 8,
-        OpenClose = 9
+        ScalableObject,
+        Item,
+        NatureObject,
+        ScatterArea,
+        River,
+        Road,
+        Bridge,
+        Lightsource,
+        Construction,
+        Building,
+        ConstructionProp,
+        Sound,
+        Npc
     }
 }

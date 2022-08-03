@@ -19,20 +19,19 @@
  */
 
 using System.Collections.Generic;
-using DuloGames.UI;
-using TMPro;
-using TT.Data;
-using TT.MapEditor;
-using TT.World;
 using UnityEngine;
 using UnityEngine.Serialization;
+using TMPro;
+using DuloGames.UI;
+using TT.MapEditor;
+using TT.Shared.World;
+using TT.World;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
     public class ItemOptionSlider : PropertySlider
     {
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The slider controlled by this option.")] private UISliderExtended slider;
         [FormerlySerializedAs("InitialiseFromEditor")] [SerializeField] private bool initialiseFromEditor;
@@ -40,7 +39,6 @@ namespace TT.UI.MapEditor.ObjectProperties
         [SerializeField][Tooltip("The Text field to display the heading text.")] private TMP_Text headerText;
         [SerializeField][Tooltip("Whether to snap to whole numbers (true) or allow fractional numbers (false).")] private bool wholeNumbers;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -52,7 +50,6 @@ namespace TT.UI.MapEditor.ObjectProperties
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         protected override void Start()
         {
@@ -67,7 +64,6 @@ namespace TT.UI.MapEditor.ObjectProperties
             base.Start();
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 
@@ -76,13 +72,13 @@ namespace TT.UI.MapEditor.ObjectProperties
         public void Initialise(WorldObjectOption controlledOption, string header, float sliderMinValue, float sliderMaxValue, bool sliderWholeNumbers)
         {
             headerText.text = header;
-            this.option = controlledOption;
+            option = controlledOption;
 
             UpdatedThisFrame = true;
 
-            this.minValue = sliderMinValue;
-            this.maxValue = sliderMaxValue;
-            this.wholeNumbers = sliderWholeNumbers;
+            minValue = sliderMinValue;
+            maxValue = sliderMaxValue;
+            wholeNumbers = sliderWholeNumbers;
 
             slider.minValue = sliderMinValue;
             slider.maxValue = sliderMaxValue;

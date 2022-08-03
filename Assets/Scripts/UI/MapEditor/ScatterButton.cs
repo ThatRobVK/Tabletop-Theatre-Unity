@@ -18,12 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
-using TT.State;
-using TT.World;
 using UnityEngine;
 using UnityEngine.UI;
+using TT.State;
+using TT.World;
 
 namespace TT.UI.MapEditor
 {
@@ -31,11 +29,9 @@ namespace TT.UI.MapEditor
     public class ScatterButton : MonoBehaviour
     {
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The GameObject that contains the ScatterCategory objects to use.")] private ScatterGrid scatterGrid;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -47,7 +43,6 @@ namespace TT.UI.MapEditor
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Start()
         {
@@ -55,7 +50,6 @@ namespace TT.UI.MapEditor
             _button.onClick.AddListener(HandleButtonClicked);
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 
@@ -75,7 +69,7 @@ namespace TT.UI.MapEditor
 
                 polygon.DestroyChildren();
 
-                foreach (var scatterCategory in scatterGrid.scatterCategories)
+                foreach (var scatterCategory in scatterGrid.ScatterCategories)
                 {
                     // For each category, scatter its goodness
                     var categories = scatterCategory.GetCategories();

@@ -19,24 +19,22 @@
  */
 
 using System.Collections.Generic;
-using TMPro;
-using TT.Data;
-using TT.MapEditor;
-using TT.World;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using TT.MapEditor;
+using TT.Shared.World;
+using TT.World;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
     public class ItemOptionBool : MonoBehaviour
     {
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The Text field to display the heading text.")] private TMP_Text headerText;
         [SerializeField][Tooltip("The toggle to control via this option.")] private Toggle toggle;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -49,7 +47,6 @@ namespace TT.UI.MapEditor.ObjectProperties
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Start()
         {
@@ -69,7 +66,6 @@ namespace TT.UI.MapEditor.ObjectProperties
             _updatedThisFrame = false;
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 

@@ -20,6 +20,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using TT.Shared;
 
 namespace TT.UI.MainMenu
 {
@@ -28,7 +29,6 @@ namespace TT.UI.MainMenu
     /// </summary>
     public class AuthController : MonoBehaviour
     {
-        
         #region Editor fields
         
         [SerializeField][Tooltip("The login form.")] private GameObject loggedOutPanel;
@@ -47,6 +47,7 @@ namespace TT.UI.MainMenu
             // Listen for auth events
             Helpers.Comms.User.OnLoginStart += HandleLoginStart;
             Helpers.Comms.User.OnLoginSuccess += HandleLoginSuccess;
+            Helpers.Comms.User.OnLoginFailed += HandleLoginFailed;
             Helpers.Comms.User.OnLogout += HandleLogout;
             
             // Initialise UI
@@ -68,6 +69,7 @@ namespace TT.UI.MainMenu
                 // Stop listening for auth events
                 Helpers.Comms.User.OnLoginStart -= HandleLoginStart;
                 Helpers.Comms.User.OnLoginSuccess -= HandleLoginSuccess;
+                Helpers.Comms.User.OnLoginFailed -= HandleLoginFailed;
                 Helpers.Comms.User.OnLogout -= HandleLogout;
             }
         }
@@ -93,6 +95,8 @@ namespace TT.UI.MainMenu
         /// </summary>
         private void HandleLoginSuccess()
         {
+            Debug.Log("AuthController :: HandleLoginSuccess :: Successfully logged in");
+
             ToggleObjects(true, false);
 
             if (rememberMeToggle.isOn)
@@ -111,9 +115,22 @@ namespace TT.UI.MainMenu
         /// </summary>
         private void HandleLogout()
         {
+            Debug.Log("AuthController :: HandleLogout :: User logged out");
+
             ToggleObjects(false, false);
         }
         
+        /// <summary>
+        /// Called when authentication has failed. Show the login UI.
+        /// </summary>
+        /// <param name="obj"></param>
+        private void HandleLoginFailed(LoginFailureReason obj)
+        {
+            Debug.Log($"AuthController :: HandleLoginFailed :: Login failed: {obj.ToString()}");
+
+            ToggleObjects(false, false);
+        }
+
         #endregion
         
         
@@ -142,6 +159,8 @@ namespace TT.UI.MainMenu
         /// </summary>
         private async void RefreshLogin()
         {
+            Debug.Log("AuthController :: RefreshLogin :: Logging in from stored refresh token");
+            
             // Ensure the remember me toggle is on as we're refreshing so want to store the new refresh tokens
             if (rememberMeToggle) rememberMeToggle.isOn = true;
             

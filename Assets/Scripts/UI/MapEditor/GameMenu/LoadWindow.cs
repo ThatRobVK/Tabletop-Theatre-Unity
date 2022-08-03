@@ -19,15 +19,16 @@
  */
 
 using System.Text;
-using DuloGames.UI;
+using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using DuloGames.UI;
 using TT.Data;
 using TT.InputMapping;
 using TT.MapEditor;
 using TT.State;
+using TT.UI.GameContent;
 using TT.UI.Load;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace TT.UI.MapEditor.GameMenu
 {
@@ -154,7 +155,7 @@ namespace TT.UI.MapEditor.GameMenu
         /// <summary>
         /// Loads the selected map.
         /// </summary>
-        private async void LoadMap()
+        private void LoadMap()
         {
             // Don't act if the load button is disabled
             if (!loadButton.GetComponent<ToggledButton>().Enabled)
@@ -164,10 +165,7 @@ namespace TT.UI.MapEditor.GameMenu
             
             Debug.Log($"LoadWindow :: LoadMap :: Loading map {mapId}");
             
-            // Unload the map and load the saved data
-            Map.Current.Unload();
-            await Map.Load(mapId);
-            await Map.Current.Render();
+            LoadingScreen.Current.LoadAndRender(true, mapId, null, true);
             
             StateController.Current.ChangeState(StateType.EditorIdleState);
             

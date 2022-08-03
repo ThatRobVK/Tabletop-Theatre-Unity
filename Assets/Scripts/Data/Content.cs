@@ -22,9 +22,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using UnityEditorInternal.VersionControl;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using TT.Shared.GameContent;
+using TT.Shared.World;
 
 namespace TT.Data
 {
@@ -44,6 +46,13 @@ namespace TT.Data
 
         #endregion
 
+
+        #region Private fields
+        
+        private static IResourceLocator _contentCatalog;
+        
+        #endregion
+        
 
         #region Public properties
 
@@ -81,19 +90,35 @@ namespace TT.Data
         {
             if (!Helpers.Comms.User.IsLoggedIn)
             {
+                Debug.LogWarning("Content :: Load :: User not logged in. Clearing content.");
                 Current = null;
                 ContentLoaded = false;
+                return;
             }
 
             try
             {
-                var json = await CommsLib.GameContent.GetContentJsonAsync();
-                Current = JsonConvert.DeserializeObject<Content>(json);
+                Debug.Log("Content :: Load :: Loading content");
+                
+                // Initialise access to the game content
+                await Helpers.Comms.GameContent.InitialiseAddressables();
+                
+                // Load the content catalog
+                var catalog = await Helpers.Comms.GameContent.GetContentCatalogLocationAsync();
+                // Unload asset bundles to avoid errors on duplicate bundles being loaded
+                AssetBundle.UnloadAllAssetBundles(false);
+                var handle = Addressables.LoadContentCatalogAsync(catalog);
+                _contentCatalog = await handle.Task;
+                Addressables.Release(handle);
+
+                // Load content definitions
+                var packs = await Helpers.Comms.GameContent.GetContentAsync();
+                Current = new Content { Packs = packs };
                 SetDerivedValues();
                 CombinePacks();
 
+                Debug.Log("Content :: Load :: Content loaded successfully");
                 ContentLoaded = true;
-                OnContentChanged?.Invoke();
             }
             catch (Exception ex)
             {
@@ -171,7 +196,7 @@ namespace TT.Data
             {
                 var contentItemTemplate = TypeToContentItemMap[type];
                 foreach (var item in items)
-                    contentItems.Add(new ContentItem()
+                    contentItems.Add(new ContentItem
                     {
                         Name = contentItemTemplate.Name,
                         Traversable = contentItemTemplate.Traversable,
@@ -183,6 +208,97 @@ namespace TT.Data
             }
 
             return contentItems.ToArray();
+        }
+
+        /// <summary>
+        /// Populates the Combined property with a union of all selected content packs.
+        /// </summary>
+        public static void CombinePacks()
+        {
+            var constructionBuildings = new List<ContentItemCategory>();
+            var constructionProps = new List<ContentItemCategory>();
+            var constructionCeilings = new List<string>();
+            var constructionFloors = new List<string>();
+            var constructionWalls = new List<string>();
+            var items = new List<ContentItemCategory>();
+            var lightsources = new List<ContentItemCategory>();
+            var nature = new List<ContentItemCategory>();
+            var rivers = new List<string>();
+            var roads = new List<string>();
+            var bridges = new List<string>();
+            var terrainLayers = new List<ContentTerrainLayer>();
+
+            foreach (var pack in Current.Packs)
+                if (pack.Selected)
+                {
+                    CombineCategories(ref constructionBuildings, pack.Construction.Buildings);
+                    CombineCategories(ref constructionProps, pack.Construction.Props);
+                    constructionCeilings.AddRange(pack.Construction.Ceilings);
+                    constructionFloors.AddRange(pack.Construction.Floors);
+                    constructionWalls.AddRange(pack.Construction.Walls);
+                    CombineCategories(ref items, pack.Items);
+                    CombineCategories(ref lightsources, pack.Lightsources);
+                    CombineCategories(ref nature, pack.Nature);
+                    rivers.AddRange(pack.RiversRoads.Rivers);
+                    roads.AddRange(pack.RiversRoads.Roads);
+                    bridges.AddRange(pack.RiversRoads.Bridges);
+                    terrainLayers.AddRange(pack.TerrainLayers);
+                }
+
+            Current.Combined.Construction.Buildings = constructionBuildings.ToArray();
+            Current.Combined.Construction.Props = constructionProps.ToArray();
+            Current.Combined.Construction.Ceilings = constructionCeilings.ToArray();
+            Current.Combined.Construction.Floors = constructionFloors.ToArray();
+            Current.Combined.Construction.Walls = constructionWalls.ToArray();
+            Current.Combined.Items = items.ToArray();
+            Current.Combined.Lightsources = lightsources.ToArray();
+            Current.Combined.Nature = nature.ToArray();
+            Current.Combined.RiversRoads.Rivers = rivers.ToArray();
+            Current.Combined.RiversRoads.Roads = roads.ToArray();
+            Current.Combined.RiversRoads.Bridges = bridges.ToArray();
+            Current.Combined.TerrainLayers = terrainLayers.ToArray();
+
+            OnContentChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Returns any passed in addresses that are not currently loaded into memory. If all addresses are in memory,
+        /// an empty list is returned.
+        /// </summary>
+        /// <param name="addresses">A list of content addresses to check for.</param>
+        /// <returns>A list of addresses not in memory, or an empty list if all addresses are in memory.</returns>
+        /// <remarks>
+        /// This does not check for dependencies, but lazily assumes that if the address was loaded, all its
+        /// dependencies were loaded as well and are thus still in memory. This will do until proven incorrect.
+        /// </remarks>
+        public static List<string> GetContentNotInMemory(IEnumerable<string> addresses)
+        {
+            if (_contentCatalog == null)
+            {
+                Debug.LogError("Content :: ContentLoadedIntoMemory :: Catalog not instantiated.");
+                return new List<string>();
+            }
+
+            // Create a list of all asset locations that are currently loaded
+            var loadedAssetBundles = AssetBundle.GetAllLoadedAssetBundles();
+            var loadedInternalIds = new List<string>();
+            foreach (var assetBundle in loadedAssetBundles)
+                loadedInternalIds.AddRange(assetBundle.GetAllAssetNames());
+
+            List<string> addressesToLoad = new List<string>();
+            foreach (string address in addresses)
+            {
+                // Get a resource location for each supplied address and if found, check if its InternalId (its
+                // asset location) is in the list of loaded locations.
+                _contentCatalog.Locate(address, typeof(GameObject), out var locators);
+                if (locators != null && locators.Count >= 1)
+                {
+                    if (!loadedInternalIds.Contains(locators[0].InternalId))
+                        addressesToLoad.Add(address);
+                }
+            }
+
+            return addressesToLoad;
         }
 
         #endregion
@@ -197,11 +313,11 @@ namespace TT.Data
         {
             foreach (var pack in Current.Packs)
             {
-                SetDerivedValues(pack.Construction.Buildings, WorldObjectType.Building);
-                SetDerivedValues(pack.Construction.Props, WorldObjectType.ConstructionProp);
-                SetDerivedValues(pack.Items, WorldObjectType.Item);
-                SetDerivedValues(pack.Lightsources, WorldObjectType.Lightsource);
-                SetDerivedValues(pack.Nature, WorldObjectType.NatureObject);
+                SetDerivedValues(pack.Construction.Buildings, WorldObjectType.Building, pack);
+                SetDerivedValues(pack.Construction.Props, WorldObjectType.ConstructionProp, pack);
+                SetDerivedValues(pack.Items, WorldObjectType.Item, pack);
+                SetDerivedValues(pack.Lightsources, WorldObjectType.Lightsource, pack);
+                SetDerivedValues(pack.Nature, WorldObjectType.NatureObject, pack);
             }
         }
 
@@ -210,7 +326,7 @@ namespace TT.Data
         /// </summary>
         /// <param name="categories">An array of categories to recursively loop over.</param>
         /// <param name="type">The type to set all items inside this category to.</param>
-        private static void SetDerivedValues(ContentItemCategory[] categories, WorldObjectType type)
+        private static void SetDerivedValues(ContentItemCategory[] categories, WorldObjectType type, ContentPack pack)
         {
             foreach (var category in categories)
             {
@@ -220,11 +336,12 @@ namespace TT.Data
                     item.Type = type;
                     item.Name = category.Name;
                     item.Category = category;
+                    item.ContentPack = pack;
                 }
 
                 if (category.Categories.Length > 0)
                     // Recurse over subcategories
-                    SetDerivedValues(category.Categories, type);
+                    SetDerivedValues(category.Categories, type, pack);
             }
         }
 
@@ -254,87 +371,46 @@ namespace TT.Data
         }
 
         /// <summary>
-        /// Populates the Combined property with a union of all selected content packs.
-        /// </summary>
-        private static void CombinePacks()
-        {
-            var constructionBuildings = new List<ContentItemCategory>();
-            var constructionProps = new List<ContentItemCategory>();
-            var constructionCeilings = new List<string>();
-            var constructionFloors = new List<string>();
-            var constructionWalls = new List<string>();
-            var items = new List<ContentItemCategory>();
-            var lightsources = new List<ContentItemCategory>();
-            var nature = new List<ContentItemCategory>();
-            var rivers = new List<string>();
-            var roads = new List<string>();
-            var bridges = new List<string>();
-            var terrainLayers = new List<ContentTerrainLayer>();
-
-            foreach (var pack in Current.Packs)
-                if (pack.Selected)
-                {
-                    CombineCategories(ref constructionBuildings, pack.Construction.Buildings);
-                    CombineCategories(ref constructionProps, pack.Construction.Props);
-                    constructionCeilings.AddRange(pack.Construction.Ceilings);
-                    constructionFloors.AddRange(pack.Construction.Floors);
-                    constructionWalls.AddRange(pack.Construction.Walls);
-                    CombineCategories(ref items, pack.Items);
-                    CombineCategories(ref lightsources, pack.Lightsources);
-                    nature.AddRange(pack.Nature);
-                    rivers.AddRange(pack.RiversRoads.Rivers);
-                    roads.AddRange(pack.RiversRoads.Roads);
-                    bridges.AddRange(pack.RiversRoads.Bridges);
-                    terrainLayers.AddRange(pack.TerrainLayers);
-                }
-
-            Current.Combined.Construction.Buildings = constructionBuildings.ToArray();
-            Current.Combined.Construction.Props = constructionProps.ToArray();
-            Current.Combined.Construction.Ceilings = constructionCeilings.ToArray();
-            Current.Combined.Construction.Floors = constructionFloors.ToArray();
-            Current.Combined.Construction.Walls = constructionWalls.ToArray();
-            Current.Combined.Items = items.ToArray();
-            Current.Combined.Lightsources = lightsources.ToArray();
-            Current.Combined.Nature = nature.ToArray();
-            Current.Combined.RiversRoads.Rivers = rivers.ToArray();
-            Current.Combined.RiversRoads.Roads = roads.ToArray();
-            Current.Combined.RiversRoads.Bridges = bridges.ToArray();
-            Current.Combined.TerrainLayers = terrainLayers.ToArray();
-        }
-
-        /// <summary>
         /// Adds items to the specified list, combining any categories of the same name into one and adding new
         /// categories to the end of the list. This method is recursive and will combine all subcategories as well.
         /// </summary>
         /// <param name="listToAddTo">The list of categories to merge into. This is a ref parameter and will be changed
         ///     by this method.</param>
-        /// <param name="itemsToAdd">The list of items to add. This parameter will not be changed.</param>
-        private static void CombineCategories(ref List<ContentItemCategory> listToAddTo, IEnumerable<ContentItemCategory> itemsToAdd)
+        /// <param name="categoriesToAdd">The list of items to add. This parameter will not be changed.</param>
+        /// <remarks>Items added to the list are clones of the originals to prevent updating the source lists.</remarks>
+        private static void CombineCategories(ref List<ContentItemCategory> listToAddTo, IEnumerable<ContentItemCategory> categoriesToAdd)
         {
-            foreach (var itemToAdd in itemsToAdd)
+            foreach (var categoryToAdd in categoriesToAdd)
             {
                 bool categoryFound = false;
-                foreach (var listItem in listToAddTo)
+                foreach (var listToAddToItem in listToAddTo)
                 {
-                    if (listItem.Name.Equals(itemToAdd.Name))
+                    if (listToAddToItem.Name.Equals(categoryToAdd.Name))
                     {
                         // Same category
                         categoryFound = true;
                         
-                        if (itemToAdd.Categories.Length > 0)
+                        if (categoryToAdd.Categories.Length > 0)
                         {
                             // If there are further subcategories, combine them
-                            var listCategories = listItem.Categories.ToList();
-                            CombineCategories(ref listCategories, itemToAdd.Categories);
-                            listItem.Categories = listCategories.ToArray();
+                            var listCategories = listToAddToItem.Categories.ToList();
+                            CombineCategories(ref listCategories, categoryToAdd.Categories);
+                            listToAddToItem.Categories = listCategories.ToArray();
                         }
 
-                        if (itemToAdd.Items.Length > 0)
+                        if (categoryToAdd.Items.Length > 0)
                         {
+                            // Create a clone of all the content items in the list
+                            List<ContentItem> itemsToAdd = new List<ContentItem>();
+                            foreach (var item in categoryToAdd.Items)
+                            {
+                                itemsToAdd.Add(item.Clone(listToAddToItem));
+                            }
+                            
                             // If there are items, combine them
-                            var itemList = listItem.Items.ToList();
-                            itemList.AddRange(itemToAdd.Items);
-                            listItem.Items = itemList.ToArray();
+                            var itemList = listToAddToItem.Items.ToList();
+                            itemList.AddRange(itemsToAdd);
+                            listToAddToItem.Items = itemList.ToArray();
                         }
 
                         // End loop if found
@@ -345,7 +421,7 @@ namespace TT.Data
                 if (!categoryFound)
                 {
                     // If not found, add it
-                    listToAddTo.Add(itemToAdd);
+                    listToAddTo.Add(categoryToAdd.Clone());
                 }
             }
         }

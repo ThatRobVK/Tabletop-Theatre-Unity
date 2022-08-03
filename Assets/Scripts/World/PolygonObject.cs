@@ -20,11 +20,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HighlightPlus;
 using TT.Data;
 using TT.MapEditor;
 using TT.Shared;
+using TT.Shared.GameContent;
 using TT.Shared.UserContent;
+using TT.Shared.World;
 using TT.UI;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -88,6 +91,7 @@ namespace TT.World
         private int _placedItems;
         private bool _initialised;
         private KeyValuePair<int, Vector3> _undoHandlePosition;
+        private Action<WorldObjectBase> _InitialiseCompleteCallback;
 
         #endregion
 
@@ -110,6 +114,10 @@ namespace TT.World
         public Bounds BoundingBox => _meshCollider.bounds;
 
         public override Vector3 Position => _handles.Count >= 1 ? _handles[0].transform.position : addHandleButton.transform.position;
+        
+        public int ObjectCount { get; private set; }
+        
+        public List<string> ContentPacksUsed { get; private set; }
 
         #endregion
 
@@ -132,6 +140,8 @@ namespace TT.World
             _mesh = new Mesh();
             _mesh.MarkDynamic();
 
+            ContentPacksUsed = new List<string>();
+            
             addHandleButton.GetComponentInChildren<MouseTrigger>().OnChildClick += HandleAddHandleButtonClicked;
 
             // Add this object to the list
@@ -147,13 +157,14 @@ namespace TT.World
             addHandleButton.SetActive(ControlsVisible && !InPlacementMode);
 
             // While the number of placed items is less than the number of requested items, keep the wait cursor
-            if (_placedItems < _targetItems)
+            if (ObjectCount < _targetItems)
             {
                 CursorController.Current.Wait = true;
             }
             else if (!_initialised)
             {
                 _initialised = true;
+                _InitialiseCompleteCallback?.Invoke(this);
 
                 // Once initialised, show or hide the controls
                 if (_showControlsOnComplete)
@@ -283,6 +294,8 @@ namespace TT.World
         {
             base.Initialise(contentItem, itemIndex);
 
+            ObjectCount = 0;
+            
             // Initialise at 0,0,0 as some calculations are local and some global - with this root coord they're the same
             transform.position = Vector3.zero;
 
@@ -301,8 +314,12 @@ namespace TT.World
         /// Loads the polygon from the specified ScatterAreaData.
         /// </summary>
         /// <param name="scatterAreaData">The data to load.</param>
-        public void Initialise(ScatterAreaData scatterAreaData)
+        /// <param name="callback">An optional callback to invoke when all objects have been spawned.</param>
+        public void Initialise(ScatterAreaData scatterAreaData, Action<WorldObjectBase> callback = null)
         {
+            // Store the callback
+            _InitialiseCompleteCallback = callback;
+            
             //TODO: Refactor to remove scatter area specific code from polygons (either create an inheriting class or keep the two classes separate completely
             Start();
             FromMapObject(scatterAreaData);
@@ -321,6 +338,7 @@ namespace TT.World
 
             _showControlsOnComplete = false;
             _targetItems = scatterAreaData.scatterInstances.Count;
+            ObjectCount = 0;
 
             foreach (var scatterInstance in scatterAreaData.scatterInstances)
             {
@@ -772,6 +790,10 @@ namespace TT.World
             _generatedGameObjects.Add(placedObject);
             _generatedObjectAddresses.Add(address);
 
+            // Record the name of the content pack
+            if (!ContentPacksUsed.Contains(contentItem.ContentPack.Name))
+                ContentPacksUsed.Add(contentItem.ContentPack.Name);
+
             // Set the object's scale based on its content item
             Helpers.SetLayerRecursive(placedObject, contentItem.Traversable ? Helpers.TraversableLayer : Helpers.ImpassableLayer);
             var placedObjectScale = contentItem.Scale;
@@ -780,8 +802,8 @@ namespace TT.World
                 placedObject.transform.localScale = new Vector3(placedObjectScale, placedObjectScale, placedObjectScale);
             }
 
-            // Increment the number of items done so we know when to clear the wait cursor
-            _placedItems++;
+            // Increment the number of items done so we know when to clear the wait cursor and invoke the callback
+            ObjectCount++;
         }
 
         #endregion

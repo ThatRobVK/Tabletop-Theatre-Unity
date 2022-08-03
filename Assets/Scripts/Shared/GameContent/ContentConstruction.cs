@@ -18,19 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace TT.Data
+namespace TT.Shared.GameContent
 {
-    public class ContentTerrainLayer
+    public class ContentConstruction
     {
         /// <summary>
-        /// The display name for this terrain layer.
+        /// ID's of floor materials.
         /// </summary>
-        public string Name = string.Empty;
+        public string[] Floors = { };
 
         /// <summary>
-        /// The ID of the TerrainLayer object.
+        /// IDs of ceiling materials.
         /// </summary>
-        public string ID = string.Empty;
+        public string[] Ceilings = { };
+
+        /// <summary>
+        /// IDs of wall materials.
+        /// </summary>
+        public string[] Walls = { };
+
+        /// <summary>
+        /// Categories with full buildings.
+        /// </summary>
+        public ContentItemCategory[] Buildings = { };
+
+        /// <summary>
+        /// Categories with building props.
+        /// </summary>
+        public ContentItemCategory[] Props = { };
     }
 
 }

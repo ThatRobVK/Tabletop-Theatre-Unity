@@ -18,71 +18,74 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System.Collections.Generic;
-using TT.Data;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+using TT.Data;
 
 namespace TT.UI.MapEditor
 {
+    /// <summary>
+    /// Attached to the grid that contains scatter items. Populates the grid whenever content is updated.
+    /// </summary>
     [RequireComponent(typeof(VerticalLayoutGroup))]
     public class ScatterGrid : MonoBehaviour
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("A prefab for the item replace button.")] private ScatterCategory scatterCategoryPrefab;
-
-#pragma warning restore IDE0044
-        #endregion
-
-
-        #region Private fields
-
-        private bool _initialised;
+        [SerializeField][Tooltip("The parent transform for inactive UI elements.")] private Transform inactiveUIElements;
 
         #endregion
 
-
+        
         #region Public properties
 
-        [FormerlySerializedAs("ScatterCategories")] public List<ScatterCategory> scatterCategories = new List<ScatterCategory>();
+        public List<ScatterCategory> ScatterCategories { get; private set; }
 
         #endregion
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
-        void Start()
+        private void Start()
         {
+            ScatterCategories = new List<ScatterCategory>();
+            
+            // Listen for content changes and if it's already loaded, initialise
             Content.OnContentChanged += HandleContentChanged;
-
             if (Content.ContentLoaded) HandleContentChanged();
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 
         #region Event handlers
 
+        /// <summary>
+        /// Called when the loaded content has changed. Clear and re-populate the list of categories.
+        /// </summary>
         private void HandleContentChanged()
         {
-            if (_initialised) return;
-
-            foreach (var category in Content.Current.Combined.Nature)
+            // Clear the list first
+            while (transform.childCount > 0)
             {
-                var scatterCategory = Instantiate(scatterCategoryPrefab, transform);
-                scatterCategory.Initialise(category);
-                scatterCategories.Add(scatterCategory);
+                var child = transform.GetChild(0);
+                child.gameObject.SetActive(false);
+                child.SetParent(inactiveUIElements);
             }
 
-            _initialised = true;
+            // Then re-populate
+            foreach (var category in Content.Current.Combined.Nature)
+            {
+                var scatterCategory =
+                    Helpers.GetAvailableButton(scatterCategoryPrefab, ScatterCategories, inactiveUIElements);
+                scatterCategory.Initialise(category);
+                scatterCategory.gameObject.SetActive(true);
+                scatterCategory.transform.SetParent(transform);
+                ScatterCategories.Add(scatterCategory);
+            }
         }
 
         #endregion

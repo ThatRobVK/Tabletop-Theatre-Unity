@@ -19,11 +19,11 @@
  */
 
 using System.Collections.Generic;
-using DuloGames.UI;
-using TT.Data;
-using TT.MapEditor;
-using TT.World;
 using UnityEngine;
+using DuloGames.UI;
+using TT.MapEditor;
+using TT.Shared.World;
+using TT.World;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
@@ -41,7 +41,6 @@ namespace TT.UI.MapEditor.ObjectProperties
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Awake()
         {
@@ -67,7 +66,6 @@ namespace TT.UI.MapEditor.ObjectProperties
             _updatedThisFrame = false;
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 

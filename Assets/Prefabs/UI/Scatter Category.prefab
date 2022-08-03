@@ -356,6 +356,7 @@ MonoBehaviour:
   selectedLabel: {fileID: 2766515227962263297}
   densitySlider: {fileID: 400501226996998725}
   subCategoryPrefab: {fileID: 3479993856681302615, guid: 6a69d7c63b106ae4e9a1890cd3498fdd, type: 3}
+  inactiveUIElements: {fileID: 0}
 --- !u!1 &2766515228522212392
 GameObject:
   m_ObjectHideFlags: 0

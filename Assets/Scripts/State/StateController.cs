@@ -20,8 +20,8 @@
 
 using System;
 using System.Collections.Generic;
-using TT.Data;
 using UnityEngine;
+using TT.Shared.World;
 
 namespace TT.State
 {
@@ -29,7 +29,6 @@ namespace TT.State
     {
         #region Events
 
-        // Events
         public static event Action<StateController> StateChanged;
 
         #endregion
@@ -53,6 +52,7 @@ namespace TT.State
 
         #endregion
 
+        
         #region Public properties
 
         /// <summary>
@@ -112,7 +112,6 @@ namespace TT.State
 
         #region Public methods
 
-        // 
         /// <summary>
         /// Switch to a specified state if it is available.
         /// </summary>
