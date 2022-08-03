@@ -111,9 +111,7 @@ namespace TT.Data
         #region Private fields
 
         private readonly MapData _mapData;
-        private float _totalItemsToRender = 0;
-        private float _itemsRendered = 0;
-        List<Task> _renderTasks = new List<Task>();
+        List<Task> _renderTasks = new();
 
         #endregion
 
@@ -238,21 +236,13 @@ namespace TT.Data
         {
             if (_mapData == null)
             {
-                Debug.LogError("Map :: Render :: Unable to render map as no map data has been set. " +
-                               "Call New or Load first.");
+                Debug.LogError("Map :: Render :: Unable to render map as no map data has been set. Call New or Load first.");
                 return;
             }
 
-            // Count the number of items to render
-            _totalItemsToRender = 1 + _mapData.terrain.terrainLayers.Count + _mapData.worldObjects.Count +
-                                  _mapData.splineObjects.Count + _mapData.scatterAreas.Count;
-            _itemsRendered = 0;
             try
             {
-                GameTerrain.Current.LoadDefaultTexture(_mapData.terrainTextureAddress);
-                _itemsRendered++;
                 await GameTerrain.Current.LoadTerrainTextures(_mapData.terrain.terrainLayers.ToArray());
-                _itemsRendered += _mapData.terrain.terrainLayers.Count;
 
                 TimeController.Current.LightingMode = (LightingMode) _mapData.lightingMode;
                 TimeController.Current.CurrentTime = _mapData.time;
@@ -277,11 +267,18 @@ namespace TT.Data
 
                 // Init status 
                 ObjectCreated(null);
-                
+
                 if (_mapData.terrain.splatMaps.Count > 0)
+                {
                     // Load splat maps if any are present (only present when terrain has been painted)
                     GameTerrain.Current.LoadSplatMaps(_mapData.terrain.splatWidth, _mapData.terrain.splatHeight,
                         _mapData.terrain.splatMaps);
+                }
+                else
+                {
+                    // If no splat maps present, reset them to clear any previous terrain
+                    GameTerrain.Current.ResetSplatMaps();
+                }
             }
             catch (Exception e)
             {

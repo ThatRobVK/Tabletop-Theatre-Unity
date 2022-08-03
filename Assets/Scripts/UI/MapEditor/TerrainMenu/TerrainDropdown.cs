@@ -103,7 +103,7 @@ namespace TT.UI.MapEditor.TerrainMenu
             var selectedAddress = Content.Current.Combined.TerrainLayers[selectedIndex].ID;
             if (!GameTerrain.Current.TerrainTextureAddress.Equals(selectedAddress))
             {
-                GameTerrain.Current.LoadTerrainTexture(selectedAddress, 0);
+                GameTerrain.Current.ReplaceTerrainTexture(selectedAddress, 0).ConfigureAwait(false);
             }
         }
         

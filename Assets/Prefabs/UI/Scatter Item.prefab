@@ -28,6 +28,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2260969300216542921}
   m_Father: {fileID: 0}
@@ -221,16 +222,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
---- !u!1 &2260969300216542920 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7924012054063414868, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
-  m_PrefabInstance: {fileID: 8257118347936958620}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &2260969300216542921 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7924012054063414869, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
-  m_PrefabInstance: {fileID: 8257118347936958620}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2260969300216541492 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7924012054063413672, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
@@ -242,17 +233,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3907403261062606414 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4949121686951847634, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
+--- !u!1 &2260969300216542920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7924012054063414868, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
   m_PrefabInstance: {fileID: 8257118347936958620}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8877575130418022709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,3 +261,19 @@ MonoBehaviour:
     Content: Control whether items in this subcategory are scattered when the category
       is ticked.
     IsSpacer: 0
+--- !u!224 &2260969300216542921 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7924012054063414869, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
+  m_PrefabInstance: {fileID: 8257118347936958620}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3907403261062606414 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4949121686951847634, guid: a464fd20748256549866b0fb9b4430d6, type: 3}
+  m_PrefabInstance: {fileID: 8257118347936958620}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
