@@ -35,7 +35,6 @@ namespace TT.UI.MapEditor
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The text element that shows the category name.")] private TMP_Text categoryName;
         [SerializeField][Tooltip("The toggle that defines whether this category is enabled or not.")] private Toggle categoryToggle;
@@ -49,7 +48,6 @@ namespace TT.UI.MapEditor
         [SerializeField][Tooltip("A prefab for the sub categories")] private ScatterSubcategory subCategoryPrefab;
         [SerializeField][Tooltip("The transform that parents all inactive UI elements.")] private Transform inactiveUIElements;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -73,7 +71,6 @@ namespace TT.UI.MapEditor
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Start()
         {
@@ -85,7 +82,6 @@ namespace TT.UI.MapEditor
             selectedLabel.text = string.Format(LABEL_TEXT, _toggles.Where(x => x.isOn).Count(), _toggles.Count);
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 

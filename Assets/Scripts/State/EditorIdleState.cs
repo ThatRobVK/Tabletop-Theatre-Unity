@@ -18,14 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-#pragma warning disable IDE0083 // "Use patern matching" - not supported in the .NET version used by Unity 2020.3
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using DuloGames.UI;
-using TT.Data;
 using TT.InputMapping;
 using TT.MapEditor;
 using TT.Shared.World;
@@ -37,14 +33,26 @@ namespace TT.State
 {
     public class EditorIdleState : StateBase
     {
+        #region Private fields
+        
         private bool _changingToPlacement;
         private WorldObjectBase _currentWorldObject;
         private readonly List<DraggableObject> _draggableObjects = new List<DraggableObject>();
         private readonly List<WorldObjectType> _editableTypes = new List<WorldObjectType>();
         private readonly List<WorldObjectType> _notEditableTypes = new List<WorldObjectType>();
         private Vector3 _undoValue;
+        
+        #endregion
+        
+        
+        #region Public properties
 
         public override bool IsPlacementState => false;
+        
+        #endregion
+        
+        
+        #region Constructors
 
         public EditorIdleState(StateController stateController, List<WorldObjectType> types) : base(stateController)
         {
@@ -60,6 +68,11 @@ namespace TT.State
                 }
             }
         }
+        
+        #endregion
+        
+        
+        #region Lifecycle events
 
         public override void Enable()
         {
@@ -173,9 +186,12 @@ namespace TT.State
                     UIWindow.GetWindow(UIWindowID.GameMenu).Show();
                 }
             }
-
-
         }
+        
+        #endregion
+        
+        
+        #region Public methods
 
         public override void ToIdle()
         { }
@@ -186,5 +202,8 @@ namespace TT.State
             
             StateController.Current.ChangeState(StateType.ItemPlacement);
         }
+        
+        #endregion
+        
     }
 }

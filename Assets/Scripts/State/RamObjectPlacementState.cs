@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.Data;
 using TT.InputMapping;
 using TT.Shared.GameContent;
 using TT.World;
@@ -28,12 +27,22 @@ namespace TT.State
 {
     public class RamObjectPlacementState : StateBase
     {
+        #region Public properties
+        
         public override bool IsPlacementState => true;
+        
+        #endregion
+        
 
-        #region Base class overrides
+        #region Constructors
 
         public RamObjectPlacementState(StateController stateController) : base(stateController)
         { }
+        
+        #endregion
+        
+        
+        #region Lifecycle events
 
         public override void Enable()
         {
@@ -72,6 +81,11 @@ namespace TT.State
             }
         }
 
+        #endregion
+        
+        
+        #region Public methods
+        
         public override void ToIdle()
         {
             StateController.Current.ChangeState(StateType.RamObjectIdle);
@@ -80,10 +94,6 @@ namespace TT.State
         public override void ToPlacement()
         { }
         
-        #endregion
-
-        #region Public methods
-
         /// <summary>
         /// Starts placement of the specified content item.
         /// </summary>

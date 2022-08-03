@@ -1,15 +1,35 @@
-﻿using System;
+﻿/*
+ * Tabletop Theatre
+ * Copyright (C) 2020-2022 Robert van Kooten
+ * Original source code: https://github.com/ThatRobVK/Tabletop-Theatre
+ * License: https://github.com/ThatRobVK/Tabletop-Theatre/blob/main/LICENSE
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
+using TMPro;
 using TT.Data;
-using UnityEngine.UI;
 
 namespace TT.UI.GameContent
 {
@@ -20,7 +40,14 @@ namespace TT.UI.GameContent
     [RequireComponent(typeof(CanvasGroup))]
     public class LoadingScreen : MonoBehaviour
     {
+        #region Events
+        
         public event Action LoadAndRenderComplete;
+        
+        #endregion
+        
+        
+        #region Editor fields
         
         [SerializeField] private ProgressBar progressBarFullscreen;
         [SerializeField] private ProgressBar progressBarOverlay;
@@ -31,18 +58,27 @@ namespace TT.UI.GameContent
         [SerializeField] private GameObject fullscreenPanel;
         [SerializeField] private GameObject overlayPanel;
         [SerializeField] private Image waitSpinner;
+        
+        #endregion
+        
+        
+        #region Private fields
 
         private CanvasGroup _canvasGroup;
         private ProgressBar _currentProgressBar;
         private TMP_Text _currentHeadlineLabel;
         private TMP_Text _currentDetailLabel;
         private bool _visible;
+        
+        #endregion
+        
        
         #region Public properties
 
         public static LoadingScreen Current { get; private set; } 
         
         #endregion
+        
         
         #region Lifecycle events
 
@@ -62,6 +98,7 @@ namespace TT.UI.GameContent
         }
 
         #endregion
+        
         
         #region Public methods
 

@@ -19,7 +19,6 @@
  */
 
 using TMPro;
-using TT.Data;
 using TT.Shared.GameContent;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,12 +29,10 @@ namespace TT.UI.MapEditor
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The text element in which to show the category name.")] private TMP_Text categoryName;
         [SerializeField][Tooltip("The toggle that determines whether to use this category.")] private Toggle toggle;
 
-#pragma warning restore IDE0044
         #endregion
 
 

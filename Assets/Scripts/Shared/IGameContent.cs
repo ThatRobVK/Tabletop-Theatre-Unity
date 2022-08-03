@@ -3,6 +3,9 @@ using TT.Shared.GameContent;
 
 namespace TT.Shared
 {
+    /// <summary>
+    /// An interface exposing functionality required for loading content that is part of the game.
+    /// </summary>
     public interface IGameContent
     {
         /// <summary>

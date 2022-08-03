@@ -19,15 +19,14 @@
  */
 
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using DuloGames.UI;
-using TT.Data;
 using TT.MapEditor;
 using TT.Shared.GameContent;
 using TT.State;
 using TT.World;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace TT.UI.MapEditor
 {
@@ -44,7 +43,6 @@ namespace TT.UI.MapEditor
 
 
         #region Editor fields
-#pragma warning disable IDE0044
 
         [SerializeField] private Image icon;
         [SerializeField] private Toggle toggle;
@@ -52,7 +50,6 @@ namespace TT.UI.MapEditor
         [SerializeField] private Sprite randomiserSprite;
         [SerializeField] private Text itemIDText;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -66,7 +63,6 @@ namespace TT.UI.MapEditor
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051
 
         void OnEnable()
         {
@@ -86,8 +82,7 @@ namespace TT.UI.MapEditor
                 toggle.isOn = WorldObjectBase.Current != null && WorldObjectBase.Current.ContentItem == _contentItem;
             }
         }
-
-#pragma warning restore IDE0051
+        
         #endregion
 
 
@@ -225,6 +220,9 @@ namespace TT.UI.MapEditor
             }
         }
 
+        /// <summary>
+        /// Replace this object with another.
+        /// </summary>
         private async void ReplaceObject()
         {
             if (!WorldObjectBase.Current) return;

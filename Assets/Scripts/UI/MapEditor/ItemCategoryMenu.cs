@@ -18,21 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using TT.Data;
 using TT.Shared.World;
 using TT.State;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace TT.UI.MapEditor
 {
     public class ItemCategoryMenu : MonoBehaviour
     {
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField] private VerticalLayoutGroup categoriesGrid;
         [SerializeField] private VerticalLayoutGroup subCategoriesGrid;
@@ -41,7 +38,6 @@ namespace TT.UI.MapEditor
         [SerializeField] private Transform inactiveUIElementParent;
         [SerializeField] private WorldObjectType objectType;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -53,7 +49,6 @@ namespace TT.UI.MapEditor
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Start()
         {
@@ -75,7 +70,6 @@ namespace TT.UI.MapEditor
             Clear(categories: true, subCategories: true, items: true, placementState: true);
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 

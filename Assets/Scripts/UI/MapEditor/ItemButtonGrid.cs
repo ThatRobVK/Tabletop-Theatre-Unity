@@ -18,16 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using DuloGames.UI;
 using TT.Data;
 using TT.Shared.GameContent;
 using TT.World;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace TT.UI.MapEditor
 {
@@ -37,12 +35,10 @@ namespace TT.UI.MapEditor
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("A prefab for the item replace button.")] private ItemButton itemButtonPrefab;
         [SerializeField][Tooltip("The parent for UI objects that are temporarily not required.")] private Transform inactiveUIElementParent;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -61,7 +57,6 @@ namespace TT.UI.MapEditor
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Start()
         {
@@ -109,9 +104,11 @@ namespace TT.UI.MapEditor
             }
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
+        
+        #region Public methods
+        
         public void InitButtons(ContentItemCategory category)
         {
             _currentCategory = category;
@@ -162,7 +159,9 @@ namespace TT.UI.MapEditor
                 var button = Helpers.GetAvailableButton(itemButtonPrefab, _itemButtons, inactiveUIElementParent);
                 button.Initialise(contentItem, _toggleGroup, _itemGrid.transform, selected);
             }
-
         }
+        
+        #endregion
+        
     }
 }

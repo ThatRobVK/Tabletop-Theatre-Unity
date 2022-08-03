@@ -19,8 +19,8 @@
  */
 
 using UnityEngine;
-using DuloGames.UI;
 using TMPro;
+using DuloGames.UI;
 using TT.Data;
 
 namespace TT.UI.MapEditor

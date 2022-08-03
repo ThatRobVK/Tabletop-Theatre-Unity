@@ -19,11 +19,10 @@
  */
 
 using DuloGames.UI;
-using TT.Data;
+using UnityEngine;
 using TT.Shared.World;
 using TT.State;
 using TT.World;
-using UnityEngine;
 
 namespace TT.UI.MapEditor
 {

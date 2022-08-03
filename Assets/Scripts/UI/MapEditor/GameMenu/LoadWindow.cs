@@ -19,16 +19,16 @@
  */
 
 using System.Text;
-using DuloGames.UI;
+using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using DuloGames.UI;
 using TT.Data;
 using TT.InputMapping;
 using TT.MapEditor;
 using TT.State;
 using TT.UI.GameContent;
 using TT.UI.Load;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace TT.UI.MapEditor.GameMenu
 {

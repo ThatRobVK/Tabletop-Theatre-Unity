@@ -115,7 +115,6 @@ namespace TT.Data
         private float _itemsRendered = 0;
         List<Task> _renderTasks = new List<Task>();
 
-
         #endregion
 
 
@@ -290,24 +289,6 @@ namespace TT.Data
             }
         }
 
-        private void ObjectCreated(WorldObjectBase obj)
-        {
-            var tasksCompleted = _renderTasks.Count(x => x.IsCompleted);
-            var taskCount = _renderTasks.Count;
-
-            if (tasksCompleted == taskCount)
-            {
-                WorldObjectBase.All.ForEach(x => x.HideControls());
-                RenderStatusPercentage = 1;
-            }
-            else
-            {
-                RenderStatusPercentage = (float) tasksCompleted / taskCount;
-            }
-            
-        }
-
-
         /// <summary>
         /// Serializes this map into data objects and saves it.
         /// </summary>
@@ -381,5 +362,32 @@ namespace TT.Data
         }
 
         #endregion
+        
+        
+        #region Event handlers
+        
+        /// <summary>
+        /// Called when a map object has been spawned during map load. Track progress of the map load.
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ObjectCreated(WorldObjectBase obj)
+        {
+            var tasksCompleted = _renderTasks.Count(x => x.IsCompleted);
+            var taskCount = _renderTasks.Count;
+
+            if (tasksCompleted == taskCount)
+            {
+                WorldObjectBase.All.ForEach(x => x.HideControls());
+                RenderStatusPercentage = 1;
+            }
+            else
+            {
+                RenderStatusPercentage = (float) tasksCompleted / taskCount;
+            }
+            
+        }
+        
+        #endregion
+        
     }
 }

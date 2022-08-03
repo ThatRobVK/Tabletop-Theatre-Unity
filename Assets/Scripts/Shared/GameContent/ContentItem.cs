@@ -20,7 +20,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using TT.Shared.World;
-using UnityEngine.Experimental.GlobalIllumination;
 
 namespace TT.Shared.GameContent
 {

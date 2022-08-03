@@ -19,10 +19,6 @@
  */
 
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using TT.Data;
 using TT.State;
 using TT.World;
 
@@ -47,6 +43,7 @@ namespace TT.MapEditor
         void Awake()
         {
             // Limit the application to the screen's refresh rate so we don't hammer the GPU for no reason
+            // TODO: Move this into the main menu and make configurable
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
             Debug.LogFormat("EditorController :: Awake :: Setting target framerate to {0}", 
                 Application.targetFrameRate.ToString());
@@ -57,9 +54,11 @@ namespace TT.MapEditor
         
         void Start()
         {
+            // TODO: Can the state controller live on its own?
             // Set state controller to initial idle state
             _stateController.ChangeState(StateType.EditorIdleState);
 
+            // TODO: Set via the map being loaded or initialised
             TimeController.Current.CurrentTime = 12;
         }
 

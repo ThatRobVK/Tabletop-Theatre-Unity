@@ -20,6 +20,9 @@
 
 namespace TT.Shared.GameContent
 {
+    /// <summary>
+    /// A container for rivers, roads and bridges as part of a content pack.
+    /// </summary>
     public class ContentRiversRoads
     {
         /// <summary>

@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.Data;
 using TT.Shared.World;
 using TT.World;
 using UnityEngine;
@@ -29,11 +28,9 @@ namespace TT.UI.MapEditor.ObjectProperties
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The image displaying the colour preview.")] private ItemOptionColor colorOption;
 
-#pragma warning restore IDE0044
         #endregion
 
         #region Public methods

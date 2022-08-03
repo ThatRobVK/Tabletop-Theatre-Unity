@@ -20,6 +20,9 @@
 
 namespace TT.Shared.World
 {
+    /// <summary>
+    /// An enum detailing the various types of options that a world object can have.
+    /// </summary>
     public enum WorldObjectOption
     {
         Terrain = 0,

@@ -25,7 +25,6 @@ using UnityEngine.UI;
 using DuloGames.UI;
 using TT.Data;
 using TT.UI.GameContent;
-using UnityEngine.SceneManagement;
 
 namespace TT.UI.MainMenu
 {

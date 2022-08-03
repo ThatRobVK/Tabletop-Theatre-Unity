@@ -21,13 +21,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using TT.Data;
 using TT.InputMapping;
 using TT.Shared.GameContent;
 using TT.Shared.UserContent;
 using TT.Shared.World;
 using TT.World;
-using UnityEngine;
 
 namespace TT.MapEditor
 {
@@ -45,6 +45,7 @@ namespace TT.MapEditor
         private static readonly List<UndoAction> RedoActions = new List<UndoAction>();
 
         #endregion
+        
         
         #region Public properties
         

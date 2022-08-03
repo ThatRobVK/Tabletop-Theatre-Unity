@@ -19,12 +19,11 @@
  */
 
 using System.Collections.Generic;
+using UnityEngine;
 using DuloGames.UI;
-using TT.Data;
 using TT.MapEditor;
 using TT.Shared.World;
 using TT.World;
-using UnityEngine;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
@@ -32,11 +31,9 @@ namespace TT.UI.MapEditor.ObjectProperties
     public class WorldObjectOptionSlider : PropertySlider
     {
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The option this slider is for.")] private WorldObjectOption option;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -48,7 +45,6 @@ namespace TT.UI.MapEditor.ObjectProperties
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         protected override void Start()
         {
@@ -63,7 +59,6 @@ namespace TT.UI.MapEditor.ObjectProperties
             base.Start();
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 

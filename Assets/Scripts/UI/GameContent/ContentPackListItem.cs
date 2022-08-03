@@ -20,12 +20,12 @@
 
 using System;
 using System.Threading.Tasks;
-using DuloGames.UI;
-using TMPro;
-using TT.Shared.GameContent;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
+using UnityEngine.AddressableAssets;
+using TMPro;
+using DuloGames.UI;
+using TT.Shared.GameContent;
 
 namespace TT.UI.GameContent
 {

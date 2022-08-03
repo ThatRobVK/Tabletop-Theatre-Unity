@@ -18,14 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System.Collections.Generic;
 using System.Linq;
-using TT.Data;
+using UnityEngine;
 using TT.Shared.World;
 using TT.World;
-using UnityEngine;
 
 namespace TT.UI.MapEditor
 {
@@ -33,7 +30,6 @@ namespace TT.UI.MapEditor
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The Transform that is the parent of the spawned buttons.")] private Transform buttonParentTransform;
         [SerializeField][Tooltip("The prefab to spawn for each of the object buttons.")] private WorldObjectButton buttonPrefab;
@@ -42,7 +38,6 @@ namespace TT.UI.MapEditor
         [SerializeField][Tooltip("The types this list searches for.")] private List<WorldObjectType> objectTypes = new List<WorldObjectType>();
 
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -54,7 +49,6 @@ namespace TT.UI.MapEditor
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void OnEnable()
         {
@@ -69,7 +63,6 @@ namespace TT.UI.MapEditor
             searchBox.onValueChanged.RemoveListener(UpdateFromSearch);
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 

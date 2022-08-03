@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.Shared;
 using UnityEngine;
 using UnityEngine.UI;
+using TT.Shared;
 
 namespace TT.UI.MainMenu
 {
@@ -29,7 +29,6 @@ namespace TT.UI.MainMenu
     /// </summary>
     public class AuthController : MonoBehaviour
     {
-        
         #region Editor fields
         
         [SerializeField][Tooltip("The login form.")] private GameObject loggedOutPanel;

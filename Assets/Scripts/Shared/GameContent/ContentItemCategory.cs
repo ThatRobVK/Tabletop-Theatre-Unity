@@ -22,7 +22,9 @@ using System.Collections.Generic;
 
 namespace TT.Shared.GameContent
 {
-    
+    /// <summary>
+    /// A container for content items or sub content categories.
+    /// </summary>
     public class ContentItemCategory
     {
         /// <summary>
@@ -30,19 +32,29 @@ namespace TT.Shared.GameContent
         /// </summary>
         public string Name = string.Empty;
 
+        /// <summary>
+        /// If this can be scattered, the maximum density for the scatter positions.
+        /// </summary>
         public float MaxDensity = 20f;
+        
+        /// <summary>
+        /// If this can be scattered, the minimum density for the scatter positions.
+        /// </summary>
         public float MinDensity = 0.01f;
 
         /// <summary>
         /// The items in this category.
         /// </summary>
-        public ContentItem[] Items = new ContentItem[] { };
+        public ContentItem[] Items = { };
 
         /// <summary>
         /// Sub-categories under this category.
         /// </summary>
-        public ContentItemCategory[] Categories = new ContentItemCategory[] { };
+        public ContentItemCategory[] Categories = { };
 
+        
+        #region Public methods
+        
         /// <summary>
         /// Creates another instance of content item category with the same values as this instance. All subcategories
         /// and items will be cloned as well.
@@ -76,5 +88,8 @@ namespace TT.Shared.GameContent
 
             return clone;
         }
+        
+        #endregion
+        
     }
 }

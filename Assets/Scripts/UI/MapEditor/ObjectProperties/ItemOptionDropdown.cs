@@ -18,11 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DuloGames.UI;
-using TT.Data;
-using TT.Shared.World;
-using TT.World;
 using UnityEngine;
+using DuloGames.UI;
+using TT.World;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
@@ -30,11 +28,9 @@ namespace TT.UI.MapEditor.ObjectProperties
     {
 
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField][Tooltip("The dropdown to control")] private UISelectField selectField;
 
-#pragma warning restore IDE0044
         #endregion
 
 
@@ -46,7 +42,6 @@ namespace TT.UI.MapEditor.ObjectProperties
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
         void Awake()
         {
@@ -69,7 +64,6 @@ namespace TT.UI.MapEditor.ObjectProperties
             _updatedThisFrame = false;
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
 
@@ -89,30 +83,6 @@ namespace TT.UI.MapEditor.ObjectProperties
         }
 
         #endregion
-
-
-        #region Public methods
-
-        /// <summary>
-        /// Sets the dropdown up to work with the current WorldObject.
-        /// </summary>
-        /// <param name="option">The option to be controlled by the dropdown.</param>
-        /// <param name="displayName">The name to display to the user for this option.</param>
-        /// <param name="dropdownOptions">A list of strings representing the options to show in the dropdown.</param>
-        /// <param name="value">The initial option to select.</param>
-        public void Initialise(WorldObjectOption option, string displayName, string[] dropdownOptions, object value)
-        {
-            _updatedThisFrame = true;
-
-            selectField.options.Clear();
-            selectField.options.AddRange(dropdownOptions);
-            selectField.SelectOptionByIndex((int)value);
-
-            base.Initialise(option, displayName);
-        }
-
-        #endregion
-
 
 
         #region Private methods

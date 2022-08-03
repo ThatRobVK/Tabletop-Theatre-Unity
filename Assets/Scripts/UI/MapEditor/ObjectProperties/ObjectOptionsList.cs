@@ -18,20 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0083 // "Use patern matching" - not supported in the .NET version used by Unity 2020.3
-
 using System.Collections.Generic;
+using UnityEngine;
 using DuloGames.UI;
-using TT.Data;
 using TT.Shared.World;
 using TT.World;
-using UnityEngine;
 
 namespace TT.UI.MapEditor.ObjectProperties
 {
     public class ObjectOptionsList : MonoBehaviour
     {
 
+        #region Editor fields
+        
         [SerializeField][Tooltip("A prefab for the Lights option.")] private ItemOptionLights lightsPrefab;
         [SerializeField][Tooltip("A prefab for the Open/Close option.")] private ItemOptionBool openClosePrefab;
         [SerializeField][Tooltip("A prefab for a separator which is added at the end of the options.")] private GameObject separatorPrefab;
@@ -41,9 +40,19 @@ namespace TT.UI.MapEditor.ObjectProperties
             { WorldObjectOption.OpenClose, "Open" },
             { WorldObjectOption.LightsMode, "Lights" }
         };
+        
+        #endregion
+        
+        
+        #region Private fields
 
         private WorldObjectBase _currentObject;
         private UIWindow _window;
+        
+        #endregion
+        
+        
+        #region Lifecycle events
 
         void Start()
         {
@@ -63,7 +72,11 @@ namespace TT.UI.MapEditor.ObjectProperties
                 InitialiseOptions(WorldObjectBase.Current);
             }
         }
+        
+        #endregion
 
+
+        #region Private methods
 
         private void InitialiseOptions(WorldObjectBase worldObject)
         {
@@ -89,8 +102,7 @@ namespace TT.UI.MapEditor.ObjectProperties
                 }
             }
         }
-
-
+        
         /// <summary>
         /// Instantiate and initialise an option.
         /// </summary>
@@ -98,7 +110,7 @@ namespace TT.UI.MapEditor.ObjectProperties
         /// <param name="value">The default value to show.</param>
         /// <param name="parentTransform">The transform to parent this object under.</param>
         /// <returns>An instantiated option prefab, as its base class.</returns>
-        public void CreateOption(WorldObjectOption option, object value, Transform parentTransform)
+        private void CreateOption(WorldObjectOption option, object value, Transform parentTransform)
         {
             switch (option)
             {
@@ -113,5 +125,8 @@ namespace TT.UI.MapEditor.ObjectProperties
                     break;
             }
         }
+
+        #endregion
+
     }
 }

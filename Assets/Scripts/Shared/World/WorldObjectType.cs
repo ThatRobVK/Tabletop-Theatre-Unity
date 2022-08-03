@@ -20,6 +20,9 @@
 
 namespace TT.Shared.World
 {
+    /// <summary>
+    /// An enum with the different types of world object that are supported by the game.
+    /// </summary>
     public enum WorldObjectType
     {
         ScalableObject,

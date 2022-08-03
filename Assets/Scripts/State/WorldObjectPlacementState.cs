@@ -18,25 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.Data;
+using UnityEngine;
 using TT.InputMapping;
 using TT.Shared.GameContent;
 using TT.World;
-using UnityEngine;
 
 namespace TT.State
 {
     public class WorldObjectPlacementState : StateBase
     {
+        #region Private fields
+        
         private ContentItemCategory _category;
         private ContentItem _contentItem;
+        
+        #endregion
 
+        
+        #region Public properties
+        
         public override bool IsPlacementState => true;
+        
+        #endregion
+        
 
-        #region Base class overrides
+        #region Constructor
 
         public WorldObjectPlacementState(StateController stateController) : base(stateController)
         { }
+        
+        #endregion
+        
+        
+        #region Public methods
 
         public override void Enable()
         {
@@ -77,10 +91,6 @@ namespace TT.State
         public override void ToPlacement()
         { }
         
-        #endregion
-
-        #region Public methods
-
         /// <summary>
         /// Starts placement of the specified content item.
         /// </summary>
@@ -110,6 +120,7 @@ namespace TT.State
 
         #endregion
 
+        
         #region Private methods
 
         /// <summary>

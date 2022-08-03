@@ -19,10 +19,9 @@
  */
 
 using System;
-using TT.Data;
-using TT.Shared.GameContent;
 using UnityEngine;
 using UnityEngine.UI;
+using TT.Shared.GameContent;
 
 namespace TT.UI.MapEditor
 {
@@ -46,7 +45,6 @@ namespace TT.UI.MapEditor
         public ContentItemCategory Category { get; private set; }
         
         #endregion
-
 
 
         #region Event handlers
@@ -76,7 +74,6 @@ namespace TT.UI.MapEditor
             Category = category;
             InitButton(category.Name, toggleGroup, parent);
         }
-
 
         #endregion
 

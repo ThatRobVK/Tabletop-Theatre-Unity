@@ -46,8 +46,7 @@ namespace TT
         private static SettingsObject _settings;
         private static CommsObject _comms;
         private static readonly List<AsyncOperationHandle> AsyncOperationHandles = new List<AsyncOperationHandle>();
-
-
+        
         #endregion
 
 
@@ -149,9 +148,13 @@ namespace TT
         /// The PlayerPrefs key used to store whether the user wanted their auth to be remembered.
         /// </summary>
         public const string PrefsRememberMeKey = "RememberMe";
-
-
+        
+        /// <summary>
+        /// The name of the Map Editor scene object.
+        /// </summary>
         public const string MapEditorSceneName = "MapEditor";
+        
+        
         #endregion
 
 

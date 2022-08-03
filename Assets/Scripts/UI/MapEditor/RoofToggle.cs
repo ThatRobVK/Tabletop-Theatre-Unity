@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.Data;
 using TT.Shared.World;
 using TT.UI.MapEditor.ObjectProperties;
 using UnityEngine;
@@ -29,25 +28,20 @@ namespace TT.UI.MapEditor
     public class RoofToggle : MonoBehaviour
     {
         #region Editor fields
-#pragma warning disable IDE0044 // Make fields read-only
 
         [SerializeField] private WorldObjectOption option;
         [SerializeField] private string displayName;
 
-#pragma warning restore IDE0044
         #endregion
 
 
         #region Lifecycle events
-#pragma warning disable IDE0051 // Unused members
 
-        // Start is called before the first frame update
         void Start()
         {
             GetComponent<ItemOptionBool>().Initialise(option, displayName);
         }
 
-#pragma warning restore IDE0051 // Unused members
         #endregion
 
     }

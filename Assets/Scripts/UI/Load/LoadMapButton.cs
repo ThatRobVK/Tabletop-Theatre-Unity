@@ -18,11 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using TT.Data;
-using TT.UI.GameContent;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TT.UI.GameContent;
 
 namespace TT.UI.Load
 {
@@ -61,8 +59,6 @@ namespace TT.UI.Load
             _toggledButton = GetComponent<ToggledButton>();
         }
         
-        
-
         private void OnDestroy()
         {
             // Stop listening for button click events

@@ -20,6 +20,9 @@
 
 namespace TT.Shared.GameContent
 {
+    /// <summary>
+    /// A terrain layer as stored in a content pack.
+    /// </summary>
     public class ContentTerrainLayer
     {
         /// <summary>

@@ -18,40 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma warning disable IDE0090 // "Simplify new expression" - implicit object creation is not supported in the .NET version used by Unity 2020.3
-
 using System.Collections.Generic;
-using TT.Data;
 using TT.Shared.World;
 
 namespace TT.State
 {
     public abstract class StateBase
     {
-        protected StateController StateController;
-
-        public StateBase(StateController stateController)
-        {
-            this.StateController = stateController;
-        }
-
-        public abstract void Enable();
-        public abstract void Disable();
-        public abstract void Update();
-
-        public abstract void ToIdle();
-        public abstract void ToPlacement();
-
-        /// <summary>
-        /// Changes to an Idle state based on the specified WorldObjectType.
-        /// </summary>
-        /// <param name="type">The type of object to go to an idle state for.</param>
-        public virtual void ToIdle(WorldObjectType type)
-        {
-            StateController.Current.ChangeState(TypeToIdleStateMap[type]);
-        }
-
-        public abstract bool IsPlacementState { get; }
+        #region Private fields
+        
+        protected readonly StateController StateController;
 
         protected readonly Dictionary<WorldObjectType, StateType> TypeToIdleStateMap = new Dictionary<WorldObjectType, StateType>
         {
@@ -78,5 +54,44 @@ namespace TT.State
             {StateType.ScalableObjectIdle, StateType.ScalableObjectPlacement}
         };
 
+        #endregion
+
+        
+        #region Public properties
+        
+        public abstract bool IsPlacementState { get; }
+
+        #endregion
+        
+        
+        #region Constructors
+        
+        public StateBase(StateController stateController)
+        {
+            StateController = stateController;
+        }
+        
+        #endregion
+        
+        
+        #region Public methods
+        
+        public abstract void Enable();
+        public abstract void Disable();
+        public abstract void Update();
+        public abstract void ToIdle();
+        public abstract void ToPlacement();
+        
+        /// <summary>
+        /// Changes to an Idle state based on the specified WorldObjectType.
+        /// </summary>
+        /// <param name="type">The type of object to go to an idle state for.</param>
+        public void ToIdle(WorldObjectType type)
+        {
+            StateController.Current.ChangeState(TypeToIdleStateMap[type]);
+        }
+
+        #endregion
+        
     }
 }

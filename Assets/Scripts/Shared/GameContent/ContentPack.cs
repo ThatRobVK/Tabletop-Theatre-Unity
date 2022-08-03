@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Threading.Tasks;
-
 namespace TT.Shared.GameContent
 {
-
+    /// <summary>
+    ///  A container for content pack metadata and objects in the pack. 
+    /// </summary>
     public class ContentPack
     {
         /// <summary>
@@ -81,5 +81,4 @@ namespace TT.Shared.GameContent
         public ContentItemCategory[] Nature = { };
         
     }
-
 }
