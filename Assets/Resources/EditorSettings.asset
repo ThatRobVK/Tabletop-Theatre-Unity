@@ -12,36 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b867026e0f7e6fb908b43ce712aabe71, type: 3}
   m_Name: EditorSettings
   m_EditorClassIdentifier: 
-  SnapToGrid: 0
-  ContinuousPlacement: 1
-  ShowPolygons: 0
-  RotateSpeed: 40
-  RotateStepSpeed: 1
-  RotateSpeedFast: 120
-  RotateStepSpeedFast: 5
-  RotateSnapToGridSpeed: 90
-  ElevateSpeed: 1
-  ElevateStepSpeed: 0.01
-  ElevateSpeedFast: 3
-  ElevateStepSpeedFast: 0.1
-  ElevateSnapToGridSpeed: 1
-  MoveSpeed: 1
-  MoveStepSpeed: 0.01
-  MoveSpeedFast: 3
-  MoveStepSpeedFast: 0.1
-  MoveSnapToGridSpeed: 1
-  ScaleSpeed: 0.5
-  ScaleStepSpeed: 0.01
-  ScaleSpeedFast: 1
-  ScaleStepSpeedFast: 0.1
-  HoverHighlightProfile: {fileID: 11400000, guid: c56b450356ba5974cb01a1220daf9488,
-    type: 2}
-  SelectedHighlightProfile: {fileID: 11400000, guid: f5e91fce87755dd4aa396a34f5bc0ccd,
-    type: 2}
-  DeniedHighlightProfile: {fileID: 11400000, guid: 85e8eb1a71654894881aa5b2695b4ee5,
-    type: 2}
-  PolygonMaterial: {fileID: 2100000, guid: 7f822568ebfccbb46b6b983a6c871a15, type: 2}
-  DebugRaycasts: 0
-  CompressSaves: 1
-  ShowItemIDs: 0
-  ShowFpsCounter: 0
+  snapToGrid: 0
+  continuousPlacement: 1
+  showPolygons: 0
+  rotateSpeed: 40
+  rotateStepSpeed: 1
+  rotateSpeedFast: 120
+  rotateStepSpeedFast: 5
+  rotateSnapToGridSpeed: 90
+  elevateSpeed: 1
+  elevateStepSpeed: 0.01
+  elevateSpeedFast: 3
+  elevateStepSpeedFast: 0.1
+  elevateSnapToGridSpeed: 1
+  moveSpeed: 1
+  moveStepSpeed: 0.01
+  moveSpeedFast: 3
+  moveStepSpeedFast: 0.1
+  moveSnapToGridSpeed: 1
+  scaleSpeed: 0.5
+  scaleStepSpeed: 0.01
+  scaleSpeedFast: 1
+  scaleStepSpeedFast: 0.1
+  hoverHighlightProfile: {fileID: 11400000, guid: c56b450356ba5974cb01a1220daf9488, type: 2}
+  selectedHighlightProfile: {fileID: 11400000, guid: f5e91fce87755dd4aa396a34f5bc0ccd, type: 2}
+  deniedHighlightProfile: {fileID: 11400000, guid: 85e8eb1a71654894881aa5b2695b4ee5, type: 2}
+  polygonMaterial: {fileID: 2100000, guid: 7f822568ebfccbb46b6b983a6c871a15, type: 2}
+  debugRaycasts: 0
+  compressSaves: 1
+  showItemIDs: 0
+  showFpsCounter: 1

@@ -19,6 +19,7 @@
  */
 
 using System.Collections;
+using HighlightPlus;
 using TT.Data;
 using UnityEngine;
 
@@ -37,8 +38,7 @@ namespace TT.World
             if (_selected)
                 _selected.StopHighlight(true);
             
-            if (worldObject)
-                _selected = worldObject.GetComponent<WorldObjectHighlighter>();
+            _selected = worldObject != null ? worldObject.GetComponent<WorldObjectHighlighter>() : null;
             
             if (_selected)
                 _selected.Highlight(true);
@@ -49,8 +49,7 @@ namespace TT.World
             if (_highlighted)
                 _highlighted.StopHighlight();
             
-            if (worldObject)
-                _highlighted = worldObject.GetComponent<WorldObjectHighlighter>();
+            _highlighted = worldObject != null ? worldObject.GetComponent<WorldObjectHighlighter>() : null;
             
             if (_highlighted)
                 _highlighted.Highlight(WorldObjectBase.Current == worldObject);
@@ -122,12 +121,14 @@ namespace TT.World
         private void Highlight(bool selected = false)
         {
             // If new selection, OR already selected, then highlight with selection highlighter, otherwise hover highlighter
-            // Keep the effect group as-is, it is overridden by a few objects such as RAM and Polygon objects
-            var effectGroup = _highlighter.effectGroup;
             _highlighter.ProfileLoad(selected || WorldObjectBase.Current == WorldObjectBase ? _settings.editorSettings.selectedHighlightProfile : _settings.editorSettings.hoverHighlightProfile);
-            _highlighter.effectGroup = effectGroup;
+            
+            // For polygon objects, only highlight the base mesh, otherwise highlight the whole object 
+            _highlighter.effectGroup = GetComponent<WorldObjectBase>() is PolygonObject 
+                ? TargetOptions.OnlyThisObject 
+                : TargetOptions.RootToChildren;
+                
             _highlighter.highlighted = true;
-
         }
 
         private void StopHighlight(bool deselected = false)
@@ -144,9 +145,13 @@ namespace TT.World
 
         private IEnumerator ShowDenied()
         {
-            var effectGroup = _highlighter.effectGroup;
             _highlighter.ProfileLoad(_settings.editorSettings.deniedHighlightProfile);
-            _highlighter.effectGroup = effectGroup;
+
+            // For polygon objects, only highlight the base mesh, otherwise highlight the whole object 
+            _highlighter.effectGroup = GetComponent<WorldObjectBase>() is PolygonObject 
+                ? TargetOptions.OnlyThisObject 
+                : TargetOptions.RootToChildren;
+
             _highlighter.highlighted = true;
 
             yield return new WaitForSeconds(0.5f);
