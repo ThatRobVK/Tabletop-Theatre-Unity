@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 1781078058, guid: 9e8fa5761b9a0c14ba2f3a98316ab2f2, type: 3}
   m_Name: Denied
   m_EditorClassIdentifier: 
-  effectGroup: 0
+  effectGroup: 2
   effectGroupLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -30,13 +30,15 @@ MonoBehaviour:
   overlayAnimationSpeed: 0.5
   overlayMinIntensity: 0.1
   overlayBlending: 1
+  overlayTexture: {fileID: 0}
+  overlayTextureScale: 1
   outline: 0.3
   outlineColor: {r: 1, g: 0, b: 0, a: 1}
   outlineWidth: 0.25
   outlineQuality: 2
   outlineDownsampling: 1
   outlineOptimalBlit: 1
-  outlineVisibility: 0
+  outlineVisibility: 1
   outlineIndependent: 0
   glow: 0
   glowWidth: 0.5
@@ -49,6 +51,7 @@ MonoBehaviour:
   glowMagicNumber2: 0.5
   glowAnimationSpeed: 1
   glowVisibility: 0
+  glowBlendMode: 0
   glowBlendPasses: 1
   glowPasses:
   - offset: 4
@@ -63,6 +66,7 @@ MonoBehaviour:
   - offset: 1
     alpha: 0.4
     color: {r: 0.64, g: 1, b: 0, a: 1}
+  glowIgnoreMask: 0
   innerGlow: 0
   innerGlowWidth: 1
   innerGlowColor: {r: 0.8018868, g: 0.6281821, b: 0.13238695, a: 1}
@@ -74,6 +78,12 @@ MonoBehaviour:
   targetFXInitialScale: 4
   targetFXEndScale: 1.5
   targetFXScaleToRenderBounds: 0
+  targetFXAlignToGround: 0
+  targetFXGroundMaxDistance: 15
+  targetFXGroundLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  targetFXFadePower: 32
   targetFXTransitionDuration: 0.5
   targetFXStayDuration: 1.5
   targetFXVisibility: 1
@@ -84,6 +94,9 @@ MonoBehaviour:
   seeThroughOccluderMaskAccurate: 0
   seeThroughOccluderThreshold: 0.4
   seeThroughOccluderCheckInterval: 1
+  seeThroughOccluderCheckIndividualObjects: 0
+  seeThroughDepthOffset: 0
+  seeThroughMaxDepth: 0
   seeThroughIntensity: 0.8
   seeThroughTintAlpha: 0.5
   seeThroughTintColor: {r: 1, g: 0, b: 0, a: 1}
@@ -91,7 +104,10 @@ MonoBehaviour:
   seeThroughBorder: 0
   seeThroughBorderColor: {r: 0, g: 0, b: 0, a: 1}
   seeThroughBorderWidth: 0.45
+  seeThroughBorderOnly: 0
+  seeThroughOrdered: 1
   hitFxInitialIntensity: 1
   hitFxMode: 0
   hitFxFadeOutDuration: 0.25
   hitFxColor: {r: 1, g: 1, b: 1, a: 1}
+  hitFxRadius: 0.5
