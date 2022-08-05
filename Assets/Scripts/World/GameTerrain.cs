@@ -27,6 +27,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using TT.Shared.UserContent;
+using UnityEditor;
 using TerrainData = TT.Shared.UserContent.TerrainData;
 
 namespace TT.World
@@ -52,7 +53,7 @@ namespace TT.World
         /// <summary>
         /// The Addressables address of the main terrain texture.
         /// </summary>
-        public string TerrainTextureAddress { get; private set; }
+        public string TerrainTextureAddress => _terrainLayers.Count > 0 ? _terrainLayers[0] : string.Empty;
 
         /// <summary>
         /// The minimum elevation at which objects should be placed.
@@ -65,7 +66,7 @@ namespace TT.World
         #region Private fields
 
         private const float TERRAIN_LEVEL = 0.1f;
-        private readonly List<string> _terrainLayers = new List<string>();
+        private readonly List<string> _terrainLayers = new();
         private Terrain _terrain;
 
         #endregion
@@ -90,31 +91,24 @@ namespace TT.World
         #region Public methods
 
         /// <summary>
-        /// Resets the terrain textures and loads the default texture specified
+        /// Replaces the terrain texture at the specified index with the texture of the specified address.
         /// </summary>
-        /// <param name="defaultTextureAddress">The Addressables address of the texture to load.</param>
-        public void LoadDefaultTexture(string defaultTextureAddress)
+        /// <param name="textureAddress">The address to load.</param>
+        /// <param name="replaceLayer">The terrain layer index to replace with the loaded texture.</param>
+        public async Task ReplaceTerrainTexture(string textureAddress, int replaceLayer)
         {
-            TerrainTextureAddress = defaultTextureAddress;
+            var layers = await Helpers.LoadAddressables<TerrainLayer>(new [] { textureAddress });
 
-            StartCoroutine(LoadTextureIntoTerrain(defaultTextureAddress, true));
-            ResetSplatMaps();
-        }
-
-        /// <summary>
-        /// Loads the specified texture and optionally replaces an already loaded texture.
-        /// </summary>
-        /// <param name="textureAddress">The addressables address of the texture to load.</param>
-        /// <param name="replaceLayer">If 0 or higher, the texture at this index will be replaced by the texture
-        ///     specified.</param>
-        public void LoadTerrainTexture(string textureAddress, int replaceLayer = -1)
-        {
-            if (replaceLayer == 0)
+            if (layers.Count == 0)
             {
-                TerrainTextureAddress = textureAddress;
+                Debug.LogError("Failed to load terrain texture.");
+                return;
             }
 
-            StartCoroutine(LoadTextureIntoTerrain(textureAddress, false, replaceLayer));
+            _terrainLayers[replaceLayer] = textureAddress;
+            var terrainLayers = _terrain.terrainData.terrainLayers;
+            terrainLayers[replaceLayer] = layers[0];
+            _terrain.terrainData.terrainLayers = terrainLayers;
         }
 
         /// <summary>
@@ -165,20 +159,6 @@ namespace TT.World
                 splatWidth = terrainData.alphamapWidth,
                 splatHeight = terrainData.alphamapHeight
             };
-        }
-
-        /// <summary>
-        /// Loads the terrain from a saved map object.
-        /// </summary>
-        /// <param name="terrainData">The saved map object to load the terrain from.</param>
-        /// <returns>An awaitable task.</returns>
-        public async Task FromMapObject(TerrainData terrainData)
-        {
-            //TODO: Check loading of terrain - this method is unused, does this even need the root terrain field, etc?
-            Debug.Log("GameTerrain :: FromMapObject");
-            
-            await LoadTerrainTextures(terrainData.terrainLayers.ToArray());
-            LoadSplatMaps(terrainData.splatWidth, terrainData.splatHeight, terrainData.splatMaps);
         }
 
         /// <summary>
@@ -279,66 +259,6 @@ namespace TT.World
         }
 
         /// <summary>
-        /// Loads a texture into the terrain - optionally clears any existing terrains (clearLayers).
-        /// </summary>
-        /// <param name="textureAddress">The Addressables address of the texture to load.</param>
-        /// <param name="clearLayers">Whether to remove all textures first.</param>
-        /// <param name="replaceLayer">A layer index to be replaced by the specified textureAddress.</param>
-        /// <returns>A coroutine enumerator.</returns>
-        private IEnumerator LoadTextureIntoTerrain(string textureAddress, bool clearLayers = false, int replaceLayer = -1)
-        {
-            var handle = Addressables.LoadAssetAsync<TerrainLayer>(textureAddress);
-
-            // Wait until done
-            if (!handle.IsDone)
-            {
-                yield return handle;
-            }
-
-            // Break out if failed
-            if (handle.Status != AsyncOperationStatus.Succeeded)
-            {
-                Debug.LogFormat("Failed to load terrain texture. Error returned: [{0}]", handle.OperationException.Message);
-                yield break;
-            }
-
-            // Create new array, copying existing layers if not clearing
-            var index = -1;
-            TerrainLayer[] newLayers;
-
-            if (clearLayers)
-            {
-                // Clear all existing layers and add in the new texture
-                newLayers = new TerrainLayer[1];
-                index = 0;
-                _terrainLayers.Clear();
-                _terrainLayers.Add(textureAddress);
-            }
-            else if (replaceLayer >= 0)
-            {
-                // Replace an existing layer
-                newLayers = new TerrainLayer[_terrain.terrainData.terrainLayers.Length];
-                _terrain.terrainData.terrainLayers.CopyTo(newLayers, 0);
-                index = replaceLayer;
-                _terrainLayers[index] = textureAddress;
-            }
-            else
-            {
-                // Add a new layer
-                newLayers = new TerrainLayer[_terrain.terrainData.terrainLayers.Length + 1];
-                _terrain.terrainData.terrainLayers.CopyTo(newLayers, 0);
-                index = newLayers.Length - 1;
-                _terrainLayers.Add(textureAddress);
-            }
-
-            // Set up the new layer and apply the changes to the terrain
-            newLayers[index] = handle.Result;
-
-            // Apply the changes
-            _terrain.terrainData.terrainLayers = newLayers;
-        }
-
-        /// <summary>
         /// Resets the terrain heights across the entire map.
         /// </summary>
         /// <param name="level">The level to set the terrain to.</param>
@@ -363,7 +283,7 @@ namespace TT.World
         /// <summary>
         /// Resets the terrain splat maps to show only the base layer.
         /// </summary>
-        private void ResetSplatMaps()
+        public void ResetSplatMaps()
         {
             Debug.Log("GameTerrain :: ResetSplatMaps");
             
@@ -394,16 +314,12 @@ namespace TT.World
         public async Task LoadTerrainTextures(string[] addresses)
         {
             Debug.Log("GameTerrain :: LoadTerrainTextures");
-
+            
             TerrainLayer[] newLayers = new TerrainLayer[addresses.Length];
             _terrainLayers.Clear();
 
             for (int i = 0; i < addresses.Length; i++)
             {
-                // Skip loading of the base texture
-                if (addresses[i].Equals(TerrainTextureAddress))
-                    continue;
-                
                 var handle = Addressables.LoadAssetAsync<TerrainLayer>(addresses[i]);
                 await handle.Task;
 
@@ -430,10 +346,10 @@ namespace TT.World
         /// <param name="splatValues">A list of values to paint.</param>
         public void LoadSplatMaps(int width, int height, List<VectorData> splatValues)
         {
-            Debug.Log("GameTerrain :: LoadSplatMaps");
-
             // First reset back to normal
             ResetSplatMaps();
+
+            Debug.Log("GameTerrain :: LoadSplatMaps");
 
             float[,,] splatArray = _terrain.terrainData.GetAlphamaps(0, 0, width, height);
 

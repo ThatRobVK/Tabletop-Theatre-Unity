@@ -28,6 +28,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5730017232531816066}
   m_RootOrder: 0
@@ -103,6 +104,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1788493910427739128}
   m_RootOrder: 2
@@ -184,6 +186,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1788493911012263489}
   - {fileID: 1788493911036663446}
@@ -450,6 +453,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1788493910427739128}
   m_RootOrder: 0
@@ -538,6 +542,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1788493910427739128}
   m_RootOrder: 1
@@ -613,6 +618,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1788493910427739128}
   m_RootOrder: 5
@@ -694,6 +700,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 641229877300729162}
   m_Father: {fileID: 1788493910427739128}
@@ -908,16 +915,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73a3dc0e2d5e1e5419fa5c62b12ae7f4, type: 3}
---- !u!1 &8161192596604825216 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 364360710716278048, guid: 73a3dc0e2d5e1e5419fa5c62b12ae7f4, type: 3}
-  m_PrefabInstance: {fileID: 8380100836079430560}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &8240233627228706500 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 438865241993248100, guid: 73a3dc0e2d5e1e5419fa5c62b12ae7f4, type: 3}
-  m_PrefabInstance: {fileID: 8380100836079430560}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8128998516274290132 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 332167252751365748, guid: 73a3dc0e2d5e1e5419fa5c62b12ae7f4, type: 3}
@@ -929,6 +926,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &8161192596604825216 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 364360710716278048, guid: 73a3dc0e2d5e1e5419fa5c62b12ae7f4, type: 3}
+  m_PrefabInstance: {fileID: 8380100836079430560}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &18581228403582472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,3 +954,8 @@ MonoBehaviour:
     Content: Pick a random variant of this tiem and place it. Each time you click
       this button, a new random variant will be picked.
     IsSpacer: 0
+--- !u!224 &8240233627228706500 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 438865241993248100, guid: 73a3dc0e2d5e1e5419fa5c62b12ae7f4, type: 3}
+  m_PrefabInstance: {fileID: 8380100836079430560}
+  m_PrefabAsset: {fileID: 0}
