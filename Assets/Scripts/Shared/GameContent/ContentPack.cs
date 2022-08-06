@@ -31,6 +31,11 @@ namespace TT.Shared.GameContent
         public string Name = string.Empty;
 
         /// <summary>
+        /// The name of the bundle file.
+        /// </summary>
+        public string BundleName = string.Empty;
+        
+        /// <summary>
         /// A user-friendly description of this content pack.
         /// </summary>
         public string Description = string.Empty;
