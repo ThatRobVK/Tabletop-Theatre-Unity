@@ -354,7 +354,7 @@ namespace TT.World
                             break;
                         }
                     }
-                    PlacePrefab(contentItem, itemIndex, scatterInstance.position.ToVector3(), scatterInstance.rotation, transform);
+                    PlacePrefab(contentItem, itemIndex, scatterInstance.position.ToVector3(), scatterInstance.rotation.ToQuaternion(), transform);
                 }
             }
 
@@ -629,7 +629,7 @@ namespace TT.World
                     {
                         prefabAddress = _generatedObjectAddresses[i],
                         position = new VectorData(_generatedGameObjects[i].transform.position),
-                        rotation = _generatedGameObjects[i].transform.rotation
+                        rotation = new VectorData(_generatedGameObjects[i].transform.rotation)
                     }
                 );
             }
@@ -674,12 +674,15 @@ namespace TT.World
         /// </summary>
         private void UpdateMesh()
         {
+            // Can't draw a polygon with fewer than 3 sides, this can happen during map loading
+            if (_vertices.Count < 3) return;
+            
             List<Vector2> vertices2 = new List<Vector2>();
             foreach (Vector3 vertex in _vertices)
             {
                 vertices2.Add(new Vector2(vertex.x, vertex.z));
             }
-
+            
             var indices = PolygonHelpers.Triangulate(vertices2);
 
             // Update the mesh, reset triangles to null before setting vertices or it errors on removing vertices
