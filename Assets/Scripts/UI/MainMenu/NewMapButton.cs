@@ -49,7 +49,7 @@ namespace TT.UI.MainMenu
         
         private Button _button;
         private UIModalBox _savingModal;
-        
+
         #endregion
         
         
@@ -60,7 +60,7 @@ namespace TT.UI.MainMenu
             _button = GetComponent<Button>();
             _button.onClick.AddListener(HandleButtonClicked);
         }
-        
+
         #endregion
         
         

@@ -105,8 +105,7 @@ namespace TT.UI.MapEditor
                     : "never";
                 
                 // No changes yet so ensure the buttons are disabled
-                if (applyButton) applyButton.Enabled = false;
-                if (undoButton) undoButton.Enabled = false;
+                ToggleButtons(false);
             }
         }
 
@@ -118,10 +117,8 @@ namespace TT.UI.MapEditor
         {
             // If there is no apply button, auto apply the change
             if (applyButton == null) Map.Current.Name = newValue;
-            
-            // Changes have been made, so buttons are enabled
-            if (applyButton) applyButton.Enabled = true;
-            if (undoButton) undoButton.Enabled = true;
+
+            ToggleButtons(true);
         }
 
         /// <summary>
@@ -134,8 +131,7 @@ namespace TT.UI.MapEditor
             if (applyButton == null) Map.Current.Description = newValue;
             
             // Changes have been made, so buttons are enabled
-            if (applyButton) applyButton.Enabled = true;
-            if (undoButton) undoButton.Enabled = true;
+            ToggleButtons(true);
         }
 
         /// <summary>
@@ -147,8 +143,7 @@ namespace TT.UI.MapEditor
             Map.Current.Description = descriptionTextbox.text;
             
             // Changes have been applied, so buttons are disabled
-            if (applyButton) applyButton.Enabled = false;
-            if (undoButton) undoButton.Enabled = false;
+            ToggleButtons(false);
         }
 
         /// <summary>
@@ -160,8 +155,23 @@ namespace TT.UI.MapEditor
             descriptionTextbox.text = Map.Current.Description;
             
             // Changes have been undone, so buttons are disabled
-            if (applyButton) applyButton.Enabled = false;
-            if (undoButton) undoButton.Enabled = false;
+            ToggleButtons(false);
+        }
+
+        #endregion
+        
+        
+        #region Private methods
+        
+        /// <summary>
+        /// Enables and disables the apply and undo buttons.
+        /// </summary>
+        /// <param name="enabled">If true the buttons will be enabled, otherwise disabled.</param>
+        private void ToggleButtons(bool enabled)
+        {
+            // Changes have been made, so buttons are enabled
+            if (applyButton) applyButton.Enabled = enabled;
+            if (undoButton) undoButton.Enabled = enabled;
         }
 
         #endregion
