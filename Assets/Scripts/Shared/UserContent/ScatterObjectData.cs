@@ -37,7 +37,7 @@ namespace TT.Shared.UserContent
         /// <summary>
         /// The rotation of the object.
         /// </summary>
-        public Quaternion rotation;
+        public VectorData rotation;
         
         /// <summary>
         /// The Addressables address of the prefab from which the object is instantiated.

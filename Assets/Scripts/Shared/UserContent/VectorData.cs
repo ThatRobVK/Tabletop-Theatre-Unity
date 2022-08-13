@@ -56,13 +56,13 @@ namespace TT.Shared.UserContent
         #region Constructors
         
         /// <summary>
-        /// Default constructor for deserialization.
+        /// Creates a new instance of VectorData.
         /// </summary>
         public VectorData()
         {}
         
         /// <summary>
-        /// Creates a new instance with the passed in values.
+        /// Creates a new instance of VectorData.
         /// </summary>
         /// <param name="x">The X coordinate.</param>
         /// <param name="y">The Y coordinate.</param>
@@ -77,9 +77,9 @@ namespace TT.Shared.UserContent
         }
 
         /// <summary>
-        /// Creates a new instance with values based on the passed in Vector4.
+        /// Creates a new instance of VectorData.
         /// </summary>
-        /// <param name="vector">The vector to base the Vector4Data instance on.</param>
+        /// <param name="vector">A Vector4 with the values for this instance.</param>
         public VectorData(Vector4 vector)
         {
             x = vector.x;
@@ -89,15 +89,27 @@ namespace TT.Shared.UserContent
         }
 
         /// <summary>
-        /// Creates a new instance with values based on the passed in Vector4.
+        /// Creates a new instance of VectorData.
         /// </summary>
-        /// <param name="vector">The vector to base the Vector4Data instance on.</param>
+        /// <param name="vector">A Vector3 with the values for this instance.</param>
         public VectorData(Vector3 vector)
         {
             x = vector.x;
             y = vector.y;
             z = vector.z;
             w = 0;
+        }
+
+        /// <summary>
+        /// Creates a new instance of VectorData.
+        /// </summary>
+        /// <param name="quaternion">A Quaternion with the values for this instance.</param>
+        public VectorData(Quaternion quaternion)
+        {
+            x = quaternion.x;
+            y = quaternion.y;
+            z = quaternion.z;
+            w = quaternion.w;
         }
         
         #endregion
@@ -121,6 +133,11 @@ namespace TT.Shared.UserContent
         public Vector4 ToVector4()
         {
             return new Vector4(x, y, z, w);
+        }
+
+        public Quaternion ToQuaternion()
+        {
+            return new Quaternion(x, y, z, w);
         }
 
         /// <summary>
@@ -161,6 +178,26 @@ namespace TT.Shared.UserContent
         public static List<Vector3> ToVector3List(List<VectorData> list)
         {
             return list.ConvertAll(x => x.ToVector3()).ToList();
+        }
+
+        /// <summary>
+        /// Converts a list of Quaternion objects to a list of data objects.
+        /// </summary>
+        /// <param name="list">The list of Quaternions to convert.</param>
+        /// <returns>A list of data objects with the same values as the passed in quaternions.</returns>
+        public static List<VectorData> FromQuaternionList(List<Quaternion> list)
+        {
+            return list.ConvertAll(x => new VectorData(x)).ToList();
+        }
+
+        /// <summary>
+        /// Converts a list of data objects to a list of Unity Quaternion objects.
+        /// </summary>
+        /// <param name="list">The list of data objects to convert.</param>
+        /// <returns>A list of Quaternion objects with the same values as the passed in data objects.</returns>
+        public static List<Quaternion> ToQuaternionList(List<VectorData> list)
+        {
+            return list.ConvertAll(x => x.ToQuaternion()).ToList();
         }
         
         #endregion
