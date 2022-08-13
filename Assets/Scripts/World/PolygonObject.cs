@@ -91,7 +91,7 @@ namespace TT.World
         private int _placedItems;
         private bool _initialised;
         private KeyValuePair<int, Vector3> _undoHandlePosition;
-        private Action<WorldObjectBase> _InitialiseCompleteCallback;
+        private Action<WorldObjectBase> _initialiseCompleteCallback;
 
         #endregion
 
@@ -156,15 +156,17 @@ namespace TT.World
             // Show Add Handle button only when selected but not in placement mode
             addHandleButton.SetActive(ControlsVisible && !InPlacementMode);
 
-            // While the number of placed items is less than the number of requested items, keep the wait cursor
             if (ObjectCount < _targetItems)
             {
+                // While the number of placed items is less than the number of requested items, keep the wait cursor
                 CursorController.Current.Wait = true;
             }
-            else if (!_initialised)
+            else if (!_initialised && _targetItems > 0)
             {
+                // If placement has started (target items > 0) and now completed,
+                // initialisation has completed
                 _initialised = true;
-                _InitialiseCompleteCallback?.Invoke(this);
+                _initialiseCompleteCallback?.Invoke(this);
 
                 // Once initialised, show or hide the controls
                 if (_showControlsOnComplete)
@@ -318,7 +320,7 @@ namespace TT.World
         public void Initialise(ScatterAreaData scatterAreaData, Action<WorldObjectBase> callback = null)
         {
             // Store the callback
-            _InitialiseCompleteCallback = callback;
+            _initialiseCompleteCallback = callback;
             
             //TODO: Refactor to remove scatter area specific code from polygons (either create an inheriting class or keep the two classes separate completely
             Start();
