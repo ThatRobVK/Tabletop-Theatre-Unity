@@ -1,3 +1,8 @@
+!! This repo is no longer maintained !!
+
+I took a short break when I felt I was starting to burn myself out. That break became longer, and eventually the whole Unity pricing debacle happened. I'm no longer intending to go back to Unity so this project as it is is dead. I am intending to restart it using Unreal in the near future.
+
+
 # Tabletop Theatre
 
 ## About
